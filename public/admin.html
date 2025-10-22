@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - إدارة المنتجات</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script type="module" src="auth-guard.js"></script>
+    <style>
+        :root {
+            --primary-blue: #3498db;
+            --danger-red: #e74c3c;
+            --success-green: #2ecc71;
+            --light-gray: #ecf0f1;
+            --text-dark: #34495e;
+            --bg-soft-accent: #f8f9fa;
+        }
+        body { display: none; font-family: 'Cairo', sans-serif; background-color: var(--bg-soft-accent); color: var(--text-dark); }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .admin-header h1 { color: var(--text-dark); font-size: 1.5rem; margin: 0; }
+        #logout-btn { padding: 0.6rem 1.2rem; font-size: 1rem; font-weight: 600; color: white; background-color: var(--danger-red); border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; }
+        #logout-btn:hover { background-color: #c0392b; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .form-container, .product-management-section { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section-divider { margin: 3rem 0; border: 0; height: 1px; background-color: #e0e0e0; }
+        h2 { font-size: 1.8rem; text-align: center; margin-bottom: 2rem; color: var(--text-dark); }
+        h2 .fas { margin-left: 10px; }
+        .product-table-container { overflow-x: auto; }
+        .product-table { width: 100%; border-collapse: collapse; text-align: right; }
+        .product-table th, .product-table td { padding: 15px; border-bottom: 1px solid var(--light-gray); }
+        .product-table thead { background-color: var(--bg-soft-accent); }
+        .product-table th { font-weight: 700; color: #555; }
+        .product-table img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+        .action-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; transition: transform 0.2s, color 0.2s; }
+        .edit-btn { color: var(--primary-blue); }
+        .delete-btn { color: var(--danger-red); }
+        .action-btn:hover { transform: scale(1.2); }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 30px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 8px; position: relative; }
+        .close-btn { color: #aaa; position: absolute; left: 25px; top: 15px; font-size: 28px; font-weight: bold; }
+        .close-btn:hover, .close-btn:focus { color: black; text-decoration: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <h1><i class="fas fa-cogs"></i> لوحة تحكم المتجر</h1>
+        <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </header>
+
+    <main class="container">
+        <div class="form-container">
+            <h2><i class="fas fa-plus-circle"></i> إضافة منتج جديد</h2>
+            <form id="add-product-form">
+                <div class="form-group"><label for="name">اسم المنتج</label><input type="text" id="name" required></div>
+                <div class="form-group"><label for="category">الفئة</label><select id="category" required><option value="">اختر فئة...</option><option value="external-books">كتب خارجية</option><option value="high-level-books">كتب مستوى</option><option value="skill-development-books">تنمية مهارات</option><option value="skill-development-games">ألعاب</option><option value="children-stories">قصص اطفال</option><option value="foundation-books">كتب تأسيس</option><option value="returned-books">كتب مرتجع</option></select></div>
+                <div class="form-group"><label for="price">السعر (جنيه)</label><input type="number" id="price" step="0.01" required></div>
+                <div class="form-group"><label for="discountPrice">سعر الخصم (اختياري)</label><input type="number" id="discountPrice" step="0.01"></div>
+                <div class="form-group"><label for="stock">الكمية المتاحة</label><input type="number" id="stock" required></div>
+                <div class="form-group"><label for="publishYear">سنة الإصدار</label><input type="number" id="publishYear" placeholder="e.g., 2023"></div>
+                <div class="form-group"><label for="imageFile">صورة المنتج</label><input type="file" id="imageFile" accept="image/*" required></div>
+                <div class="form-group"><label for="description">وصف المنتج</label><textarea id="description" rows="4" required></textarea></div>
+                <button type="submit" class="submit-btn"><i class="fas fa-plus"></i> إضافة المنتج</button>
+            </form>
+            <div id="feedback-message" class="feedback" style="display: none;"></div>
+        </div>
+
+        <hr class="section-divider">
+
+        <section class="product-management-section">
+            <h2><i class="fas fa-edit"></i> إدارة المنتجات الحالية</h2>
+            <div id="product-list-container" class="product-table-container">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>الفئة</th>
+                            <th>السعر</th>
+                            <th>المخزون</th>
+                            <th>تعديل</th>
+                            <th>حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2><i class="fas fa-pen-to-square"></i> تعديل المنتج</h2>
+            <form id="edit-product-form">
+                <input type="hidden" id="edit-product-id">
+                <div class="form-group"><label for="edit-name">اسم المنتج</label><input type="text" id="edit-name" required></div>
+                <div class="form-group"><label for="edit-category">الفئة</label><select id="edit-category" required><option value="">اختر فئة...</option><option value="external-books">كتب خارجية</option><option value="high-level-books">كتب مستوى</option><option value="skill-development-books">تنمية مهارات</option><option value="skill-development-games">ألعاب</option><option value="children-stories">قصص اطفال</option><option value="foundation-books">كتب تأسيس</option><option value="returned-books">كتب مرتجع</option></select></div>
+                <div class="form-group"><label for="edit-price">السعر (جنيه)</label><input type="number" id="edit-price" step="0.01" required></div>
+                <div class="form-group"><label for="edit-discountPrice">سعر الخصم</label><input type="number" id="edit-discountPrice" step="0.01"></div>
+                <div class="form-group"><label for="edit-stock">الكمية المتاحة</label><input type="number" id="edit-stock" required></div>
+                <div class="form-group"><label for="edit-publishYear">سنة الإصدار</label><input type="number" id="edit-publishYear"></div>
+                <div class="form-group"><label for="edit-description">وصف المنتج</label><textarea id="edit-description" rows="4" required></textarea></div>
+                <div class="form-group"><label for="edit-imageFile">تغيير صورة المنتج (اختياري)</label><input type="file" id="edit-imageFile" accept="image/*"></div>
+                <p>الصورة الحالية:</p>
+                <img id="current-product-image" src="" alt="الصورة الحالية" style="max-width: 100px; margin-bottom: 1rem;">
+                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> حفظ التعديلات</button>
+            </form>
+             <div id="edit-feedback-message" class="feedback" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { signOut } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
+        const logoutBtn = document.getElementById('logout-btn');
+        if(logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    window.location.href = '/login.html';
+                }).catch(console.error);
+            });
+        }
+    </script>
+</body>
+</html>

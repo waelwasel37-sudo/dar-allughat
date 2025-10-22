@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر دار اللغات</title>
+    <meta name="description" content="متجر دار اللغات هو مشروع تجريبي يهدف إلى بيع الكتب والمواد التعليمية عبر الإنترنت بطريقة حديثة وجذابة.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <!-- AI CONTEXT: Using Web Components for Header/Footer -->
+    <script type="module" src="/components/Header.js"></script>
+    <script type="module" src="/components/Footer.js"></script>
+
+    <!-- AI CONTEXT: Main stylesheet with modern features -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <site-header></site-header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">كنوز المعرفة بين يديك</h1>
+                <p class="hero-subtitle">افضل الكتب الدراسيه وكتب تنمية مهارات أطفال و العاب تنمية مهارات أطفال</p>
+                <a href="#products-section" class="hero-button">اكتشف الآن</a>
+            </div>
+        </section>
+
+        <section id="products-section" class="products-section">
+             <h2 id="products-grid-title" class="section-title">كل المنتجات</h2>
+            <div class="controls-container">
+                <div class="search-group">
+                    <label for="search-input"><i class="fas fa-search"></i></label>
+                    <input type="text" id="search-input" placeholder="ابحث عن كتاب...">
+                </div>
+                <div class="sort-group">
+                    <label for="sort-select"><i class="fas fa-sort-amount-down"></i></label>
+                    <select id="sort-select">
+                        <option value="latest">الأحدث أولاً</option>
+                        <option value="price-asc">السعر: من الأقل للأعلى</option>
+                        <option value="price-desc">السعر: من الأعلى للأقل</option>
+                    </select>
+                </div>
+            </div>
+            <div id="product-list" class="product-grid"></div>
+        </section>
+    </main>
+
+    <site-footer></site-footer>
+
+    <!-- Modals -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content cart-modal-content">
+            <span class="close-button">&times;</span>
+            <h2><i class="fas fa-shopping-cart"></i> سلة التسوق</h2>
+            <div id="cart-items"></div>
+            <div id="cart-total"></div>
+            <div class="customer-info-form">
+                <h3>بيانات العميل</h3>
+                <input type="text" id="customer-name" placeholder="الاسم بالكامل" required>
+                <input type="tel" id="customer-phone" placeholder="رقم الهاتف" required>
+                <select id="payment-method" required>
+                    <option value="" disabled selected>اختر طريقة الدفع</option>
+                    <option value="الدفع عند الاستلام">الدفع عند الاستلام</option>
+                    <option value="انستا باي">انستا باي (InstaPay)</option>
+                    <option value="محفظة إلكترونية">محفظة إلكترونية</option>
+                </select>
+                <button id="whatsapp-checkout-btn" class="whatsapp-button">
+                    <i class="fab fa-whatsapp"></i> أرسل الطلب عبر واتساب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="product-details-modal" class="modal">
+        <div id="product-details-content" class="modal-content"></div>
+    </div>
+
+    <!-- Main application logic -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>

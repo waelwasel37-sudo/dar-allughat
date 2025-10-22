@@ -1,0 +1,860 @@
+[debug] [2025-10-22T19:46:02.463Z] ----------------------------------------------------------------------
+[debug] [2025-10-22T19:46:02.465Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/lib/bin/firebase.js deploy
+[debug] [2025-10-22T19:46:02.466Z] CLI Version:   14.19.1
+[debug] [2025-10-22T19:46:02.466Z] Platform:      linux
+[debug] [2025-10-22T19:46:02.466Z] Node Version:  v20.19.1
+[debug] [2025-10-22T19:46:02.467Z] Time:          Wed Oct 22 2025 19:46:02 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-10-22T19:46:02.467Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-22T19:46:02.946Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T19:46:02.947Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T19:46:02.947Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[debug] [2025-10-22T19:46:02.952Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:02.952Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:02.959Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 [none]
+[debug] [2025-10-22T19:46:03.761Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 200
+[debug] [2025-10-22T19:46:03.762Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 {"workspaceId":"dar-allughat-97483992","name":"dar allughat","workspaceRedirectUrl":"firebase-dar-allughat-1758043786001.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-10-22T18:04:32.773713Z","failureReason":"<eye3 title='/IAMPolicy.SetIamPolicy, ABORTED'/> APPLICATION_ERROR;google.iam.v1/IAMPolicy.SetIamPolicy;The operation was aborted. This is usually caused by concurrent policy changes, please review your access pattern and try again.;AppErrorCode=10;StartTimeMs=1758043789056;unknown;Deadline(sec)=30.0;ResFormat=uncompressed;ServerTimeSec=0.619794079;LogBytes=256;Non-FailFast;EndUserCredsRequested;EffSecLevel=none;ReqFormat=uncompressed;ReqID=5da2978d839c4fee;GlobalID=0;Server=[2002:a05:6002:488a:b0:380:1cf3:9b4]:4002","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-3749666591500262531@monospace-per-ws-sa-9.iam.gserviceaccount.com","enableNix":true,"ownerEmail":"waelwasel37@gmail.com","workspaceImageUrl":"https://www.gstatic.com/monospace/231115/logo_html.svg","templateArgs":"{\"__agentic_workspace\":true}","templateRepoUrl":"file:///usr/local/monospace/templates/public/blank-web","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtZGFyLWFsbHVnaGF0LTE3NTgwNDM3ODYwMDEuY2x1c3Rlci1mYmZqbHRuMzc1YzZ3cXhsaG9laGJ6NDRzay5jbG91ZHdvcmtzdGF0aW9ucy5kZXYiLCJpYXQiOjE3NjExNjIzNjMsImV4cCI6MTc2MTI0ODc2M30.SRf5VJ3-iDYtEN2Q7C2OHY8cP-S9qZxehYHcJXQ0BHAgX2Xix-LZGQAoKn8R9hbOiGsrEVI2QiQIavorJulmSChyIqAZ0rOzrQFTqDG4OirLtLKieINxNte88LSf-7Wqt1tFszixv4RnAgJArfZ6tEnJeubxHGzotPvONQPmejV2T86U21vv4vUxDkHFSZ2PjqOE62EzKezJTnG5XxVCGWs60HpK4VdpYLwhK5bPBUJgGROOkGH7dJey1HXRRv497NqzUquIkd_s_sFlelqp-OCX7RslCq48dMSDOm2HuQkP98vVmBrH_bBicNmCsq2vYAzUzUOihg9k-9kbnYqqMA","firebaseProjectId":"dar-allughat-97483992-fc6c5"}
+[debug] [2025-10-22T19:46:03.764Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T19:46:03.764Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T19:46:03.765Z] [iam] checking project dar-allughat-97483992-fc6c5 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create",null]
+[debug] [2025-10-22T19:46:03.768Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:03.768Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:03.768Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions [none]
+[debug] [2025-10-22T19:46:03.768Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:46:03.768Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create",null]}
+[debug] [2025-10-22T19:46:03.930Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions 200
+[debug] [2025-10-22T19:46:03.930Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}
+[debug] [2025-10-22T19:46:03.934Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project dar-allughat-97483992-fc6c5:
+
+  
+[debug] [2025-10-22T19:46:03.935Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:03.935Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:03.935Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5 [none]
+[debug] [2025-10-22T19:46:04.146Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5 200
+[debug] [2025-10-22T19:46:04.146Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5 {"projectId":"dar-allughat-97483992-fc6c5","projectNumber":"118615668327","displayName":"Firebase app","name":"projects/dar-allughat-97483992-fc6c5","resources":{"hostingSite":"dar-allughat-97483992-fc6c5"},"state":"ACTIVE","etag":"1_8acb9829-d953-4dae-95ea-c46f3bb7eefe"}
+[debug] [2025-10-22T19:46:09.393Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:09.394Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:09.395Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites pageToken=&pageSize=10
+[debug] [2025-10-22T19:46:10.258Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites 200
+[debug] [2025-10-22T19:46:10.259Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites {"sites":[{"name":"projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5","defaultUrl":"https://dar-allughat-97483992-fc6c5.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2025-10-22T19:46:10.261Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:10.261Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:10.261Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites 
+[debug] [2025-10-22T19:46:10.610Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites 200
+[debug] [2025-10-22T19:46:10.610Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites {"sites":[{"name":"projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5","defaultUrl":"https://dar-allughat-97483992-fc6c5.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2025-10-22T19:46:10.611Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:10.611Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:10.613Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/webApps/-/config [none]
+[debug] [2025-10-22T19:46:11.086Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/webApps/-/config 200
+[debug] [2025-10-22T19:46:11.086Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/webApps/-/config {"projectId":"dar-allughat-97483992-fc6c5","appId":"1:118615668327:web:394407c7f6ab1e801a06c2","storageBucket":"dar-allughat-97483992-fc6c5.firebasestorage.app","apiKey":"AIzaSyCX0RCPBcg0_eL28snWBn0bNfDf8ACWzWM","authDomain":"dar-allughat-97483992-fc6c5.firebaseapp.com","messagingSenderId":"118615668327","projectNumber":"118615668327","version":"2"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2025-10-22T19:46:17.078Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:17.078Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:17.079Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5 [none]
+[debug] [2025-10-22T19:46:17.800Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5 200
+[debug] [2025-10-22T19:46:17.800Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5 {"name":"projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5","defaultUrl":"https://dar-allughat-97483992-fc6c5.web.app","type":"DEFAULT_SITE"}
+[info]    ▲ Next.js 15.5.5
+
+
+[info]    Linting and checking validity of types ...
+
+[info]    Creating an optimized production build ...
+
+[info]  ✓ Compiled successfully in 5.3s
+
+[info]    Collecting page data ...
+
+[info]    Generating static pages (0/5) ...
+
+[info]    Generating static pages (1/5) 
+   Generating static pages (2/5) 
+   Generating static pages (3/5) 
+ ✓ Generating static pages (5/5)
+
+[info]    Finalizing page optimization ...
+
+[info]    Collecting build traces ...
+
+[info] 
+
+[info] Route (pages)                                Size  First Load JS
+┌ ƒ /                                        2 kB         103 kB
+├   /_app                                     0 B        98.4 kB
+├ ○ /404                                    180 B        98.5 kB
+├ ○ /Cart (533 ms)                          178 B        98.5 kB
+├ ○ /Footer (545 ms)                        369 B        98.7 kB
+├ ○ /Header (515 ms)                        672 B         101 kB
+└ ƒ /products/[id]                        1.09 kB         102 kB
++ First Load JS shared by all             99.3 kB
+  ├ chunks/framework-292291387d6b2e39.js  59.7 kB
+  ├ chunks/main-a0a6f8318aeb48d0.js       36.7 kB
+  └ other shared chunks (total)           2.96 kB
+
+
+[info] ○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+[info] Building a Cloud Function to run this application. This is needed due to:
+[info]  • non-static route /
+[info]  • non-static route /products/[id]
+[info] 
+[debug] [2025-10-22T19:46:57.513Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:57.513Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:46:57.515Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5 [none]
+[debug] [2025-10-22T19:46:58.248Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5 200
+[debug] [2025-10-22T19:46:58.248Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5 {"name":"projects/dar-allughat-97483992-fc6c5/sites/dar-allughat-97483992-fc6c5","defaultUrl":"https://dar-allughat-97483992-fc6c5.web.app","type":"DEFAULT_SITE"}
+[debug] [2025-10-22T19:47:49.464Z] [web frameworks] effective firebase.json:  {
+  "hosting": [
+    {
+      "source": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "site": "dar-allughat-97483992-fc6c5",
+      "rewrites": [
+        {
+          "source": "/**",
+          "function": {
+            "functionId": "ssrdarallughat97483992f",
+            "region": "us-central1",
+            "pinTag": true
+          }
+        }
+      ],
+      "redirects": [],
+      "headers": [
+        {
+          "source": "/**/*.[jt]s",
+          "headers": [
+            {
+              "key": "Set-Cookie",
+              "value": "__FIREBASE_DEFAULTS__=eyJjb25maWciOnsicHJvamVjdElkIjoiZGFyLWFsbHVnaGF0LTk3NDgzOTkyLWZjNmM1IiwiYXBwSWQiOiIxOjExODYxNTY2ODMyNzp3ZWI6Mzk0NDA3YzdmNmFiMWU4MDFhMDZjMiIsInN0b3JhZ2VCdWNrZXQiOiJkYXItYWxsdWdoYXQtOTc0ODM5OTItZmM2YzUuZmlyZWJhc2VzdG9yYWdlLmFwcCIsImFwaUtleSI6IkFJemFTeUNYMFJDUEJjZzBfZUwyOHNuV0JuMGJOZkRmOEFDV3pXTSIsImF1dGhEb21haW4iOiJkYXItYWxsdWdoYXQtOTc0ODM5OTItZmM2YzUuZmlyZWJhc2VhcHAuY29tIiwibWVzc2FnaW5nU2VuZGVySWQiOiIxMTg2MTU2NjgzMjciLCJwcm9qZWN0TnVtYmVyIjoiMTE4NjE1NjY4MzI3IiwidmVyc2lvbiI6IjIifSwiX2F1dGhUb2tlblN5bmNVUkwiOiIvX19zZXNzaW9uIn0; SameSite=Strict; Expires=2027-09-17T06:27:49.463Z; Path=/;"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "public": ".firebase/dar-allughat-97483992-fc6c5/hosting",
+      "webFramework": "next_ssr"
+    }
+  ],
+  "functions": [
+    {
+      "source": ".firebase/dar-allughat-97483992-fc6c5/functions",
+      "codebase": "firebase-frameworks-dar-allughat-97483992-fc6c5"
+    }
+  ]
+}
+[debug] [2025-10-22T19:47:49.464Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T19:47:49.467Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T19:47:49.467Z] [iam] checking project dar-allughat-97483992-fc6c5 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-10-22T19:47:49.468Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:49.468Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:49.468Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions [none]
+[debug] [2025-10-22T19:47:49.468Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:47:49.469Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-10-22T19:47:49.611Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions 200
+[debug] [2025-10-22T19:47:49.612Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'dar-allughat-97483992-fc6c5'...
+[info] 
+[info] i  deploying functions, storage, firestore, hosting, apphosting 
+[debug] [2025-10-22T19:47:49.620Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:49.621Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:49.621Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2025-10-22T19:47:49.621Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudresourcemanager.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:47:50.436Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudresourcemanager.googleapis.com 200
+[debug] [2025-10-22T19:47:50.436Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2025-10-22T19:47:50.451Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:50.451Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:50.451Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5 [none]
+[debug] [2025-10-22T19:47:50.609Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5 200
+[debug] [2025-10-22T19:47:50.609Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5 {"projectNumber":"118615668327","projectId":"dar-allughat-97483992-fc6c5","lifecycleState":"ACTIVE","name":"Firebase app","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-10-11T21:10:16.933684Z"}
+[info] i  functions: preparing codebase firebase-frameworks-dar-allughat-97483992-fc6c5 for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-10-22T19:47:50.616Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:50.616Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:50.617Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:50.617Z] Checked if tokens are valid: true, expires at: 1761164662061
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-10-22T19:47:50.619Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-10-22T19:47:50.619Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:47:50.622Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-10-22T19:47:50.622Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:47:51.396Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/runtimeconfig.googleapis.com 200
+[debug] [2025-10-22T19:47:51.397Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-10-22T19:47:51.427Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com 200
+[debug] [2025-10-22T19:47:51.429Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API cloudfunctions.googleapis.com. Enabling now... 
+[debug] [2025-10-22T19:47:51.436Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:51.436Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:47:51.437Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com:enable [none]
+[debug] [2025-10-22T19:47:51.437Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com:enable x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:47:52.023Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com:enable 200
+[debug] [2025-10-22T19:47:52.025Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/cloudfunctions.googleapis.com:enable [omitted]
+[debug] [2025-10-22T19:48:02.047Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:02.048Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:02.048Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/adminSdkConfig [none]
+[debug] [2025-10-22T19:48:02.519Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/adminSdkConfig 200
+[debug] [2025-10-22T19:48:02.519Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/adminSdkConfig {"projectId":"dar-allughat-97483992-fc6c5","storageBucket":"dar-allughat-97483992-fc6c5.firebasestorage.app"}
+[debug] [2025-10-22T19:48:02.520Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:02.520Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:02.521Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/configs [none]
+[debug] [2025-10-22T19:48:02.719Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/configs 200
+[debug] [2025-10-22T19:48:02.719Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/dar-allughat-97483992-fc6c5/configs {}
+[debug] [2025-10-22T19:48:02.723Z] Validating nodejs source
+[debug] [2025-10-22T19:48:03.609Z] > [functions] package.json contents: {
+  "dependencies": {
+    "firebase": "^12.4.0",
+    "next": "^15.5.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "firebase-frameworks": "^0.11.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-admin": "^11.11.1"
+  },
+  "main": "server.js",
+  "engines": {
+    "node": "20"
+  }
+}
+[debug] [2025-10-22T19:48:03.609Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase firebase-frameworks-dar-allughat-97483992-fc6c5 to determine what to deploy 
+[debug] [2025-10-22T19:48:03.613Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-22T19:48:03.623Z] Found firebase-functions binary at '/home/user/dar-allughat/.firebase/dar-allughat-97483992-fc6c5/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8901
+
+[debug] [2025-10-22T19:48:04.258Z] Got response from /__/functions.yaml {"endpoints":{"ssrdarallughat97483992f":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"ssrdarallughat97483992f"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-10-22T19:48:04.329Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:04.330Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:04.330Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com [none]
+[debug] [2025-10-22T19:48:04.330Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:48:05.103Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com 200
+[debug] [2025-10-22T19:48:05.103Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com [omitted]
+[warn] ⚠  extensions: missing required API firebaseextensions.googleapis.com. Enabling now... 
+[debug] [2025-10-22T19:48:05.104Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:05.104Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:05.104Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com:enable [none]
+[debug] [2025-10-22T19:48:05.105Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com:enable x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:48:06.155Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com:enable 200
+[debug] [2025-10-22T19:48:06.155Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseextensions.googleapis.com:enable [omitted]
+[debug] [2025-10-22T19:48:16.173Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T19:48:16.173Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T19:48:16.174Z] [iam] checking project dar-allughat-97483992-fc6c5 for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-10-22T19:48:16.174Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:16.174Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:16.174Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions [none]
+[debug] [2025-10-22T19:48:16.174Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:48:16.174Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-10-22T19:48:16.772Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions 200
+[debug] [2025-10-22T19:48:16.772Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-10-22T19:48:16.773Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:16.773Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:16.774Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/instances pageSize=100&pageToken=
+[debug] [2025-10-22T19:48:18.426Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/instances 200
+[debug] [2025-10-22T19:48:18.427Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/instances {}
+[info] i  functions: Loaded environment variables from .env. 
+[info] i  functions: preparing .firebase/dar-allughat-97483992-fc6c5/functions directory for uploading... 
+[info] i  functions: packaged /home/user/dar-allughat/.firebase/dar-allughat-97483992-fc6c5/functions (3.52 MB) for uploading 
+[debug] [2025-10-22T19:48:19.399Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:19.402Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:19.403Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/locations/-/functions [none]
+[debug] [2025-10-22T19:48:19.960Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/locations/-/functions 200
+[debug] [2025-10-22T19:48:19.960Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/locations/-/functions {}
+[debug] [2025-10-22T19:48:19.961Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:19.961Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:19.961Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/dar-allughat-97483992-fc6c5/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2025-10-22T19:48:20.877Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/dar-allughat-97483992-fc6c5/locations/-/functions 200
+[debug] [2025-10-22T19:48:20.878Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/dar-allughat-97483992-fc6c5/locations/-/functions {}
+[info] i  functions: ensuring required API run.googleapis.com is enabled... 
+[debug] [2025-10-22T19:48:20.882Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:20.882Z] Checked if tokens are valid: true, expires at: 1761164662061
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+[debug] [2025-10-22T19:48:20.882Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:20.882Z] Checked if tokens are valid: true, expires at: 1761164662061
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+[debug] [2025-10-22T19:48:20.883Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:20.883Z] Checked if tokens are valid: true, expires at: 1761164662061
+[info] i  functions: ensuring required API storage.googleapis.com is enabled... 
+[debug] [2025-10-22T19:48:20.883Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:20.883Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:20.883Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/run.googleapis.com [none]
+[debug] [2025-10-22T19:48:20.884Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/run.googleapis.com x-goog-quota-user=projects/118615668327
+[debug] [2025-10-22T19:48:20.886Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com [none]
+[debug] [2025-10-22T19:48:20.886Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com x-goog-quota-user=projects/118615668327
+[debug] [2025-10-22T19:48:20.888Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/pubsub.googleapis.com [none]
+[debug] [2025-10-22T19:48:20.888Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/pubsub.googleapis.com x-goog-quota-user=projects/118615668327
+[debug] [2025-10-22T19:48:20.890Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/storage.googleapis.com [none]
+[debug] [2025-10-22T19:48:20.890Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/storage.googleapis.com x-goog-quota-user=projects/118615668327
+[debug] [2025-10-22T19:48:21.652Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/pubsub.googleapis.com 200
+[debug] [2025-10-22T19:48:21.652Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/pubsub.googleapis.com [omitted]
+[info] ✔  functions: required API pubsub.googleapis.com is enabled 
+[debug] [2025-10-22T19:48:21.668Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/run.googleapis.com 200
+[debug] [2025-10-22T19:48:21.668Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/run.googleapis.com [omitted]
+[info] ✔  functions: required API run.googleapis.com is enabled 
+[debug] [2025-10-22T19:48:21.684Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/storage.googleapis.com 200
+[debug] [2025-10-22T19:48:21.684Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/storage.googleapis.com [omitted]
+[info] ✔  functions: required API storage.googleapis.com is enabled 
+[debug] [2025-10-22T19:48:21.703Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com 200
+[debug] [2025-10-22T19:48:21.703Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API eventarc.googleapis.com. Enabling now... 
+[debug] [2025-10-22T19:48:21.704Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:21.704Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:21.705Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com:enable [none]
+[debug] [2025-10-22T19:48:21.705Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com:enable x-goog-quota-user=projects/118615668327
+[debug] [2025-10-22T19:48:22.816Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com:enable 200
+[debug] [2025-10-22T19:48:22.816Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/118615668327/services/eventarc.googleapis.com:enable [omitted]
+[info] i  functions: generating the service identity for pubsub.googleapis.com... 
+[debug] [2025-10-22T19:48:32.833Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:32.834Z] Checked if tokens are valid: true, expires at: 1761164662061
+[info] i  functions: generating the service identity for eventarc.googleapis.com... 
+[debug] [2025-10-22T19:48:32.834Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:32.834Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:32.834Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/pubsub.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-10-22T19:48:32.835Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/pubsub.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/118615668327
+[debug] [2025-10-22T19:48:32.835Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/pubsub.googleapis.com:generateServiceIdentity {}
+[debug] [2025-10-22T19:48:32.838Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/eventarc.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-10-22T19:48:32.838Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/eventarc.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/118615668327
+[debug] [2025-10-22T19:48:32.838Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/eventarc.googleapis.com:generateServiceIdentity {}
+[debug] [2025-10-22T19:48:33.855Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/eventarc.googleapis.com:generateServiceIdentity 200
+[debug] [2025-10-22T19:48:33.856Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/eventarc.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-118615668327@gcp-sa-eventarc.iam.gserviceaccount.com","uniqueId":"114638276567353060613"}}
+[debug] [2025-10-22T19:48:33.939Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/pubsub.googleapis.com:generateServiceIdentity 200
+[debug] [2025-10-22T19:48:33.940Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/118615668327/services/pubsub.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-118615668327@gcp-sa-pubsub.iam.gserviceaccount.com","uniqueId":"114510571564305450906"}}
+[debug] [2025-10-22T19:48:33.948Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:33.948Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:33.948Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5 [none]
+[debug] [2025-10-22T19:48:34.574Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5 200
+[debug] [2025-10-22T19:48:34.574Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5 {"projectNumber":"118615668327","projectId":"dar-allughat-97483992-fc6c5","lifecycleState":"ACTIVE","name":"Firebase app","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-10-11T21:10:16.933684Z"}
+[debug] [2025-10-22T19:48:34.575Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:34.575Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:34.575Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/118615668327 [none]
+[debug] [2025-10-22T19:48:34.703Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/118615668327 403
+[debug] [2025-10-22T19:48:34.703Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/118615668327 {"error":{"code":403,"message":"Compute Engine API has not been used in project 118615668327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 118615668327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"consumer":"projects/118615668327","containerInfo":"118615668327","serviceTitle":"Compute Engine API","service":"compute.googleapis.com","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 118615668327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327"}]}]}}
+[debug] [2025-10-22T19:48:34.705Z] unable to look up default compute service account. Falling back to 118615668327-compute@developer.gserviceaccount.com. Error: {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":403,"message":"Compute Engine API has not been used in project 118615668327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 118615668327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"consumer":"projects/118615668327","containerInfo":"118615668327","serviceTitle":"Compute Engine API","service":"compute.googleapis.com","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 118615668327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327"}]}]}},"response":{"statusCode":403}},"exit":1,"message":"Request to https://compute.googleapis.com/compute/v1/projects/118615668327 had HTTP Error: 403, Compute Engine API has not been used in project 118615668327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=118615668327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":403}
+[info] i  storage: ensuring required API firebasestorage.googleapis.com is enabled... 
+[debug] [2025-10-22T19:48:34.707Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:34.708Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:34.708Z] >>> [apiv2][query] GET https://firebasestorage.googleapis.com/v1alpha/projects/dar-allughat-97483992-fc6c5/defaultBucket [none]
+[debug] [2025-10-22T19:48:35.287Z] <<< [apiv2][status] GET https://firebasestorage.googleapis.com/v1alpha/projects/dar-allughat-97483992-fc6c5/defaultBucket 200
+[debug] [2025-10-22T19:48:35.287Z] <<< [apiv2][body] GET https://firebasestorage.googleapis.com/v1alpha/projects/dar-allughat-97483992-fc6c5/defaultBucket {"name":"projects/dar-allughat-97483992-fc6c5/defaultBucket","location":"US-CENTRAL1","bucket":{"name":"projects/dar-allughat-97483992-fc6c5/buckets/dar-allughat-97483992-fc6c5.firebasestorage.app"},"storageClass":"REGIONAL"}
+[info] i  firebase.storage: checking storage.rules for compilation errors... 
+[debug] [2025-10-22T19:48:35.317Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:35.318Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:35.318Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test [none]
+[debug] [2025-10-22T19:48:35.318Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test [omitted]
+[debug] [2025-10-22T19:48:35.975Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test 200
+[debug] [2025-10-22T19:48:35.975Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test {}
+[info] ✔  firebase.storage: rules file storage.rules compiled successfully 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2025-10-22T19:48:35.981Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:35.982Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:35.982Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/databases/(default) [none]
+[debug] [2025-10-22T19:48:36.716Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/databases/(default) 200
+[debug] [2025-10-22T19:48:36.716Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/databases/(default) {"name":"projects/dar-allughat-97483992-fc6c5/databases/(default)","uid":"95468639-c66a-417b-b173-31d3c586bd51","createTime":"2025-10-12T18:25:50.836441Z","updateTime":"2025-10-12T18:25:50.836441Z","locationId":"nam5","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-10-22T18:48:36.656416Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"s","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"ILvdydHJuJADMNSU2dqkn5AD"}
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-10-22T19:48:36.755Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:36.755Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:36.756Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test [none]
+[debug] [2025-10-22T19:48:36.756Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test [omitted]
+[debug] [2025-10-22T19:48:37.348Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test 200
+[debug] [2025-10-22T19:48:37.348Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:test {}
+[info] ✔  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2025-10-22T19:48:37.354Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:37.354Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:37.355Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dar-allughat-97483992-fc6c5/versions [none]
+[debug] [2025-10-22T19:48:37.355Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dar-allughat-97483992-fc6c5/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase--project-idx","firebase-web-framework":"next_ssr"}}
+[debug] [2025-10-22T19:48:38.342Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dar-allughat-97483992-fc6c5/versions 200
+[debug] [2025-10-22T19:48:38.343Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/dar-allughat-97483992-fc6c5/versions {"name":"projects/118615668327/sites/dar-allughat-97483992-fc6c5/versions/9bea302af693f40c","status":"CREATED","config":{},"labels":{"firebase-web-framework":"next_ssr","deployment-tool":"cli-firebase--project-idx"}}
+[debug] [2025-10-22T19:48:38.346Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:38.346Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:38.347Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-10-22T19:48:38.347Z] >>> [apiv2][(partial)header] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:48:38.347Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T19:48:38.951Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-10-22T19:48:38.951Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T19:48:38.952Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:38.952Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:38.952Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [none]
+[debug] [2025-10-22T19:48:38.952Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts {"accountId":"firebase-app-hosting-compute","serviceAccount":{"displayName":"Firebase App Hosting compute service account","description":"Default service account used to run builds and deploys for Firebase App Hosting"}}
+[debug] [2025-10-22T19:48:39.721Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts 409
+[debug] [2025-10-22T19:48:39.721Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [omitted]
+[debug] [2025-10-22T19:48:39.722Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:39.722Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:39.723Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy [none]
+[debug] [2025-10-22T19:48:40.395Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy 200
+[debug] [2025-10-22T19:48:40.396Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy {"version":1,"etag":"BwZBxJkaubI=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T19:48:40.397Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:40.397Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:40.397Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy [none]
+[debug] [2025-10-22T19:48:40.397Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"policy":{"version":1,"etag":"BwZBxJkaubI=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]},"updateMask":"bindings"}
+[debug] [2025-10-22T19:48:41.381Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy 200
+[debug] [2025-10-22T19:48:41.382Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"version":1,"etag":"BwZBxJp5WVo=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T19:48:41.382Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:41.383Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:48:41.383Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 
+[debug] [2025-10-22T19:48:42.275Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 200
+[debug] [2025-10-22T19:48:42.276Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends {}
+[debug] [2025-10-22T19:49:39.775Z] TypeError: Cannot read properties of undefined (reading 'name')
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:51:29
+    at Array.map (<anonymous>)
+    at normalizeChoices (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:39:20)
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:69:52
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:113:38
+    at store.handleChange (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:31:17)
+    at cycle (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:33:19)
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:111:13
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:35:16
+    at AsyncLocalStorage.run (node:async_hooks:346:14)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-10-22T19:51:34.339Z] ----------------------------------------------------------------------
+[debug] [2025-10-22T19:51:34.342Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/lib/bin/firebase.js deploy --only apphosting
+[debug] [2025-10-22T19:51:34.343Z] CLI Version:   14.19.1
+[debug] [2025-10-22T19:51:34.343Z] Platform:      linux
+[debug] [2025-10-22T19:51:34.343Z] Node Version:  v20.19.1
+[debug] [2025-10-22T19:51:34.344Z] Time:          Wed Oct 22 2025 19:51:34 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-10-22T19:51:34.344Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-22T19:51:34.868Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T19:51:34.869Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T19:51:34.869Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[debug] [2025-10-22T19:51:34.876Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:34.877Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:34.885Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 [none]
+[debug] [2025-10-22T19:51:35.752Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 200
+[debug] [2025-10-22T19:51:35.753Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 {"workspaceId":"dar-allughat-97483992","name":"dar allughat","workspaceRedirectUrl":"firebase-dar-allughat-1758043786001.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-10-22T18:04:32.773713Z","failureReason":"<eye3 title='/IAMPolicy.SetIamPolicy, ABORTED'/> APPLICATION_ERROR;google.iam.v1/IAMPolicy.SetIamPolicy;The operation was aborted. This is usually caused by concurrent policy changes, please review your access pattern and try again.;AppErrorCode=10;StartTimeMs=1758043789056;unknown;Deadline(sec)=30.0;ResFormat=uncompressed;ServerTimeSec=0.619794079;LogBytes=256;Non-FailFast;EndUserCredsRequested;EffSecLevel=none;ReqFormat=uncompressed;ReqID=5da2978d839c4fee;GlobalID=0;Server=[2002:a05:6002:488a:b0:380:1cf3:9b4]:4002","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-3749666591500262531@monospace-per-ws-sa-9.iam.gserviceaccount.com","enableNix":true,"ownerEmail":"waelwasel37@gmail.com","workspaceImageUrl":"https://www.gstatic.com/monospace/231115/logo_html.svg","templateArgs":"{\"__agentic_workspace\":true}","templateRepoUrl":"file:///usr/local/monospace/templates/public/blank-web","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtZGFyLWFsbHVnaGF0LTE3NTgwNDM3ODYwMDEuY2x1c3Rlci1mYmZqbHRuMzc1YzZ3cXhsaG9laGJ6NDRzay5jbG91ZHdvcmtzdGF0aW9ucy5kZXYiLCJpYXQiOjE3NjExNjI2OTUsImV4cCI6MTc2MTI0OTA5NX0.lSl6k3Gfv1X1RnWzh17hMnbIo5aJ8PY49GPH5kh6UWQauPKAwSR_vYE5SG6C7LvLxJa48Jyamr4OyKXCTcUGvZWBPvOe9XgZ1vidrY7djFE8ViDaXm97H64KB6blAPWEkcXNJJPmgSpnmaCWQuRM2yCi2hwvtBTgnqKVBxIQIZyuWhlMCt2tKwn7nOPFhjHoNlZotA-GMU7PEI4oDl_JieVhvHCNJIzz5SFa9fssCinhDdwhuN8XS5vkiGP2dClLlHd2HzXh3TtHoKIjmszymYZv5vXbHyADymWNQ0HwQ6bUN46wOeSFb7MVxZ9uJh6YKZgmTtWPNXEuTAT6ZDLjGg","firebaseProjectId":"dar-allughat-97483992-fc6c5"}
+[debug] [2025-10-22T19:51:35.756Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T19:51:35.757Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T19:51:35.757Z] [iam] checking project dar-allughat-97483992-fc6c5 for permissions ["firebase.projects.get",null]
+[debug] [2025-10-22T19:51:35.758Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:35.758Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:35.758Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions [none]
+[debug] [2025-10-22T19:51:35.759Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:51:35.759Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get",null]}
+[debug] [2025-10-22T19:51:36.362Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions 200
+[debug] [2025-10-22T19:51:36.363Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-10-22T19:51:36.363Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project dar-allughat-97483992-fc6c5:
+
+  
+[info] 
+[info] === Deploying to 'dar-allughat-97483992-fc6c5'...
+[info] 
+[info] i  deploying apphosting 
+[debug] [2025-10-22T19:51:36.375Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:36.376Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:36.376Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-10-22T19:51:36.376Z] >>> [apiv2][(partial)header] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:51:36.376Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T19:51:36.976Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-10-22T19:51:36.976Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T19:51:36.977Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:36.977Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:36.977Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [none]
+[debug] [2025-10-22T19:51:36.978Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts {"accountId":"firebase-app-hosting-compute","serviceAccount":{"displayName":"Firebase App Hosting compute service account","description":"Default service account used to run builds and deploys for Firebase App Hosting"}}
+[debug] [2025-10-22T19:51:37.722Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts 409
+[debug] [2025-10-22T19:51:37.722Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [omitted]
+[debug] [2025-10-22T19:51:37.724Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:37.725Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:37.725Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy [none]
+[debug] [2025-10-22T19:51:37.990Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy 200
+[debug] [2025-10-22T19:51:37.992Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy {"version":1,"etag":"BwZBxJp5WVo=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T19:51:37.993Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:37.994Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:37.994Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy [none]
+[debug] [2025-10-22T19:51:37.994Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"policy":{"version":1,"etag":"BwZBxJp5WVo=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]},"updateMask":"bindings"}
+[debug] [2025-10-22T19:51:39.081Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy 200
+[debug] [2025-10-22T19:51:39.081Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"version":1,"etag":"BwZBxKUQyHA=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T19:51:39.082Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:39.082Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:51:39.083Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 
+[debug] [2025-10-22T19:51:39.978Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 200
+[debug] [2025-10-22T19:51:39.979Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends {}
+[debug] [2025-10-22T19:54:17.259Z] TypeError: Cannot read properties of undefined (reading 'name')
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:51:29
+    at Array.map (<anonymous>)
+    at normalizeChoices (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:39:20)
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:69:52
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:113:38
+    at store.handleChange (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:31:17)
+    at cycle (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:33:19)
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:111:13
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:35:16
+    at AsyncLocalStorage.run (node:async_hooks:346:14)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-10-22T19:55:57.808Z] ----------------------------------------------------------------------
+[debug] [2025-10-22T19:55:57.811Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/lib/bin/firebase.js deploy
+[debug] [2025-10-22T19:55:57.811Z] CLI Version:   14.19.1
+[debug] [2025-10-22T19:55:57.812Z] Platform:      linux
+[debug] [2025-10-22T19:55:57.812Z] Node Version:  v20.19.1
+[debug] [2025-10-22T19:55:57.812Z] Time:          Wed Oct 22 2025 19:55:57 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-10-22T19:55:57.812Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-22T19:55:58.309Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T19:55:58.310Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T19:55:58.310Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[debug] [2025-10-22T19:55:58.313Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:55:58.313Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:55:58.319Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 [none]
+[debug] [2025-10-22T19:55:59.049Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 200
+[debug] [2025-10-22T19:55:59.050Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 {"workspaceId":"dar-allughat-97483992","name":"dar allughat","workspaceRedirectUrl":"firebase-dar-allughat-1758043786001.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-10-22T18:04:32.773713Z","failureReason":"<eye3 title='/IAMPolicy.SetIamPolicy, ABORTED'/> APPLICATION_ERROR;google.iam.v1/IAMPolicy.SetIamPolicy;The operation was aborted. This is usually caused by concurrent policy changes, please review your access pattern and try again.;AppErrorCode=10;StartTimeMs=1758043789056;unknown;Deadline(sec)=30.0;ResFormat=uncompressed;ServerTimeSec=0.619794079;LogBytes=256;Non-FailFast;EndUserCredsRequested;EffSecLevel=none;ReqFormat=uncompressed;ReqID=5da2978d839c4fee;GlobalID=0;Server=[2002:a05:6002:488a:b0:380:1cf3:9b4]:4002","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-3749666591500262531@monospace-per-ws-sa-9.iam.gserviceaccount.com","enableNix":true,"ownerEmail":"waelwasel37@gmail.com","workspaceImageUrl":"https://www.gstatic.com/monospace/231115/logo_html.svg","templateArgs":"{\"__agentic_workspace\":true}","templateRepoUrl":"file:///usr/local/monospace/templates/public/blank-web","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtZGFyLWFsbHVnaGF0LTE3NTgwNDM3ODYwMDEuY2x1c3Rlci1mYmZqbHRuMzc1YzZ3cXhsaG9laGJ6NDRzay5jbG91ZHdvcmtzdGF0aW9ucy5kZXYiLCJpYXQiOjE3NjExNjI5NTgsImV4cCI6MTc2MTI0OTM1OH0.iZdy7ReqWcfZW-OYDVGlXYvzZASYUN1R7NHD2QKeSPkfR3AM-Yl_nlXof3e-T0_PB1WAcpsmvLvIXhiQRRi5Su0mJ951dGWB51NZexTCD9ahhKmYwoby-X5G6NsPGmfzmKTDjE4MhSjQkpVa1y3oETmkBdciUHXpIVF9pvIESE18xBXV-WW00KhpsI4TOLeLDDMWMIRpNX857JpZTAYtaa60DQxGhduHx0kfjoOMTX2pTVdaslClgyoxL5ZIXAl3dpV-yWNjz1RT_4fgIEL2DKDZkIHgbbOzUtCO8CCK0ZHZ3h7W39Q4IapJymvAUHV1JV7HHzSJPK-3DiaJiqhjjQ","firebaseProjectId":"dar-allughat-97483992-fc6c5"}
+[debug] [2025-10-22T19:55:59.052Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T19:55:59.053Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T19:55:59.053Z] [iam] checking project dar-allughat-97483992-fc6c5 for permissions ["firebase.projects.get",null]
+[debug] [2025-10-22T19:55:59.053Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:55:59.054Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:55:59.054Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions [none]
+[debug] [2025-10-22T19:55:59.054Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:55:59.054Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get",null]}
+[debug] [2025-10-22T19:55:59.639Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions 200
+[debug] [2025-10-22T19:55:59.640Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-10-22T19:55:59.640Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project dar-allughat-97483992-fc6c5:
+
+  
+[info] 
+[info] === Deploying to 'dar-allughat-97483992-fc6c5'...
+[info] 
+[info] i  deploying apphosting 
+[debug] [2025-10-22T19:55:59.648Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:55:59.648Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:55:59.648Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-10-22T19:55:59.648Z] >>> [apiv2][(partial)header] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T19:55:59.649Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T19:56:00.248Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-10-22T19:56:00.248Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T19:56:00.249Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:00.249Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:00.249Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [none]
+[debug] [2025-10-22T19:56:00.249Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts {"accountId":"firebase-app-hosting-compute","serviceAccount":{"displayName":"Firebase App Hosting compute service account","description":"Default service account used to run builds and deploys for Firebase App Hosting"}}
+[debug] [2025-10-22T19:56:00.581Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts 409
+[debug] [2025-10-22T19:56:00.581Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [omitted]
+[debug] [2025-10-22T19:56:00.583Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:00.583Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:00.584Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy [none]
+[debug] [2025-10-22T19:56:00.788Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy 200
+[debug] [2025-10-22T19:56:00.788Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy {"version":1,"etag":"BwZBxKUQyHA=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T19:56:00.790Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:00.790Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:00.791Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy [none]
+[debug] [2025-10-22T19:56:00.791Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"policy":{"version":1,"etag":"BwZBxKUQyHA=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]},"updateMask":"bindings"}
+[debug] [2025-10-22T19:56:02.062Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy 200
+[debug] [2025-10-22T19:56:02.062Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"version":1,"etag":"BwZBxLS9iEg=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T19:56:02.066Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:02.066Z] Checked if tokens are valid: true, expires at: 1761164662061
+[debug] [2025-10-22T19:56:02.067Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 
+[debug] [2025-10-22T19:56:02.947Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 200
+[debug] [2025-10-22T19:56:02.948Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends {}
+[debug] [2025-10-22T19:58:33.803Z] TypeError: Cannot read properties of undefined (reading 'name')
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:51:29
+    at Array.map (<anonymous>)
+    at normalizeChoices (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:39:20)
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/checkbox/dist/commonjs/index.js:69:52
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:113:38
+    at store.handleChange (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:31:17)
+    at cycle (/nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:33:19)
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:111:13
+    at /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/hook-engine.js:35:16
+    at AsyncLocalStorage.run (node:async_hooks:346:14)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-10-22T20:27:27.716Z] ----------------------------------------------------------------------
+[debug] [2025-10-22T20:27:27.721Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/lib/bin/firebase.js deploy
+[debug] [2025-10-22T20:27:27.722Z] CLI Version:   14.19.1
+[debug] [2025-10-22T20:27:27.722Z] Platform:      linux
+[debug] [2025-10-22T20:27:27.722Z] Node Version:  v20.19.1
+[debug] [2025-10-22T20:27:27.722Z] Time:          Wed Oct 22 2025 20:27:27 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-10-22T20:27:27.723Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-22T20:27:28.424Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T20:27:28.425Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T20:27:28.425Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[debug] [2025-10-22T20:27:28.428Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:28.428Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:28.433Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 [none]
+[debug] [2025-10-22T20:27:29.204Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 200
+[debug] [2025-10-22T20:27:29.204Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/dar-allughat-97483992 {"workspaceId":"dar-allughat-97483992","name":"dar allughat","workspaceRedirectUrl":"firebase-dar-allughat-1758043786001.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-10-22T18:04:32.773713Z","failureReason":"<eye3 title='/IAMPolicy.SetIamPolicy, ABORTED'/> APPLICATION_ERROR;google.iam.v1/IAMPolicy.SetIamPolicy;The operation was aborted. This is usually caused by concurrent policy changes, please review your access pattern and try again.;AppErrorCode=10;StartTimeMs=1758043789056;unknown;Deadline(sec)=30.0;ResFormat=uncompressed;ServerTimeSec=0.619794079;LogBytes=256;Non-FailFast;EndUserCredsRequested;EffSecLevel=none;ReqFormat=uncompressed;ReqID=5da2978d839c4fee;GlobalID=0;Server=[2002:a05:6002:488a:b0:380:1cf3:9b4]:4002","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-3749666591500262531@monospace-per-ws-sa-9.iam.gserviceaccount.com","enableNix":true,"ownerEmail":"waelwasel37@gmail.com","workspaceImageUrl":"https://www.gstatic.com/monospace/231115/logo_html.svg","templateArgs":"{\"__agentic_workspace\":true}","templateRepoUrl":"file:///usr/local/monospace/templates/public/blank-web","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtZGFyLWFsbHVnaGF0LTE3NTgwNDM3ODYwMDEuY2x1c3Rlci1mYmZqbHRuMzc1YzZ3cXhsaG9laGJ6NDRzay5jbG91ZHdvcmtzdGF0aW9ucy5kZXYiLCJpYXQiOjE3NjExNjQ4NDksImV4cCI6MTc2MTI1MTI0OH0.f95wbbe6fIWETY4_4SQFr_SqFlNzY3YPdZGktKpKOC8l2a0ph2qXt7CMamr5K7k9XhivHId2Bjx8kb8jJGE4KLKorjUQDaJRrCkwdRaavoBFSO4CNriuxvK1rVpVTBj9bUpV13RzURVO8N56-OKH_dACuPOuvdvjd45iJ-X9G914y-jWX5dBzvZfDxXQULaVXNwxg2Hs6L_arxj05XE5kh4rrlVzXzgFvk7yazk_EtRi1xagTuDH1clt9ZJZagm21Fh8qz5UwPFsph5wXlYBdIHrpyrbuXHrFS8awy-XBx4EVBOzpHhpzAq70zh-xbH0ne7YDKYko7KRMP8S780u0w","firebaseProjectId":"dar-allughat-97483992-fc6c5"}
+[debug] [2025-10-22T20:27:29.206Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T20:27:29.209Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T20:27:29.209Z] [iam] checking project dar-allughat-97483992-fc6c5 for permissions ["firebase.projects.get",null]
+[debug] [2025-10-22T20:27:29.210Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.211Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.212Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions [none]
+[debug] [2025-10-22T20:27:29.212Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T20:27:29.212Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get",null]}
+[debug] [2025-10-22T20:27:29.360Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions 200
+[debug] [2025-10-22T20:27:29.360Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-10-22T20:27:29.361Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project dar-allughat-97483992-fc6c5:
+
+  
+[info] 
+[info] === Deploying to 'dar-allughat-97483992-fc6c5'...
+[info] 
+[info] i  deploying apphosting 
+[debug] [2025-10-22T20:27:29.371Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.371Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.371Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-10-22T20:27:29.371Z] >>> [apiv2][(partial)header] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T20:27:29.371Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T20:27:29.527Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-10-22T20:27:29.527Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts/firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-10-22T20:27:29.529Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.529Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.530Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [none]
+[debug] [2025-10-22T20:27:29.530Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts {"accountId":"firebase-app-hosting-compute","serviceAccount":{"displayName":"Firebase App Hosting compute service account","description":"Default service account used to run builds and deploys for Firebase App Hosting"}}
+[debug] [2025-10-22T20:27:29.828Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts 409
+[debug] [2025-10-22T20:27:29.828Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/serviceAccounts [omitted]
+[debug] [2025-10-22T20:27:29.830Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.831Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:29.831Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy [none]
+[debug] [2025-10-22T20:27:30.100Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy 200
+[debug] [2025-10-22T20:27:30.101Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:getIamPolicy {"version":1,"etag":"BwZBxQnoNvw=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-devconnect.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebaseapphosting.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/secretmanager.admin_withcond_6befcab3c28e9b151c44","members":["serviceAccount:service-118615668327@gcp-sa-devconnect.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T20:27:30.102Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:30.102Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:30.102Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy [none]
+[debug] [2025-10-22T20:27:30.103Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"policy":{"version":1,"etag":"BwZBxQnoNvw=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-devconnect.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebaseapphosting.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/secretmanager.admin_withcond_6befcab3c28e9b151c44","members":["serviceAccount:service-118615668327@gcp-sa-devconnect.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]},"updateMask":"bindings"}
+[debug] [2025-10-22T20:27:31.142Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy 200
+[debug] [2025-10-22T20:27:31.142Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5:setIamPolicy {"version":1,"etag":"BwZBxSVWq0w=","bindings":[{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:118615668327@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-118615668327@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-118615668327@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-devconnect.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:118615668327-compute@developer.gserviceaccount.com","serviceAccount:118615668327@cloudservices.gserviceaccount.com","serviceAccount:dar-allughat-97483992-fc6c5@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebaseapphosting.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-118615668327@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-118615668327@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:waelwasel37@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-118615668327@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/secretmanager.admin_withcond_6befcab3c28e9b151c44","members":["serviceAccount:service-118615668327@gcp-sa-devconnect.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"]}]}
+[debug] [2025-10-22T20:27:31.143Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:31.145Z] Checked if tokens are valid: true, expires at: 1761168394662
+[debug] [2025-10-22T20:27:31.145Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 
+[debug] [2025-10-22T20:27:32.029Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends 200
+[debug] [2025-10-22T20:27:32.029Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/dar-allughat-97483992-fc6c5/locations/-/backends {}
+[debug] [2025-10-22T21:54:09.584Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:09.587Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:09.588Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:09.612Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:09.613Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:09.613Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:09.616Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.616Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.617Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.619Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.620Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.649Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.650Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.650Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.650Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.650Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.653Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.654Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.654Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.654Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.654Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.657Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.657Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.657Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.657Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.658Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.660Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.660Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.660Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.660Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.660Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.662Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.662Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.663Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.663Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.663Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.665Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.665Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.665Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.666Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.666Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.668Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.668Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.668Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.669Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.669Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.752Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:09.752Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:09.752Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:09.753Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:09.754Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:09.754Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:09.754Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.755Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.755Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.755Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.755Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.758Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.758Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.758Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.758Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.758Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.760Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.761Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.761Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.761Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.761Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.763Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.763Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.764Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.764Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.764Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.766Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.766Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.766Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.767Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.767Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.769Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.769Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.769Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.770Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.770Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.772Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.772Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.772Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.772Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.772Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.774Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.774Z] Checked if tokens are valid: false, expires at: 1761168394662
+[debug] [2025-10-22T21:54:09.774Z] > refreshing access token with scopes: []
+[debug] [2025-10-22T21:54:09.775Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-22T21:54:09.775Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.838Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:09.839Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.911Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com [none]
+[debug] [2025-10-22T21:54:09.911Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:09.937Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:09.938Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.954Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ [none]
+[debug] [2025-10-22T21:54:09.954Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:09.957Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:09.957Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:09.968Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com [none]
+[debug] [2025-10-22T21:54:09.968Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:09.979Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:09.980Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.002Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com [none]
+[debug] [2025-10-22T21:54:10.002Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.007Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.008Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.022Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.022Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.026Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.026Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.038Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.038Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.045Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.045Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.061Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com [none]
+[debug] [2025-10-22T21:54:10.061Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.065Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.065Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.080Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.080Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.082Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.082Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.094Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.094Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.133Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.133Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.152Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ [none]
+[debug] [2025-10-22T21:54:10.152Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.154Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.154Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.166Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.166Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.177Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.177Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.194Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.194Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.200Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.200Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.213Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.213Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.221Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.221Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.239Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.239Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.248Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.249Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.265Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.265Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.291Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-22T21:54:10.291Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-22T21:54:10.303Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com [none]
+[debug] [2025-10-22T21:54:10.303Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com x-goog-quota-user=projects/dar-allughat-97483992-fc6c5
+[debug] [2025-10-22T21:54:10.741Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com 403
+[debug] [2025-10-22T21:54:10.742Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com [omitted]
+[debug] [2025-10-22T21:54:10.754Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com 403
+[debug] [2025-10-22T21:54:10.755Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseio.com [omitted]
+[debug] [2025-10-22T21:54:10.762Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com 200
+[debug] [2025-10-22T21:54:10.762Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.023Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com 200
+[debug] [2025-10-22T21:54:11.024Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.038Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com 200
+[debug] [2025-10-22T21:54:11.038Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/fcm.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.052Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-22T21:54:11.052Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.053Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com 200
+[debug] [2025-10-22T21:54:11.053Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.054Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-22T21:54:11.054Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.055Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com 200
+[debug] [2025-10-22T21:54:11.055Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.076Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com 200
+[debug] [2025-10-22T21:54:11.077Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebasecrashlytics.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.080Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com 200
+[debug] [2025-10-22T21:54:11.080Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/storage.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.103Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com 200
+[debug] [2025-10-22T21:54:11.105Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.116Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com 200
+[debug] [2025-10-22T21:54:11.116Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.131Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com 200
+[debug] [2025-10-22T21:54:11.131Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2025-10-22T21:54:11.151Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ 200
+[debug] [2025-10-22T21:54:11.154Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ [omitted]
+[debug] [2025-10-22T21:54:11.188Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ 200
+[debug] [2025-10-22T21:54:11.188Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/dar-allughat-97483992-fc6c5/services/ [omitted]
+[debug] [2025-10-22T21:54:11.189Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:11.189Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:11.189Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:11.218Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:11.221Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:11.221Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:11.229Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T21:54:11.231Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T21:54:11.264Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:11.267Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:11.267Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:11.279Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:11.280Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:11.280Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:11.303Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:11.303Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:11.303Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:11.305Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T21:54:11.306Z] > authorizing via signed-in user (waelwasel37@gmail.com)
+[debug] [2025-10-22T21:54:11.313Z] Object "/apphosting" in "firebase.json" is missing required property: {"missingProperty":"backendId"}
+[debug] [2025-10-22T21:54:11.314Z] Field "/apphosting" in "firebase.json" is possibly invalid: must be array
+[debug] [2025-10-22T21:54:11.314Z] Field "/apphosting" in "firebase.json" is possibly invalid: must match a schema in anyOf
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2025-10-22T21:54:11.317Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-22T21:54:11.317Z] > authorizing via signed-in user (waelwasel37@gmail.com)
