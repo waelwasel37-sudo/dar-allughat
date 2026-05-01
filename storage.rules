@@ -1,0 +1,22 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Rules for products remain unchanged
+    match /products/{allPaths=**} {
+      allow read;
+    }
+
+    // New, more secure rules for school lists
+    match /school-lists/{fileName} {
+      // ANYONE can view (read) the school lists. This fixes the error.
+      allow read;
+
+      // ANYONE can UPLOAD (create) a new school list.
+      allow create;
+
+      // ONLY an admin can update or delete an existing list.
+      allow update, delete: if request.auth != null && request.auth.token.role == 'admin';
+    }
+  }
+}

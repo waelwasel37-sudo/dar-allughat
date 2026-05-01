@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // وظيفة التحقق من الأدمن (تستخدم في كل القواعد)
+    function isAdmin() {
+      return request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // المنتجات والمقالات: البحث والوصول يتم عبر الـ Slug (id)
+    match /products/{slug} { 
+      allow read: if true; 
+      allow write: if isAdmin(); 
+    }
+    match /posts/{slug} { 
+      allow read: if true; 
+      allow write: if isAdmin(); 
+    }
+
+    // طلبات الشراء (Orders): الجمهور يرسل، والأدمن يدير
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ارفع قائمة مدرستك: (لا تستخدم slug - تستخدم معرف تلقائي)
+    // مسموح للجمهور بإرسال: (الصورة، العنوان، رقم التليفون)
+    match /school-lists/{listId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // أي مجموعات أخرى غير مذكورة
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

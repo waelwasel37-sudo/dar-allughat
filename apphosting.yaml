@@ -1,0 +1,56 @@
+# See https://firebase.google.com/docs/hosting/frameworks/frameworks-overview
+# Fields whose values are null or omitted will not be deployed.
+# Fields that are not included in this file will use the project's default.
+#
+# Some of these fields may be ignored when running in an emulator.
+# For a description of each field, see the docs.
+#
+# Note: Emulator support for App Hosting is currently in development.
+
+version: 1
+
+# Required: The base directory of the app.
+# All paths specified in other fields in this file are relative to this.
+app: .
+
+# Required: The command to run to build the app.
+buildCommand: npm run build
+
+# Required: The command to run to start the app.
+startCommand: npm start
+
+# Optional: Environment variables to be passed to the build and start commands.
+# You can also use secrets from Google Secret Manager.
+# See https://firebase.google.com/docs/app-hosting/configure#set-environment-variables
+env:
+  - variable: FIREBASE_SERVICE_ACCOUNT_JSON
+    secret: FIREBASE_SERVICE_ACCOUNT_JSON
+
+# Optional: Settings for the server that runs the app.
+# These settings are mostly used to fine-tune performance.
+# See https://firebase.google.com/docs/app-hosting/configure#server-settings
+server:
+  # The number of concurrent requests the server can handle.
+  # Must be an integer between 1 and 1000.
+  concurrency: 500
+
+  # The maximum number of instances that can be created for the app.
+  # Must be an integer between 1 and 100.
+  maxInstances: 10
+
+  # The minimum number of instances that will be kept running at all times.
+  # Must be an integer between 0 and 100.
+  # Set to 0 for the most cost-effective scaling.
+  minInstances: 0
+
+  # The number of CPU cores to allocate to each instance.
+  # Must be 1, 2, or 4.
+  cpu: 1
+
+  # The amount of memory to allocate to each instance.
+  # Must be a string with a unit (e.g., '512MiB', '1GiB', '2GiB').
+  memory: 512MiB
+
+  # The timeout for requests to the app.
+  # Must be a string with a unit (e.g., '10s', '30s', '60s').
+  timeout: 30s

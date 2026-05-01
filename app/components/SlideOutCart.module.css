@@ -1,0 +1,194 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040; /* Increased z-index */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cartDrawer {
+  position: fixed;
+  top: 0;
+  right: -450px; /* Start off-screen */
+  width: 420px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+  z-index: 1050; /* Increased z-index */
+  transition: right 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.cartDrawer.open {
+  right: 0;
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.drawerHeader h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.cartContent {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.emptyCart {
+    text-align: center;
+    padding-top: 50px;
+}
+
+.continueShoppingButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Re-using and adapting styles from Cart.module.css */
+.cartItem {
+  display: flex;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 1rem;
+}
+
+.cartItemImage {
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.cartItemDetails {
+  flex-grow: 1;
+  margin-right: 1rem;
+}
+
+.cartItemName {
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.finalPrice {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.subtotal {
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+.cartItemQuantity {
+  display: flex;
+  align-items: center;
+}
+
+.cartItemQuantity button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.cartItemQuantity span {
+  padding: 0 10px;
+  font-size: 1.1rem;
+}
+
+.removeItemButton {
+  background: none;
+  border: none;
+  color: #f00;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: 1rem;
+}
+
+.cartSummary {
+  padding: 1rem;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.cartTotal {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.whatsappButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  background-color: #25D366;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.whatsappButton:hover {
+  background-color: #20b856;
+}
+
+.disabledButton {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.validationMessage {
+  color: #d9534f;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.clearCartButton {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 8px;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}

@@ -1,0 +1,189 @@
+/* app/components/ProductCard.module.css */
+
+.cardContainer {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff; 
+    border: 1px solid #eee;
+}
+
+.cardContainer:hover {
+    transform: translateY(-8px); 
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12); 
+}
+
+.cardLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card {
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.imageContainer {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+}
+
+.image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.cardContainer:hover .image {
+    transform: scale(1.05);
+}
+
+.discountBadge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(45deg, #39FF14, #00b300); 
+    color: #1a252f; 
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(57, 255, 20, 0.5); 
+    transform: rotate(-5deg);
+    transition: all 0.3s ease;
+}
+
+.shareIconContainer {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+}
+
+.shareIconContainer :global(.shareButton) {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #2c3e50 !important;
+    border-radius: 50% !important;
+    width: 38px;
+    height: 38px;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.shareIconContainer :global(.shareButton:hover) {
+    background-color: #fff !important;
+}
+
+/* --- AGGRESSIVE OVERLAP FIX FOR SMALL SCREENS --- */
+@media (max-width: 420px) {
+    /* Make share button smaller */
+    .shareIconContainer :global(.shareButton) {
+        width: 34px;
+        height: 34px;
+    }
+
+    /* --- RADICAL REDESIGN OF THE DISCOUNT BADGE --- */
+    .discountBadge {
+        top: auto;      /* Detach from the top */
+        bottom: 0;      /* Attach to the bottom of the image container */
+        left: 0;
+        width: 100%;
+        transform: rotate(0deg); /* Straighten the badge */
+        border-radius: 0;        /* Remove rounded corners */
+        text-align: center;      /* Center the text */
+        font-size: 0.9rem;
+        padding: 6px 0;
+        box-shadow: none;
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+}
+
+.details {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* Move discount badge details padding out of the way on mobile */
+@media (max-width: 420px) {
+    .details {
+        padding-top: 24px; /* Add more space if badge was present */
+    }
+}
+
+.name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 12px;
+    flex-grow: 1;
+    line-height: 1.4;
+    color: #34495e;
+}
+
+/* --- NEW: Rating Styles for Product Card --- */
+.ratingContainer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 12px;
+    color: #6b7280;
+}
+
+.ratingValue {
+    font-weight: bold;
+    color: #4a5568;
+    font-size: 1rem;
+}
+
+.ratingCount {
+    font-size: 0.85rem;
+    color: #718096;
+}
+/* ------------------------------------------- */
+
+.priceContainer {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.currentPrice {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    order: 1;
+}
+
+.newPrice {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #e63946;
+    order: 1;
+}
+
+.oldPrice {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    order: 2;
+}

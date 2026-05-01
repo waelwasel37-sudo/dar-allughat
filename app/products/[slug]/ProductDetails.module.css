@@ -1,0 +1,183 @@
+
+.productPageContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    font-family: 'Cairo', sans-serif; 
+    padding-bottom: 150px; /* Increased padding for sticky buttons */
+}
+
+/* ... (other styles) ... */
+
+.stickyButtonContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 1rem;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .stickyButtonContainer {
+        position: static;
+        background: none;
+        backdrop-filter: none;
+        padding: 0;
+        box-shadow: none;
+        z-index: auto;
+    }
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.buyNowButton {
+  background-color: #16a34a;
+}
+
+.buyNowButton:hover {
+  background-color: #15803d;
+}
+
+/* Pre-Order Specific Styles */
+.preOrderContainer {
+    width: 100%;
+}
+
+.preOrderButton {
+    background-color: #f59e0b;
+    width: 100%;
+}
+
+.preOrderButton:hover:not(:disabled) {
+    background-color: #d97706;
+}
+
+.preOrderSubmitted {
+    background-color: #22c55e; /* Green-500 */
+    border-color: #16a34a;
+    color: white;
+    cursor: default;
+}
+
+.preOrderInputGroup {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    direction: rtl; /* Ensure RTL layout for Arabic UI */
+}
+
+.preOrderInput {
+    flex-grow: 1;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.preOrderSubmitButton {
+    background-color: #16a34a;
+    flex-shrink: 0;
+}
+
+.cancelButton {
+    background: none;
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.preOrderError {
+    color: #ef4444;
+    font-size: 0.875rem;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+/* Actions & Share Button */
+.actionsContainer {
+    margin-top: 0.5rem; /* Reduced margin */
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    width: 100%; /* Make it full width inside the container */
+}
+
+.iconButton:hover {
+    background-color: #f3f4f6;
+}
+
+.shareButton {
+    color: #3b82f6;
+    font-size: 1.25rem; /* Adjusted size */
+}
+
+.shareButton span {
+    margin-right: 0.5rem;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+/* Release Date Info */
+.releaseDateInfo {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+    background-color: #f0f9ff;
+    padding: 0.5rem;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.stockInfo.outOfStock {
+    background-color: #fee2e2;
+    color: #991b1b;
+}

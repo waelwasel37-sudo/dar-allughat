@@ -1,0 +1,94 @@
+.reportsContainer {
+    padding: 2rem 3rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a73e8;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #5f6368;
+    margin-bottom: 2.5rem;
+}
+
+.loading, .error, .noData {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+    padding: 4rem 0;
+}
+
+.error {
+    color: #d93025;
+}
+
+.reportList {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.listHeader {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f1f3f4;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: #3c4043;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.reportItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    border-bottom: 1px solid #e8eaed;
+    transition: background-color 0.2s ease;
+}
+
+.reportItem:last-child {
+    border-bottom: none;
+}
+
+.reportItem:hover {
+    background-color: #f8f9fa;
+}
+
+.productInfo {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Gap between rank, image, and name */
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #202124;
+}
+
+.rank {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a73e8;
+    min-width: 25px; /* To align numbers nicely */
+    text-align: center;
+}
+
+.productImage {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.salesCount {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #34a853; /* Google Green for positive numbers */
+}

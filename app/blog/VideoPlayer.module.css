@@ -1,0 +1,76 @@
+/* app/blog/VideoPlayer.module.css */
+
+.videoContainer {
+    position: relative;
+    width: 100%;
+    max-width: 800px; /* Or your desired max width */
+    margin: 2rem auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    background-color: #000;
+}
+
+.thumbnailWrapper {
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1a202c;
+}
+
+.thumbnailWrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    transition: background 0.3s ease;
+}
+
+.thumbnailWrapper:hover::before {
+    background: rgba(0,0,0,0.1);
+}
+
+.playButton {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.playButton::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 24px solid #333;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+    margin-left: 5px;
+}
+
+.thumbnailWrapper:hover .playButton {
+    transform: scale(1.1);
+}
+
+.playText {
+    position: absolute;
+    bottom: 20px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+.videoPlayer {
+    width: 100%;
+    display: block;
+}

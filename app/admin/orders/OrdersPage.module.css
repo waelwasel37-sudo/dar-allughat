@@ -1,0 +1,211 @@
+.ordersContainer {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.exportButton {
+    background-color: #1a73e8;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.exportButton:hover {
+    background-color: #1558b0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.exportButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.loading, .error, .noOrders {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 5rem;
+}
+
+.error {
+    color: #d93025;
+}
+
+.ordersList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5rem;
+}
+
+.orderCard {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.orderCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+    background-color: #f1f3f4;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cardHeader h2 {
+    font-size: 1.3rem;
+    color: #202124;
+    margin: 0;
+}
+
+.date {
+    font-size: 0.9rem;
+    color: #5f6368;
+    margin-top: 0.25rem;
+}
+
+.statusBadge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.statusProcessing {
+    background-color: #ff9800; /* Orange */
+}
+
+.statusDelivered {
+    background-color: #4caf50; /* Green */
+}
+
+.statusCancelled {
+    background-color: #f44336; /* Red */
+}
+
+.cardBody {
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+
+.cardBody h3 {
+    font-size: 1.2rem;
+    color: #3c4043;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    border-bottom: 2px solid #e8f0fe;
+    padding-bottom: 0.5rem;
+}
+
+.cardBody p {
+    margin: 0.5rem 0;
+    color: #5f6368;
+}
+
+.itemsTitle {
+    margin-top: 1.5rem !important;
+}
+
+.itemsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.itemImage {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-left: 1rem;
+}
+
+.itemDetails {
+    display: flex;
+    flex-direction: column;
+    color: #3c4043;
+}
+
+.cardActions {
+    display: flex;
+    gap: 1rem;
+    background-color: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    align-items: center;
+}
+
+.statusSelect {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.whatsappButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #25d366;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.whatsappButton:hover {
+    background-color: #128c7e;
+    transform: scale(1.05);
+}
+
+.whatsappButton svg {
+    font-size: 1.5rem;
+}

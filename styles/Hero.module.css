@@ -1,0 +1,7 @@
+/* styles/Hero.module.css */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 60vh; /* Adjust as needed */
+    background-color: #f0f0f0;
+}
