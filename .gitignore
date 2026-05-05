@@ -1,39 +1,44 @@
-# --- الحماية والأمان (Secrets) ---
+# --- المكتبات والاعتمادات (Dependencies) ---
+/node_modules
+/.pnp
+.pnp.js
+.pnp.loader.mjs
+
+# --- ملفات البناء (Next.js build output) ---
+/.next/
+/out/
+/build/
+/dist/
+.cache/
+
+# --- ملفات الحماية والمتغيرات البيئية (Secrets & Env) ---
 .env
-.env.local
+.env*.local
 .env.development.local
 .env.test.local
 .env.production.local
-*.json
-!package.json
-!package-lock.json
-!tsconfig.json
-!firebase.json
-# استثناء ملفات الخدمة الخاصة بجوجل صراحة
-serviceAccountKey.json
-service-account-key.json
+.env.local
+
+# --- ملفات حسابات الخدمة السرية (Sensitive Keys) ---
+firebase-service-account.json
+firebase-service-account-key.json
 service-account.json
+service-account-key.json
+serviceAccountKey.json
+temp_service_account.json
+cors.json
 
-# --- المكتبات والاعتمادات (Dependencies) ---
-node_modules/
-jspm_packages/
-.pnp
-.pnp.js
-
-# --- ملفات البناء والملفات الكبيرة (Build & Large Files) ---
-.next/
-out/
-build/
-dist/
-.cache/
+# --- ملفات النظام وسجلات الأخطاء (System & Logs) ---
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# --- ملفات النظام والبيئات (System Files) ---
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 .vscode/
 .idea/
-*.swp
