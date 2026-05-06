@@ -1,4 +1,4 @@
-# See https://firebase.google.com/docs/hosting/frameworks/frameworks-overview
+# See https://google.com
 # Fields whose values are null or omitted will not be deployed.
 # Fields that are not included in this file will use the project's default.
 #
@@ -21,14 +21,17 @@ startCommand: npm start
 
 # Optional: Environment variables to be passed to the build and start commands.
 # You can also use secrets from Google Secret Manager.
-# See https://firebase.google.com/docs/app-hosting/configure#set-environment-variables
+# See https://google.com
 env:
   - variable: FIREBASE_SERVICE_ACCOUNT_JSON
     secret: FIREBASE_SERVICE_ACCOUNT_JSON
+    availability:
+      - BUILD
+      - RUNTIME
 
 # Optional: Settings for the server that runs the app.
 # These settings are mostly used to fine-tune performance.
-# See https://firebase.google.com/docs/app-hosting/configure#server-settings
+# See https://google.com
 server:
   # The number of concurrent requests the server can handle.
   # Must be an integer between 1 and 1000.
