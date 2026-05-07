@@ -8,17 +8,17 @@ if (!admin.apps.length) {
 
     if (serviceAccountJSON && serviceAccountJSON.trim().startsWith('{')) {
       const serviceAccount = JSON.parse(serviceAccountJSON);
+      
       if (serviceAccount.private_key) {
-        serviceAccount.private_key = serviceAccount.private_key.replace(/\n/g, '
-');
+        serviceAccount.private_key = serviceAccount.private_key.split('\\n').join('\n');
       }
+      
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         storageBucket: process.env.FIREBASE_STORAGE_BUCKET || `${projectId}.firebasestorage.app`
       });
       console.log('✅ Firebase Admin initialized with Service Account.');
     } else {
-      // الاعتماد الكامل على هوية المشروع والمتغير السحابي الموثق
       admin.initializeApp({
         projectId: projectId,
         storageBucket: process.env.FIREBASE_STORAGE_BUCKET || `${projectId}.firebasestorage.app`

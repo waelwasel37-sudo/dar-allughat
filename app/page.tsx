@@ -1,23 +1,23 @@
 import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic'; // ✅ تم تغيير الاسم لمنع التضارب
 import styles from './page.module.css';
 import Hero from './components/Hero';
 import SearchAndFilter from './components/SearchAndFilter';
 import { getProducts, getCategories } from './lib/data-server'; 
 import { Product, Category } from './lib/types';
 
-// استدعاء المكون ديناميكياً مع حمايته من الانهيار أثناء الـ SSR
-const HomeProductsView = dynamic(() => import('./components/HomeProductsView'), { ssr: false });
+// استدعاء المكون ديناميكياً بالاسم الجديد الآمن
+const HomeProductsView = nextDynamic(() => import('./components/HomeProductsView'), { ssr: false });
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // ✅ الآن تعمل بشكل سليم تماماً بدون تعارض
 export const revalidate = 0;
 
 async function loadData(): Promise<{ products: Product[], categories: Category[] }> {
   const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
   try {
     const [products, rawCategories] = await Promise.all([
-      getProducts().catch(() => []), // حماية دالة جلب المنتجات من التسبب بانهيار الصفحة
-      getCategories().catch(() => []) // حماية دالة جلب الأقسام من التسبب بانهيار الصفحة
+      getProducts().catch(() => []), 
+      getCategories().catch(() => []) 
     ]);
 
     const categories = [allCategory, ...(rawCategories?.map(c => ({...c, slug: c.slug || c.id})) || [])];
@@ -38,7 +38,6 @@ export default async function Home() {
 
   return (
     <main className={styles.main}>
-      
       <Hero />
       
       <Suspense fallback={<div className={styles.loading}>جاري تحميل الفلاتر...</div>}>
@@ -48,7 +47,6 @@ export default async function Home() {
       <Suspense fallback={<div className={styles.loading}>جاري تحميل المنتجات...</div>}>
         <HomeProductsView initialProducts={initialProducts || []} categories={categories || []} />
       </Suspense>
-
     </main>
   );
 }
