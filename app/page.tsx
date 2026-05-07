@@ -1,15 +1,15 @@
 import { Suspense } from 'react';
-import nextDynamic from 'next/dynamic'; // ✅ تم تغيير الاسم لمنع التضارب
+import nextDynamic from 'next/dynamic';
 import styles from './page.module.css';
 import Hero from './components/Hero';
 import SearchAndFilter from './components/SearchAndFilter';
 import { getProducts, getCategories } from './lib/data-server'; 
 import { Product, Category } from './lib/types';
 
-// استدعاء المكون ديناميكياً بالاسم الجديد الآمن
-const HomeProductsView = nextDynamic(() => import('./components/HomeProductsView'), { ssr: false });
+// تم إزالة ssr: false لأن المكون يتم استدعاؤه داخل Server Component
+const HomeProductsView = nextDynamic(() => import('./components/HomeProductsView'));
 
-export const dynamic = 'force-dynamic'; // ✅ الآن تعمل بشكل سليم تماماً بدون تعارض
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 async function loadData(): Promise<{ products: Product[], categories: Category[] }> {
