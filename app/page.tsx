@@ -1,4 +1,3 @@
-
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import styles from './page.module.css';
@@ -7,30 +6,29 @@ import SearchAndFilter from './components/SearchAndFilter';
 import { getProducts, getCategories } from './lib/data-server'; 
 import { Product, Category } from './lib/types';
 
-// Dynamically import the HomeProductsView component
-const HomeProductsView = dynamic(() => import('./components/HomeProductsView'));
+// استدعاء المكون ديناميكياً مع حمايته من الانهيار أثناء الـ SSR
+const HomeProductsView = dynamic(() => import('./components/HomeProductsView'), { ssr: false });
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 async function loadData(): Promise<{ products: Product[], categories: Category[] }> {
+  const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
   try {
     const [products, rawCategories] = await Promise.all([
-      getProducts(),
-      getCategories()
+      getProducts().catch(() => []), // حماية دالة جلب المنتجات من التسبب بانهيار الصفحة
+      getCategories().catch(() => []) // حماية دالة جلب الأقسام من التسبب بانهيار الصفحة
     ]);
 
-    const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
-    // Ensure slug is present for all categories, providing a fallback if necessary
     const categories = [allCategory, ...(rawCategories?.map(c => ({...c, slug: c.slug || c.id})) || [])];
 
     return { 
-      products: products || [], 
-      categories
+      products: Array.isArray(products) ? products : [], 
+      categories: Array.isArray(categories) ? categories : [allCategory]
     };
 
   } catch (error) {
     console.error("Failed to load server data for homepage:", error);
-    const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
     return { products: [], categories: [allCategory] };
   }
 }
@@ -44,12 +42,11 @@ export default async function Home() {
       <Hero />
       
       <Suspense fallback={<div className={styles.loading}>جاري تحميل الفلاتر...</div>}>
-        <SearchAndFilter categories={categories} />
+        <SearchAndFilter categories={categories || []} />
       </Suspense>
       
       <Suspense fallback={<div className={styles.loading}>جاري تحميل المنتجات...</div>}>
-        {/* We now pass categories to the view and rely on it to show all of them, even if empty */}
-        <HomeProductsView initialProducts={initialProducts} categories={categories} />
+        <HomeProductsView initialProducts={initialProducts || []} categories={categories || []} />
       </Suspense>
 
     </main>
