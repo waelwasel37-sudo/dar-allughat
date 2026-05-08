@@ -10,7 +10,6 @@
   },
   "hosting": {
     "site": "dar-allughat-97483992-fc6c5",
-    "source": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
