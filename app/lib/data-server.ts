@@ -1,4 +1,3 @@
-
 // app/lib/data-server.ts
 
 import admin, { db } from '@/app/lib/firebase-admin'; 
@@ -42,18 +41,64 @@ const toCategory = (doc: DocumentSnapshot): Category => {
 // New helper to convert Firestore doc to Post
 const toPost = (doc: DocumentSnapshot): Post => {
     const data = doc.data()!;
-    const createdAt = data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date().toISOString();
-    const updatedAt = data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date().toISOString();
-    return {
-        id: doc.id,
-        title: data.title || 'Untitled Post',
-        slug: data.slug,
-        content: data.content || '',
-        description: data.description || '',
-        imageUrl: data.imageUrl || '',
-        createdAt,
-        updatedAt,
-    };
+    const post: Partial<Post> = { id: doc.id };
+
+    try {
+        post.title = data.title || 'Untitled Post';
+    } catch (e) {
+        console.error(`Error processing title for post ${doc.id}:`, e);
+        post.title = 'Error: Invalid Title';
+    }
+
+    try {
+        post.slug = data.slug;
+    } catch (e) {
+        console.error(`Error processing slug for post ${doc.id}:`, e);
+        post.slug = doc.id;
+    }
+
+    try {
+        let rawContent = data.content || '';
+        if (typeof rawContent === 'string') {
+            // تصحيح التعبير النصي بمضاعفة علامات الهروب ليفهمها محرك جافاسكريبت والـ Webpack تماماً
+            const invalidEscapeRegex = new RegExp('\\(?!["\\\\/bfnrtu])', 'g');
+            rawContent = rawContent.replace(invalidEscapeRegex, '\\');
+        }
+        post.content = rawContent;
+    } catch (e) {
+        console.error(`Error processing content for post ${doc.id}:`, e);
+        post.content = 'Error: Could not load content.';
+    }
+    
+    try {
+        post.description = data.description || '';
+    } catch (e) {
+        console.error(`Error processing description for post ${doc.id}:`, e);
+        post.description = '';
+    }
+
+    try {
+        post.imageUrl = data.imageUrl || '';
+    } catch (e) {
+        console.error(`Error processing imageUrl for post ${doc.id}:`, e);
+        post.imageUrl = '';
+    }
+
+    try {
+        post.createdAt = data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date().toISOString();
+    } catch (e) {
+        console.error(`Error processing createdAt for post ${doc.id}:`, e);
+        post.createdAt = new Date().toISOString();
+    }
+
+    try {
+        post.updatedAt = data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date().toISOString();
+    } catch (e) {
+        console.error(`Error processing updatedAt for post ${doc.id}:`, e);
+        post.updatedAt = new Date().toISOString();
+    }
+
+    return post as Post;
 };
 
 // Fetches all posts, cached for performance.
@@ -135,7 +180,7 @@ export const getRelatedProducts = cache(async (category: string, currentProductS
     try {
         const snapshot = await db.collection('products')
             .where('category', '==', category)
-            .where('slug', '!=', currentProductSlug) // Corrected logic to use slug
+            .where('slug', '!=', currentProductSlug)
             .limit(4)
             .get();
             
