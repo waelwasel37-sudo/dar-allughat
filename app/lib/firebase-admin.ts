@@ -1,1 +1,21 @@
-import * as admin from "firebase-admin"; const formatPrivateKey = (key: string | undefined) => { if (!key) return undefined; const cleanedKey = key.replace(/^["\x27]|["\x27]$/g, ""); return cleanedKey.includes("\\n") ? cleanedKey.replace(/\\n/g, "\n") : cleanedKey; }; const bucketName = "dar-allughat-97483992-fc6c5.firebasestorage.app"; if (!admin.apps.length) { try { const pKey = formatPrivateKey(process.env.SERVER_FB_PRIVATE_KEY); if (pKey && pKey.includes("PRIVATE KEY")) { admin.initializeApp({ credential: admin.credential.cert({ projectId: process.env.SERVER_FB_PROJECT_ID || "dar-allughat-97483992-fc6c5", clientEmail: process.env.SERVER_FB_CLIENT_EMAIL, privateKey: pKey }), storageBucket: process.env.SERVER_FB_STORAGE_BUCKET || bucketName }); } else { admin.initializeApp({ credential: admin.credential.applicationDefault(), storageBucket: bucketName }); } } catch (e) { admin.initializeApp({ credential: admin.credential.applicationDefault(), storageBucket: bucketName }); } } export const db = admin.firestore(); export const auth = admin.auth(); export const storage = admin.storage(); export const bucket = admin.apps.length ? admin.storage().bucket(admin.apps[0]?.options.storageBucket || bucketName) : admin.storage().bucket(bucketName); export default admin;
+
+import * as admin from 'firebase-admin';
+
+const BUCKET_NAME = "dar-allughat-97483992-fc6c5.firebasestorage.app";
+
+if (!admin.apps.length) {
+    // عند النشر على بيئة جوجل السحابية (مثل App Hosting)،
+    // يجد SDK بيانات الاعتماد تلقائيًا من البيئة.
+    // هذه هي الطريقة الأكثر أمانًا وموثوقية.
+    console.log("Initializing Firebase Admin with Application Default Credentials.");
+    admin.initializeApp({
+        credential: admin.credential.applicationDefault(),
+        storageBucket: BUCKET_NAME,
+    });
+}
+
+export const db = admin.firestore();
+export const auth = admin.auth();
+export const storage = admin.storage();
+export const bucket = admin.storage().bucket(BUCKET_NAME);
+export default admin;
