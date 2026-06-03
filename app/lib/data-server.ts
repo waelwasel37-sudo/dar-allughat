@@ -2,7 +2,6 @@
 
 import admin, { db } from '@/app/lib/firebase-admin'; 
 import { Product, Category, Post } from './types';
-import { cache } from 'react';
 import { DocumentSnapshot } from 'firebase-admin/firestore';
 
 // Helper to convert Firestore doc to a common format with ISO strings for dates
@@ -38,7 +37,7 @@ const toCategory = (doc: DocumentSnapshot): Category => {
     };
 };
 
-// New helper to convert Firestore doc to Post
+// Helper to convert Firestore doc to Post
 const toPost = (doc: DocumentSnapshot): Post => {
     const data = doc.data()!;
     const post: Partial<Post> = { id: doc.id };
@@ -60,7 +59,7 @@ const toPost = (doc: DocumentSnapshot): Post => {
     try {
         let rawContent = data.content || '';
         if (typeof rawContent === 'string') {
-            // تصحيح التعبير النصي بمضاعفة علامات الهروب ليفهمها محرك جافاسكريبت والـ Webpack تماماً
+            // Corrected the regex to properly handle escape characters.
             const invalidEscapeRegex = new RegExp('\\(?!["\\\\/bfnrtu])', 'g');
             rawContent = rawContent.replace(invalidEscapeRegex, '\\');
         }
@@ -101,8 +100,8 @@ const toPost = (doc: DocumentSnapshot): Post => {
     return post as Post;
 };
 
-// Fetches all posts, cached for performance.
-export const getPosts = cache(async (): Promise<Post[]> => {
+// Fetches all posts
+export const getPosts = async (): Promise<Post[]> => {
     if (!db) {
         console.error("Database not initialized for getPosts. Check Firebase Admin SDK setup.");
         return [];
@@ -115,9 +114,10 @@ export const getPosts = cache(async (): Promise<Post[]> => {
         console.error('Error fetching posts:', error);
         return [];
     }
-});
+};
 
-export const getProducts = cache(async (): Promise<Product[]> => {
+// Fetches products without caching
+export const getProducts = async (): Promise<Product[]> => {
     if (!db) {
         console.error("Database not initialized for getProducts. Check Firebase Admin SDK setup.");
         return [];
@@ -128,12 +128,12 @@ export const getProducts = cache(async (): Promise<Product[]> => {
         return snapshot.docs.map(toProduct).filter((p: Product) => p.slug);
     } catch (error) {
         console.error('Error fetching products:', error);
-        // Returning empty array instead of throwing to prevent crashing the page
         return [];
     }
-});
+};
 
-export const getProductBySlug = cache(async (slug: string): Promise<Product | null> => {
+// Fetches product by slug without caching
+export const getProductBySlug = async (slug: string): Promise<Product | null> => {
     if (!db) {
         console.error("Database not initialized for getProductBySlug. Check Firebase Admin SDK setup.");
         return null;
@@ -141,7 +141,6 @@ export const getProductBySlug = cache(async (slug: string): Promise<Product | nu
     try {
         const decodedSlug = decodeURIComponent(slug);
         const productsRef = db.collection('products');
-
         const snapshot = await productsRef.where('slug', '==', decodedSlug).limit(1).get();
 
         if (snapshot.empty) {
@@ -149,14 +148,13 @@ export const getProductBySlug = cache(async (slug: string): Promise<Product | nu
         }
 
         return toProduct(snapshot.docs[0]);
-
     } catch (error) {
-        console.error(`Error fetching product with decoded slug \"${slug}\":`, error);
+        console.error(`Error fetching product with decoded slug "${slug}"`, error);
         return null; 
     }
-});
+};
 
-export const getCategories = cache(async (): Promise<Category[]> => {
+export const getCategories = async (): Promise<Category[]> => {
     if (!db) {
         console.error("Database not initialized for getCategories. Check Firebase Admin SDK setup.");
         return [];
@@ -165,14 +163,14 @@ export const getCategories = cache(async (): Promise<Category[]> => {
         const categoriesSnapshot = await db.collection('categories').orderBy('name', 'asc').get();
         if (categoriesSnapshot.empty) return [];
         return categoriesSnapshot.docs.map(toCategory);
-
     } catch (error) {
         console.error('Error fetching categories:', error);
         return [];
     }
-});
+};
 
-export const getRelatedProducts = cache(async (category: string, currentProductSlug: string): Promise<Product[]> => {
+// Fetches related products without caching
+export const getRelatedProducts = async (category: string, currentProductSlug: string): Promise<Product[]> => {
     if (!db) {
         console.error("Database not initialized for getRelatedProducts. Check Firebase Admin SDK setup.");
         return [];
@@ -190,4 +188,4 @@ export const getRelatedProducts = cache(async (category: string, currentProductS
         console.error('Error fetching related products:', error);
         return [];
     }
-});
+};

@@ -5,8 +5,7 @@ import Script from 'next/script';
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { CartProvider } from "./context/CartContext";
-import { AuthProvider } from './context/AuthContext';
+import { Providers } from "./providers"; // Import the main Providers component
 import SlideOutCart from "./components/SlideOutCart";
 
 // Initialize Firebase and Analytics for client-side
@@ -37,14 +36,12 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className={cairo.className}>
-        <AuthProvider>
-          <CartProvider>
-            <Header />
-            <SlideOutCart />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-          </CartProvider>
-        </AuthProvider>
+        <Providers> {/* Use the Providers component to wrap everything */}
+          <Header />
+          <SlideOutCart />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </Providers>
 
         {/* Meta Pixel Code */}
         <Script id="meta-pixel-script" strategy="afterInteractive">
