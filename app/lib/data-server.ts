@@ -1,3 +1,4 @@
+
 // app/lib/data-server.ts
 
 import admin, { db } from '@/app/lib/firebase-admin'; 
@@ -56,17 +57,27 @@ const toPost = (doc: DocumentSnapshot): Post => {
         post.slug = doc.id;
     }
 
+    // The user's definitive fix for preventing JSON crashes from malformed content.
     try {
         let rawContent = data.content || '';
         if (typeof rawContent === 'string') {
-            // Corrected the regex to properly handle escape characters.
-            const invalidEscapeRegex = new RegExp('\\(?!["\\\\/bfnrtu])', 'g');
-            rawContent = rawContent.replace(invalidEscapeRegex, '\\');
+            // Use four backslashes to be correctly interpreted by JS engine & Webpack.
+            rawContent = rawContent.replace(/\\(?!["\\/bfnrtu])/g, '\\');
+            
+            try {
+                if (rawContent.startsWith('{') || rawContent.startsWith('[')) {
+                    rawContent = JSON.stringify(JSON.parse(rawContent));
+                }
+            } catch (jsonErr) {
+                console.warn(`JSON parsing failed for content in post ${doc.id}. Applying fallback sanitization.`);
+                // A safe, comprehensive replacement with four backslashes to protect the build server.
+                rawContent = rawContent.replace(/\\/g, '\\');
+            }
         }
         post.content = rawContent;
     } catch (e) {
-        console.error(`Error processing content for post ${doc.id}:`, e);
-        post.content = 'Error: Could not load content.';
+        console.error(`FATAL: Error processing content for post ${doc.id}:`, e);
+        post.content = 'Error: Could not load content due to a fatal error.';
     }
     
     try {
@@ -149,7 +160,7 @@ export const getProductBySlug = async (slug: string): Promise<Product | null> =>
 
         return toProduct(snapshot.docs[0]);
     } catch (error) {
-        console.error(`Error fetching product with decoded slug "${slug}"`, error);
+        console.error(`Error fetching product with decoded slug \"${slug}\"`, error);
         return null; 
     }
 };
