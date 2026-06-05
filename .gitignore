@@ -41,8 +41,11 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 .vscode/
-.idea/.next/
+.idea/
+
+# --- Duplicated entries from user, cleaned up ---
+# /.next/ (already listed)
+# out/ (already listed as /out/)
+# node_modules/ (already listed as /node_modules)
+# .env*.local (already listed)
 .firebase/
-out/
-node_modules/
-.env*.local

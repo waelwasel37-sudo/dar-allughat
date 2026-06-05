@@ -1,7 +1,8 @@
-// app/lib/data-server.ts - النسخة الكاملة والنهائية المعتمدة للـ Build (المحمية والمطهرة)
+// app/lib/data-server.ts - نسخة تشخيصية لتحديد المقالات التالفة
 import admin, { getDb } from './firebase-admin';
 import { Product } from './types';
 
+// ... (getProducts, getCategories, getProductBySlug, getRelatedProducts functions remain the same) ...
 // 1. جلب جميع المنتجات
 export async function getProducts(): Promise<Product[]> {
     const db = getDb();
@@ -71,43 +72,57 @@ export async function getRelatedProducts(category: string, currentSlug: string):
     }
 }
 
-// 5. جلب المقالات - النسخة المطهرة والمحمية ضد أخطاء الـ SyntaxError والـ JSON
+// 5. جلب المقالات - وضع التشخيص لتحديد البيانات التالفة
 export async function getPosts(): Promise<any[]> {
     const db = getDb();
     try {
         const snapshot = await db.collection("posts").orderBy("createdAt", "desc").get();
         if (snapshot.empty) return [];
-        
-        return snapshot.docs.map(doc => {
-            const data = doc.data();
-            
-            // جدار حماية صارم يعالج تداخل النصوص المائلة ويمنع كسر معالج الـ JSON نهائياً
-            const safeCleanString = (rawStr: any) => {
-                if (!rawStr || typeof rawStr !== 'string') return '';
-                try {
-                    // حماية وتأمين المائلات وعلامات التنصيص المزدوجة التالفة هندسياً
-                    const serialized = JSON.stringify(rawStr);
-                    return JSON.parse(serialized
-                        .replace(/\\\\?/g, '?')
-                        .replace(/\\([^"\\/bfnrtu])/g, '$1')
-                    );
-                } catch {
-                    return rawStr.replace(/\\/g, '/'); // خط دفاع أخير لتأمين النص عند الطوارئ
-                }
-            };
 
-            return {
-                id: doc.id,
-                ...data,
-                title: data.title ? safeCleanString(data.title) : '',
-                content: data.content ? safeCleanString(data.content) : '',
-                summary: data.summary ? safeCleanString(data.summary) : '',
-                createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
-                updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
-            };
-        });
+        // استخدام reduce لمعالجة المستندات بأمان وتخطي التالف منها
+        return snapshot.docs.reduce<any[]>((acc, doc) => {
+            try {
+                const data = doc.data();
+
+                const safeCleanString = (rawStr: any) => {
+                    if (!rawStr || typeof rawStr !== 'string') return '';
+                    try {
+                        const serialized = JSON.stringify(rawStr);
+                        return JSON.parse(serialized
+                            .replace(/\\\\\?/g, '?')
+                            .replace(/\\([^"\\\/bfnrtu])/g, '$1')
+                        );
+                    } catch {
+                        return rawStr.replace(/\\/g, '/');
+                    }
+                };
+
+                const post = {
+                    id: doc.id,
+                    ...data,
+                    title: data.title ? safeCleanString(data.title) : '',
+                    content: data.content ? safeCleanString(data.content) : '',
+                    summary: data.summary ? safeCleanString(data.summary) : '',
+                    createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+                    updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
+                };
+                
+                acc.push(post); // إضافة المقال المعالج إلى القائمة
+
+            } catch (error) {
+                // في حالة حدوث أي خطأ أثناء معالجة مستند واحد، قم بتسجيله والمتابعة
+                console.error(`--- تم العثور على مستند تالف وتجاهله ---`);
+                console.error(`Document ID: ${doc.id}`);
+                console.error(`Error:`, error);
+                console.error(`Raw Data:`, JSON.stringify(doc.data(), null, 2));
+                console.error(`--------------------------------------`);
+            }
+            return acc;
+        }, []); // ابدأ بمصفوفة فارغة
+
     } catch (error) {
-        console.error("Error in getPosts:", error);
+        // هذا الخطأ سيلتقط فقط الأخطاء من الجلب الأولي لقاعدة البيانات
+        console.error("Error in getPosts (initial fetch):", error);
         return [];
     }
 }
