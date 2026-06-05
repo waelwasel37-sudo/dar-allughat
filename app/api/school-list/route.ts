@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import admin, { db, auth } from '@/app/lib/firebase-admin';
+import admin, { getDb, getAuth } from '@/app/lib/firebase-admin';
 import { cookies } from 'next/headers';
 import { SchoolListRequest } from '@/app/lib/types';
 
@@ -8,14 +8,12 @@ export const dynamic = 'force-dynamic';
 
 // GET endpoint for admin to view requests and get counts
 export async function GET(req: NextRequest) {
-    if (!auth || !db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -44,7 +42,7 @@ export async function GET(req: NextRequest) {
             return {
                 id: doc.id,
                 ...data,
-                createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+                createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
             } as SchoolListRequest;
         });
 
@@ -58,10 +56,7 @@ export async function GET(req: NextRequest) {
 
 // POST endpoint for PUBLIC new requests
 export async function POST(req: NextRequest) {
-    if (!db || !admin) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb();
 
     try {
         const data: Omit<SchoolListRequest, 'id' | 'createdAt' | 'status'> = await req.json();
@@ -97,14 +92,12 @@ export async function POST(req: NextRequest) {
 
 // PATCH endpoint for admin to update request status
 export async function PATCH(req: NextRequest) {
-    if (!auth || !db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }

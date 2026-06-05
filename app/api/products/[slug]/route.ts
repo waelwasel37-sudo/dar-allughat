@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import admin, { db, auth, bucket } from '@/app/lib/firebase-admin';
+// تعديل الاستيراد: الاعتماد على الدوال الديناميكية بدلاً من المتغيرات الاستاتيكية
+import admin, { getDb, getAuth, getBucket } from '@/app/lib/firebase-admin';
 import { Product } from '@/app/lib/types';
 import { generateSlug } from '@/app/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
-// النوع الصحيح لـ Next.js 15
 interface RouteParams {
     params: Promise<{ slug: string }>;
 }
@@ -27,10 +27,7 @@ function getPathFromUrl(url: string): string {
 
 // --- GET: جلب منتج واحد ---
 export async function GET(req: NextRequest, { params }: RouteParams) {
-    if (!db) {
-        console.error('Firebase Admin SDK not initialized for db');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb(); // استدعاء ديناميكي
 
     const { slug } = await params;
     if (!slug) {
@@ -44,12 +41,19 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
         }
         const doc = snapshot.docs[0];
         const productData = doc.data();
+        
+        // تعديل: تطبيق الحماية الذكية لقراءة التواريخ لمنع انهيار السيرفر
         const product: Product = {
             id: doc.id,
             ...productData,
-            createdAt: (productData.createdAt.toDate ? productData.createdAt.toDate() : new Date(productData.createdAt)).toISOString(),
-            updatedAt: (productData.updatedAt.toDate ? productData.updatedAt.toDate() : new Date(productData.updatedAt)).toISOString(),
+            createdAt: productData.createdAt instanceof admin.firestore.Timestamp 
+                ? productData.createdAt.toDate().toISOString() 
+                : new Date(productData.createdAt || Date.now()).toISOString(),
+            updatedAt: productData.updatedAt instanceof admin.firestore.Timestamp 
+                ? productData.updatedAt.toDate().toISOString() 
+                : new Date(productData.updatedAt || Date.now()).toISOString(),
         } as Product;
+        
         return NextResponse.json(product);
     } catch (error) {
         console.error(`[GET /api/products/${slug}] Error:`, error);
@@ -59,15 +63,13 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
 // --- PUT: تحديث منتج ---
 export async function PUT(req: NextRequest, { params }: RouteParams) {
-    if (!auth || !db || !admin) {
-        console.error('Firebase Admin SDK not initialized for auth, db, or admin');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb();     // استدعاء ديناميكي
+    const auth = getAuth(); // استدعاء ديناميكي
 
     const { slug: originalSlug } = await params;
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // صحيح ومطابق للخطة
         if (!sessionCookie) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
         const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
@@ -108,15 +110,14 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
 // --- DELETE: حذف المنتج ---
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
-    if (!auth || !db || !bucket) {
-        console.error('Firebase Admin SDK not initialized for auth, db, or bucket');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb();         // استدعاء ديناميكي
+    const auth = getAuth();     // استدعاء ديناميكي
+    const bucket = getBucket(); // استدعاء ديناميكي
 
     const { slug } = await params;
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // صحيح ومطابق للخطة
         if (!sessionCookie) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         
         const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
@@ -146,10 +147,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
 // --- POST: التقييم ---
 export async function POST(req: NextRequest, { params }: RouteParams) {
-    if (!db || !admin) {
-        console.error('Firebase Admin SDK not initialized for db or admin');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb(); // استدعاء ديناميكي
 
     const { slug: productSlug } = await params;
     try {

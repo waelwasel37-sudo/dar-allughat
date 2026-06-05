@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import admin, { db, auth } from '@/app/lib/firebase-admin';
+import admin, { getDb, getAuth } from '@/app/lib/firebase-admin';
 import { Post } from '@/app/lib/types';
 import { cookies } from 'next/headers';
 
@@ -8,10 +8,7 @@ export const dynamic = 'force-dynamic';
 
 // GET all posts or a single post by slug
 export async function GET(req: NextRequest) {
-    if (!db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb();
 
     try {
         const slug = req.nextUrl.searchParams.get('slug');
@@ -23,12 +20,12 @@ export async function GET(req: NextRequest) {
                 return NextResponse.json({ message: 'Post not found' }, { status: 404 });
             }
             const doc = snapshot.docs[0];
-            const postData = doc.data();
+            const data = doc.data();
             const post = {
                 id: doc.id, 
-                ...postData,
-                createdAt: postData.createdAt.toDate().toISOString(),
-                updatedAt: postData.updatedAt.toDate().toISOString(),
+                ...data,
+                createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+                updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
             };
             return NextResponse.json(post);
         } else {
@@ -38,8 +35,8 @@ export async function GET(req: NextRequest) {
                 return {
                     id: doc.id,
                     ...data,
-                    createdAt: data.createdAt.toDate().toISOString(),
-                    updatedAt: data.updatedAt.toDate().toISOString(),
+                    createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+                    updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
                 };
             });
             return NextResponse.json(posts);
@@ -53,14 +50,12 @@ export async function GET(req: NextRequest) {
 
 // POST a new post
 export async function POST(req: NextRequest) {
-    if (!auth || !db || !admin) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -88,14 +83,12 @@ export async function POST(req: NextRequest) {
 
 // PUT to update a post by SLUG
 export async function PUT(req: NextRequest) {
-    if (!auth || !db || !admin) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -148,14 +141,12 @@ export async function PUT(req: NextRequest) {
 
 // DELETE a post by SLUG
 export async function DELETE(req: NextRequest) {
-    if (!auth || !db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth();
+    const db = getDb();
 
      try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

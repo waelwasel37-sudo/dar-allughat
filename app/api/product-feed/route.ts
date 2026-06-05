@@ -1,18 +1,12 @@
 // app/api/product-feed/route.ts
 import { NextResponse } from 'next/server';
-import admin, { db } from '@/app/lib/firebase-admin';
+import admin, { getDb } from '@/app/lib/firebase-admin';
 import { Product } from '../../lib/types';
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  if (!db || !admin) {
-    console.error('Firebase Admin SDK not initialized');
-    return new NextResponse(JSON.stringify({ message: 'Server configuration error' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-  }
+  const db = getDb();
 
   try {
     const productsCollection = db.collection("products");
@@ -20,13 +14,11 @@ export async function GET() {
     
     const products: Product[] = productsSnapshot.docs.map((doc: admin.firestore.QueryDocumentSnapshot) => {
       const data = doc.data();
-      const createdAt = data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date().toISOString();
-      const updatedAt = data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date().toISOString();
       return {
         id: doc.id,
         ...data,
-        createdAt,
-        updatedAt,
+        createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+        updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
       } as Product;
     });
 

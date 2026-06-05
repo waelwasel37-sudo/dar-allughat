@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/app/lib/firebase-admin";
-import { QueryDocumentSnapshot } from "firebase-admin/firestore"; // Import the type
+import { getDb } from "@/app/lib/firebase-admin";
+import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-    if (!db) {
-        console.error('Firestore has not been initialized. Ensure service account is configured correctly.');
-        return NextResponse.json(
-            { error: 'Firestore not initialized on the server.' },
-            { status: 500 }
-        );
-    }
+    const db = getDb(); // Use the getter function
 
     try {
         const categoriesCollection = db.collection("categories");
@@ -21,7 +15,6 @@ export async function GET(req: NextRequest) {
             return NextResponse.json([]);
         }
 
-        // Fix the TypeScript error by explicitly typing 'doc'
         const categories = categoriesSnapshot.docs.map((doc: QueryDocumentSnapshot) => ({
             id: doc.id,
             ...doc.data(),

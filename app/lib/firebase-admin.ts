@@ -1,61 +1,61 @@
-import * as admin from 'firebase-admin';
+import admin from 'firebase-admin';
 
-// This function ensures Firebase Admin is initialized only once.
-const initializeAdmin = () => {
-  if (admin.apps.length > 0) {
-    return admin.apps[0];
+// تحديث النوع لمنع أخطاء المترجم البرمجي
+let app: admin.app.App | null = null;
+
+function initializeAdmin() {
+  if (!app) {
+    if (admin.apps.length > 0) {
+      app = admin.apps[0];
+    } else {
+      try {
+        console.log("Initializing Firebase Admin SDK...");
+        // التعديل المستهدف (البند 2): قراءة المتغير السري المعتمد في خطتك بصيغة Base64
+        const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+        
+        if (serviceAccountBase64) {
+          const serviceAccount = JSON.parse(Buffer.from(serviceAccountBase64, 'base64').toString('utf-8'));
+          app = admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount),
+            storageBucket: `${serviceAccount.project_id}.appspot.com`,
+          });
+        } else {
+          // الجلب التلقائي الذكي عند التشغيل المحلي أو السحابي المرتبط
+          app = admin.initializeApp();
+        }
+        console.log("Firebase Admin SDK initialized successfully.");
+      } catch (error) {
+        console.error("Firebase Admin initialization failed:", error);
+        app = null;
+      }
+    }
   }
+  return app;
+}
 
-  // 💡 صمام الأمان لمنع انهيار الـ Build في أول 54 ثانية
-  if (!process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
-    console.log("Auth: Build-time detected. Skipping Firebase Admin initialization.");
-    return null;
-  }
-
-  console.log("Auth: Run-time detected. Initializing Firebase Admin SDK.");
-  try {
-    const cleanBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64.trim().replace(/\s/g, '');
-    const decodedServiceAccount = Buffer.from(cleanBase64, 'base64').toString('utf8');
-    const serviceAccount = JSON.parse(decodedServiceAccount);
-    
-    return admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    });
-  } catch (error) {
-    console.error("FATAL: Firebase Admin initialization failed at run-time.", error);
-    throw new Error("Could not initialize Firebase Admin SDK at runtime.");
-  }
-};
-
-// Initialize immediately if credentials exist
+// تشغيل التهيئة الذكية عند استدعاء الملف
 initializeAdmin();
 
-// 💡 الدوال الذكية التي قمت بابتكارها
-export const getDb = () => {
-  if (!admin.apps.length) initializeAdmin();
-  return admin.firestore();
-};
+// --- الدوال الذكية الديناميكية المعتمدة في بنود خطتك البرمجية (البند 5) ---
 
-export const getAuth = () => {
-  if (!admin.apps.length) initializeAdmin();
-  return admin.auth();
-};
+export function getDb(): admin.firestore.Firestore {
+  if (!app) initializeAdmin();
+  if (!app) throw new Error("Firebase Admin SDK is not initialized. Cannot access Firestore.");
+  return admin.firestore(app);
+}
 
-export const getStorage = () => {
-  if (!admin.apps.length) initializeAdmin();
-  return admin.storage();
-};
+export function getAuth(): admin.auth.Auth {
+  if (!app) initializeAdmin();
+  if (!app) throw new Error("Firebase Admin SDK is not initialized. Cannot access Auth.");
+  return admin.auth(app);
+}
 
-export const getBucket = () => {
-  if (!admin.apps.length) initializeAdmin();
-  return admin.storage().bucket();
-};
+export function getBucket(bucketName?: string) {
+  if (!app) initializeAdmin();
+  if (!app) throw new Error("Firebase Admin SDK is not initialized. Cannot access Storage.");
+  const storage = admin.storage(app);
+  return bucketName ? storage.bucket(bucketName) : storage.bucket();
+}
 
-// 💡 خطوة التوافق الحيوية: تصدير المتغيرات الثابتة القديمة عبر جلبها من الدوال لكي لا تنهار ملفات البيانات الأخرى
-export const db = admin.apps.length ? admin.firestore() : null as any;
-export const auth = admin.apps.length ? admin.auth() : null as any;
-export const storage = admin.apps.length ? admin.storage() : null as any;
-export const bucket = admin.apps.length ? admin.storage().bucket() : null as any;
-
+// تصدير الكائن الافتراضي للتوافق
 export default admin;

@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { generateSlug } from "@/app/lib/utils";
-import { db, auth } from "@/app/lib/firebase-admin";
+import { getDb, getAuth } from "@/app/lib/firebase-admin";
 
 export const dynamic = 'force-dynamic';
 
@@ -16,15 +16,13 @@ export const dynamic = 'force-dynamic';
  * generates a new unique slug from the product's name, and updates the document.
  */
 export async function POST(req: Request) {
-    if (!auth || !db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth();
+    const db = getDb();
 
     try {
         // --- Admin Authentication Check ---
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized. No session cookie provided.' }, { status: 401 });

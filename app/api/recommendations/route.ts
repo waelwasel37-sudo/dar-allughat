@@ -1,16 +1,12 @@
 import { NextResponse } from 'next/server';
-import admin, { db } from '@/app/lib/firebase-admin';
+import admin, { getDb } from '@/app/lib/firebase-admin';
 import { Product } from '@/app/lib/types';
 
 // السطر السحري لضمان نجاح الـ Build
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-    // التحقق من وجود قاعدة البيانات لمنع أخطاء TypeScript
-    if (!db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb();
 
   try {
     const { categories, excludeSlugs } = await request.json();

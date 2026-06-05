@@ -40,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let postRoutes: MetadataRoute.Sitemap = [];
   try {
     const posts = await getPosts();
-    postRoutes = posts.map((post) => ({
+    postRoutes = posts.map((post: any) => ({
       url: `${baseUrl}/blog/${post.slug}`,
       lastModified: post.updatedAt || new Date().toISOString(),
       changeFrequency: 'weekly' as const,

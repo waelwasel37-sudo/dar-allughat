@@ -1,16 +1,10 @@
 import { NextResponse } from 'next/server';
-import admin, { db } from '@/app/lib/firebase-admin';
+import admin, { getDb } from '@/app/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-  if (!db || !admin) {
-    console.error('Firebase Admin SDK not initialized');
-    return new NextResponse(JSON.stringify({ message: 'Server configuration error' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-  }
+  const db = getDb();
 
   try {
     const { slug, phone } = await request.json(); // استلم slug بدلاً من id

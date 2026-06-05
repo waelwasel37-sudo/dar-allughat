@@ -1,35 +1,37 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from 'next/headers';
 
-import admin, { db, auth } from "@/app/lib/firebase-admin";
+import admin, { getDb, getAuth } from "@/app/lib/firebase-admin";
 import { Product } from "@/app/lib/types";
 import { generateSlug } from "@/app/lib/utils";
 
-
-// Ensures the function is always run dynamically on the server
+// تضمن تشغيل الدالة ديناميكياً على السيرفر دائماً لمنع الكاش
 export const dynamic = "force-dynamic";
 
 // GET all products
 export async function GET(req: NextRequest) {
-    if (!db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb(); // استدعاء ديناميكي مطابق للبند 5
 
     try {
         const productsCollection = db.collection("products");
         const productsSnapshot = await productsCollection.orderBy("createdAt", "desc").get();
+        
         if (productsSnapshot.empty) {
             return NextResponse.json([]);
         }
-        const products = productsSnapshot.docs.map((doc: admin.firestore.QueryDocumentSnapshot) => {
+        
+        const products = productsSnapshot.docs.map((doc) => {
             const data = doc.data();
             return {
                 id: doc.id,
                 ...data,
-                createdAt: (data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)).toISOString(),
-                updatedAt: (data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt)).toISOString(),
+                // التعديل المستهدف (البند 4): حماية السيرفر من الانهيار عند قراءة التواريخ بالفحص الذكي الصارم
+                createdAt: data.createdAt instanceof admin.firestore.Timestamp 
+                    ? data.createdAt.toDate().toISOString() 
+                    : new Date(data.createdAt || Date.now()).toISOString(),
+                updatedAt: data.updatedAt instanceof admin.firestore.Timestamp 
+                    ? data.updatedAt.toDate().toISOString() 
+                    : new Date(data.updatedAt || Date.now()).toISOString(),
             };
         });
         return NextResponse.json(products);
@@ -41,14 +43,12 @@ export async function GET(req: NextRequest) {
 
 // POST a new product
 export async function POST(req: NextRequest) {
-    if (!auth || !db || !admin) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth(); // استدعاء ديناميكي مطابق للبند 5
+    const db = getDb();     // استدعاء ديناميكي مطابق للبند 5
 
     try {
-        // 1. Authorization: Verify user is an admin
-        const sessionCookie = (await cookies()).get("session")?.value;
+        // 1. Authorization: التأكد من هوية المسؤول وصلاحياته
+        const sessionCookie = (await cookies()).get("__session")?.value; // ممتاز ومطابق للبند 1
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized. No session cookie.' }, { status: 401 });
         }
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Forbidden. User is not an admin.' }, { status: 403 });
         }
 
-        // 2. Data Handling: Read the JSON body
+        // 2. Data Handling: قراءة بيانات المنتج المرسلة
         const productData: Omit<Product, 'id'> = await req.json();
 
         if (!productData.name || !productData.price || !productData.imageUrl) {
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
         const productsRef = db.collection('products');
 
-        // 3. Server-Side Slug Generation: Ensure a unique slug
+        // 3. Server-Side Slug Generation: توليد رابط فريد وغير مكرر للمنتج
         const baseSlug = productData.slug || generateSlug(productData.name);
         let newSlug = baseSlug;
         let counter = 1;
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
             counter++;
         }
         
-        // 4. Category Management: Ensure category exists
+        // 4. Category Management: التحقق من وجود القسم أو إنشائه تلقائياً
         const categoryName = productData.category || 'Uncategorized';
         const categoryRef = db.collection('categories').doc(generateSlug(categoryName));
         const categoryDoc = await categoryRef.get();
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
             await categoryRef.set({ name: categoryName, emoji: categoryEmoji });
         }
 
-        // 5. Database Write: Prepare the final object for Firestore
+        // 5. Database Write: تجهيز الكائن النهائي وحفظه في Firestore
         const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
         const finalProduct: Omit<Product, 'id'> = {
             ...productData,

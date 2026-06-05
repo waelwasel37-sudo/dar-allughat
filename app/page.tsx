@@ -6,7 +6,6 @@ import SearchAndFilter from './components/SearchAndFilter';
 import { getProducts, getCategories } from './lib/data-server'; 
 import { Product, Category } from './lib/types';
 
-// تم إزالة ssr: false لأن المكون يتم استدعاؤه داخل Server Component
 const HomeProductsView = nextDynamic(() => import('./components/HomeProductsView'));
 
 export const dynamic = 'force-dynamic';
@@ -20,7 +19,7 @@ async function loadData(): Promise<{ products: Product[], categories: Category[]
       getCategories().catch(() => []) 
     ]);
 
-    const categories = [allCategory, ...(rawCategories?.map(c => ({...c, slug: c.slug || c.id})) || [])];
+    const categories = [allCategory, ...(rawCategories?.map((c: Category) => ({...c, slug: c.slug || c.id})) || [])];
 
     return { 
       products: Array.isArray(products) ? products : [], 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers, cookies } from 'next/headers'; 
 
-import admin, { db, auth } from '@/app/lib/firebase-admin';
+import admin, { getDb, getAuth } from '@/app/lib/firebase-admin';
 import { Product } from '@/app/lib/types';
 import { sendPurchaseEvent } from '@/app/lib/meta-capi';
 
@@ -13,14 +13,12 @@ interface CartItem extends Product {
 
 // GET all orders (for admin panel)
 export async function GET(req: NextRequest) {
-    if (!auth || !db) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const auth = getAuth();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("session")?.value;
+        const sessionCookie = cookieStore.get("__session")?.value; // ممتاز ومطابق للبند 1
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -36,13 +34,19 @@ export async function GET(req: NextRequest) {
             return NextResponse.json([]);
         }
 
-        const orders = snapshot.docs.map((doc: admin.firestore.QueryDocumentSnapshot) => {
+        // تحسين النوع ليتوافق تماماً مع مستندات Firestore وعمليات الـ Map
+        const orders = snapshot.docs.map((doc) => {
             const data = doc.data();
             return {
                 id: doc.id,
                 ...data,
-                createdAt: data.createdAt?.toDate().toISOString() ?? null,
-                updatedAt: data.updatedAt?.toDate().toISOString() ?? null,
+                // التعديل المستهدف (البند 4): الفحص الذكي والآمن للتواريخ لمنع الانهيار أثناء الـ Pending Timestamps
+                createdAt: data.createdAt instanceof admin.firestore.Timestamp 
+                    ? data.createdAt.toDate().toISOString() 
+                    : new Date(data.createdAt || Date.now()).toISOString(),
+                updatedAt: data.updatedAt instanceof admin.firestore.Timestamp 
+                    ? data.updatedAt.toDate().toISOString() 
+                    : new Date(data.updatedAt || Date.now()).toISOString(),
             };
         });
 
@@ -56,10 +60,7 @@ export async function GET(req: NextRequest) {
 
 // POST a new order (from customer cart)
 export async function POST(req: NextRequest) {
-    if (!db || !admin) {
-        console.error('Firebase Admin SDK not initialized');
-        return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const db = getDb();
 
     try {
         const body = await req.json();
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest) {
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         };
 
-        // Save the order to Firestore
+        // حفظ الطلب في Firestore بنجاح
         const newOrderRef = await db.collection('orders').add(orderData);
 
         // --- Meta CAPI Integration ---
