@@ -1,4 +1,3 @@
-
 import { initializeApp, getApps, cert, type App } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
@@ -27,14 +26,25 @@ function initializeAdmin() {
       // --- Diagnostic Logging ---
       console.log(`Private key received. Length: ${privateKey.length}`);
       console.log(`Starts with correct header? ${privateKey.startsWith('-----BEGIN PRIVATE KEY-----')}`);
-      console.log(`Ends with correct footer? ${privateKey.endsWith('-----END PRIVATE KEY-----')}`);
+      console.log(`Ends with correct footer? ${privateKey.endsWith('-----END PRIVATE KEY-----')}`); // Expected to be false
       console.log(`Raw value contains literal \\n characters? ${privateKey.includes('\\n')}`);
       // --- End of Diagnostic Logging ---
 
-      const cleanPrivateKey = privateKey
-        .replace(/^"/, '')   
-        .replace(/"$/, '')   
-        .replace(/\\n/g, '\n'); 
+      // Smart and comprehensive cleaning of the start and end, removing any nested quotes or hidden spaces
+      let cleanPrivateKey = privateKey.trim();
+      
+      // Remove double or single quotes if they surround the entire key
+      if (cleanPrivateKey.startsWith('"') && cleanPrivateKey.endsWith('"')) {
+        cleanPrivateKey = cleanPrivateKey.slice(1, -1);
+      } else if (cleanPrivateKey.startsWith("'") && cleanPrivateKey.endsWith("'")) {
+        cleanPrivateKey = cleanPrivateKey.slice(1, -1);
+      }
+      
+      // Convert literal \n to real newlines and do a final trim
+      cleanPrivateKey = cleanPrivateKey.replace(/\\n/g, '\n').trim();
+
+      // Log the end check after cleaning to confirm
+      console.log(`[After Clean] Ends with correct footer? ${cleanPrivateKey.endsWith('-----END PRIVATE KEY-----')}`);
 
       const serviceAccount = {
         projectId: projectId,
