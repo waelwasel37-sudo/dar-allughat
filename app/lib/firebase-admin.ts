@@ -15,59 +15,32 @@ function initializeAdmin() {
     return;
   }
 
-  console.log("Attempting to initialize Firebase Admin SDK from separate environment variables...");
+  const base64Sdk = process.env.FIREBASE_ADMIN_SDK_BASE64;
 
-  const projectId = process.env.SERVER_FB_PROJECT_ID;
-  const clientEmail = process.env.SERVER_FB_CLIENT_EMAIL;
-  const privateKey = process.env.SERVER_FB_PRIVATE_KEY;
-
-  if (projectId && clientEmail && privateKey) {
+  if (base64Sdk) {
+    console.log("Attempting to initialize Firebase Admin SDK from Base64 secret...");
     try {
-      // --- Diagnostic Logging ---
-      console.log(`Private key received. Length: ${privateKey.length}`);
-      console.log(`Starts with correct header? ${privateKey.startsWith('-----BEGIN PRIVATE KEY-----')}`);
-      console.log(`Ends with correct footer? ${privateKey.endsWith('-----END PRIVATE KEY-----')}`); // Expected to be false
-      console.log(`Raw value contains literal \\n characters? ${privateKey.includes('\\n')}`);
-      // --- End of Diagnostic Logging ---
+      // Decode the Base64 string to a JSON string
+      const sdkJson = Buffer.from(base64Sdk, 'base64').toString('utf-8');
 
-      // Smart and comprehensive cleaning of the start and end, removing any nested quotes or hidden spaces
-      let cleanPrivateKey = privateKey.trim();
-      
-      // Remove double or single quotes if they surround the entire key
-      if (cleanPrivateKey.startsWith('"') && cleanPrivateKey.endsWith('"')) {
-        cleanPrivateKey = cleanPrivateKey.slice(1, -1);
-      } else if (cleanPrivateKey.startsWith("'") && cleanPrivateKey.endsWith("'")) {
-        cleanPrivateKey = cleanPrivateKey.slice(1, -1);
-      }
-      
-      // Convert literal \n to real newlines and do a final trim
-      cleanPrivateKey = cleanPrivateKey.replace(/\\n/g, '\n').trim();
-
-      // Log the end check after cleaning to confirm
-      console.log(`[After Clean] Ends with correct footer? ${cleanPrivateKey.endsWith('-----END PRIVATE KEY-----')}`);
-
-      const serviceAccount = {
-        projectId: projectId,
-        clientEmail: clientEmail,
-        privateKey: cleanPrivateKey,
-      };
+      // Parse the JSON string into a service account object
+      const serviceAccount = JSON.parse(sdkJson);
 
       app = initializeApp({
         credential: cert(serviceAccount),
-        storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app", 
+        storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
       });
 
-      console.log("Firebase Admin SDK initialized successfully with modern Storage Bucket.");
+      console.log("Firebase Admin SDK initialized successfully from Base64 secret.");
     } catch (error: any) {
-      console.error("FATAL: Firebase Admin initialization failed:", error);
+      console.error("FATAL: Firebase Admin initialization from Base64 failed:", error);
       app = null;
-      
       if (process.env.NODE_ENV === 'production') {
-        throw new Error(`Firebase Admin SDK critical boot failure: ${error?.message || error}`);
+        throw new Error(`Firebase Admin SDK critical boot failure from Base64: ${error?.message || error}`);
       }
     }
   } else {
-    console.warn("WARNING: Server-side Firebase Admin SDK environment variables not found. Some features may not work.");
+    console.warn("WARNING: FIREBASE_ADMIN_SDK_BASE64 environment variable not found. Some features may not work.");
   }
 }
 
