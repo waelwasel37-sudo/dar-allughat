@@ -1,21 +1,12 @@
-# See https://google.com
+# apphosting.yaml - The final, production-ready, and secure configuration
 version: 1
+framework: nextjs
 
-# المجلد الأساسي للتطبيق
-app: .
-
-# أوامر البناء والتشغيل الافتراضية
-buildCommand: npm run build
-startCommand: npm start
-
-# إعدادات الأسرار والمتغيرات البيئية
-env: []
-
-# إعدادات السيرفر والأداء
-server:
-  concurrency: 500
-  maxInstances: 10
-  minInstances: 0
-  cpu: 1
-  memory: 512MiB
-  timeout: 30s
+# Pass environment variables securely to the Cloud Build container
+env:
+  - variable: SERVER_FB_PROJECT_ID
+    value: "dar-allughat-97483992-fc6c5"
+  - variable: SERVER_FB_CLIENT_EMAIL
+    value: "firebase-adminsdk-fbsvc@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"
+  - variable: SERVER_FB_PRIVATE_KEY
+    value: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDQ6fVe916YgXC4\nj9buA8YoUK8I/0qR+eVcf+rJm6OccpusBT+ibbavTDigQz0q9E6oE5fXSdQCdJah\ncC3odygXNsNUeIFBUK46lau5VSI7YoFic4p3soCRqwyZfJ1mf6VH5AC5HsPpfLIr\nRPERuVZp2Swbx2+kzLthmh8GGxXe2YNzc5hc9w8/Unm7F96/x/AF/yBbRpdH43tL\nxSbyNWmYvJuoyj24b3PoFlyxINffW934aQWbYDFByWOxmxGer3vwji48yen4CK3e\nbnOOfGiFwliY03Wg4ZAUO9dfoi/d7wzlQQlSBMT2yivXXP3JsIexi9ZrZtKxCHMv\nJiHOUeFPAgMBAAECggEARRh0JpYjK8Z37Rrpx6vo4JGa6ptg4vnnMZo/IbH/wXEo\napML0mF+D+liOyMx+mB2GWHtkO9ilvNPlJJhJKcwU8kxfmEiwuL31PmGo9Pz7/cq\n+tBjBia8HjGYB7Wu62UhWa8fzBpQSouK9AOnxahqW7TPwVpLYxKxkNzkEOVpbNwk\nA3zRx0CMpjLp28m+iBkXz968cTPmIG1a00oMeVR3pcLpw62HXZfCzvjHqbe5WpAU\n9kgfZnCV+hbVAPPLYEqOEUpG1s9whgvNHqRBU/ndNmCgY6GEzEjDnUficK/GTCnE\npMYnyoFTKlFir9kzU707pQlDuCmTJJvR0jQqexJweQKBgQDnVEbgVnpXXj4gtlip\ne7rOYouLJ9ipqGmAuTEeU+uE/Uyxagr0i72c5HXX4Qi0TRN68Zz1U7U3uEs+I//H\nfaVTJtHocmoYJ4YW1U6TNED+iU/wMuxKp5G33/0EXY5AHPb010E2MSh7+9o6yR4k\ny8BOvzesChpFN6eIRGvX96GzmQKBgQDnMbOXqFpi2JlH6hnePdNd8ZVwpd0oATEC\nlxpqyIYgjg+cgD7DQMt2zvTtZsHVFjgqKopypL9ELAIqBSTNU2UVrKjfSp22/68A\nbY0f33V9gZJXJs5d05ygUmRTe48RXIsGkA9HMF3MOrm+LEZzmVLLeibBvUIw76ft\n9TWwYY7NJwKBgQDEOdEFa1XL1r2MsiDzY2lKuHz2RY6cG6ei8XSg7T7TSKpNtE4m\nsoLdG057GQBxMRBdMaaa067c3Q+2XoMRjZs3ta5JJwSoCJ7Nr5M/ewvG3mNYtVmK\n2inZd78AfPu1ltxFRHKkrX5R7YloZEGVpOAz7DAlV0yBenw6Mw/n2r7nwQKBgDzD\nsmk05XS/ayIcpGnmJAy390ghQAxIq+H7ZwUT6TTbQb0nc9eLyy5R3Mwcyus/qMlk\nXvkc1eyMCJGUwoR428Ojmsr9aJB1iUB6irIK4G15RcZEO88rVCpLHXVXr1Wn1h6G\ndI2IZ87KzJDwQCAX90vlshQPszr7ck63uUG/knHXAoGBAOaT6GNOv36k7UZCxaES\niTPJNFmWRm2pk3ahPy8ZeasgxXoA1sIQREW4R8zuQKpLAVdwq+u1Pz92ECcmZvWR\nB34HepYGEVt7CqEz9/1ihwPdACtnfPpB1OcaBYwAe5eVDOT1iBGsMHt3M6y6aApG\n2MA40VnpKQ/JSMLkwPByKYMe\n-----END PRIVATE KEY-----\n"

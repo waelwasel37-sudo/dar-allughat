@@ -1,61 +1,72 @@
 import admin from 'firebase-admin';
 
-// تحديث النوع لمنع أخطاء المترجم البرمجي
 let app: admin.app.App | null = null;
 
 function initializeAdmin() {
-  if (!app) {
-    if (admin.apps.length > 0) {
-      app = admin.apps[0];
-    } else {
-      try {
-        console.log("Initializing Firebase Admin SDK...");
-        // التعديل المستهدف (البند 2): قراءة المتغير السري المعتمد في خطتك بصيغة Base64
-        const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
-        
-        if (serviceAccountBase64) {
-          const serviceAccount = JSON.parse(Buffer.from(serviceAccountBase64, 'base64').toString('utf-8'));
-          app = admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            storageBucket: `${serviceAccount.project_id}.appspot.com`,
-          });
-        } else {
-          // الجلب التلقائي الذكي عند التشغيل المحلي أو السحابي المرتبط
-          app = admin.initializeApp();
-        }
-        console.log("Firebase Admin SDK initialized successfully.");
-      } catch (error) {
-        console.error("Firebase Admin initialization failed:", error);
-        app = null;
-      }
-    }
+  if (app) {
+    return;
   }
-  return app;
+  if (admin.apps.length > 0) {
+    app = admin.apps[0];
+    return;
+  }
+
+  console.log("Attempting to initialize Firebase Admin SDK from separate environment variables...");
+
+  const projectId = process.env.SERVER_FB_PROJECT_ID;
+  const clientEmail = process.env.SERVER_FB_CLIENT_EMAIL;
+  const privateKey = process.env.SERVER_FB_PRIVATE_KEY;
+
+  if (projectId && clientEmail && privateKey) {
+    try {
+      const serviceAccount = {
+        projectId: projectId,
+        clientEmail: clientEmail,
+        // The `dotenv` package handles the newlines correctly. We just replace the literal \n with a newline character.
+        privateKey: privateKey.replace(/\\n/g, '\n'),
+      };
+
+      app = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        storageBucket: `${projectId}.appspot.com`,
+      });
+
+      console.log("Firebase Admin SDK initialized successfully.");
+    } catch (error) {
+      console.error("FATAL: Firebase Admin initialization failed:", error);
+      app = null;
+    }
+  } else {
+    console.warn("WARNING: Server-side Firebase Admin SDK environment variables not found. Some features may not work.");
+  }
 }
 
-// تشغيل التهيئة الذكية عند استدعاء الملف
+// Initialize on load
 initializeAdmin();
 
-// --- الدوال الذكية الديناميكية المعتمدة في بنود خطتك البرمجية (البند 5) ---
+function ensureInitialized() {
+  if (!app) {
+    initializeAdmin();
+    if (!app) {
+      throw new Error("Firebase Admin SDK is not initialized. Check server logs for initialization errors.");
+    }
+  }
+}
 
 export function getDb(): admin.firestore.Firestore {
-  if (!app) initializeAdmin();
-  if (!app) throw new Error("Firebase Admin SDK is not initialized. Cannot access Firestore.");
-  return admin.firestore(app);
+  ensureInitialized();
+  return admin.firestore(app!); 
 }
 
 export function getAuth(): admin.auth.Auth {
-  if (!app) initializeAdmin();
-  if (!app) throw new Error("Firebase Admin SDK is not initialized. Cannot access Auth.");
-  return admin.auth(app);
+  ensureInitialized();
+  return admin.auth(app!); 
 }
 
 export function getBucket(bucketName?: string) {
-  if (!app) initializeAdmin();
-  if (!app) throw new Error("Firebase Admin SDK is not initialized. Cannot access Storage.");
-  const storage = admin.storage(app);
-  return bucketName ? storage.bucket(bucketName) : storage.bucket();
+  ensureInitialized();
+  const storage = admin.storage(app!); 
+  return storage.bucket(bucketName); // Use provided bucket name or default
 }
 
-// تصدير الكائن الافتراضي للتوافق
 export default admin;

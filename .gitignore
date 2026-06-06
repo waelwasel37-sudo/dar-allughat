@@ -19,6 +19,9 @@
 .env.production.local
 .env.local
 
+# --- ✨ ملف إعدادات الاستضافة والمفتاح السري (App Hosting Config) ✨ ---
+apphosting.yaml
+
 # --- ملفات حسابات الخدمة السرية (Sensitive Keys) ---
 firebase-service-account.json
 firebase-service-account-key.json
@@ -26,7 +29,6 @@ service-account.json
 service-account-key.json
 serviceAccountKey.json
 temp_service_account.json
-cors.json
 
 # --- ملفات النظام وسجلات الأخطاء (System & Logs) ---
 *.log
@@ -42,10 +44,4 @@ ehthumbs.db
 Thumbs.db
 .vscode/
 .idea/
-
-# --- Duplicated entries from user, cleaned up ---
-# /.next/ (already listed)
-# out/ (already listed as /out/)
-# node_modules/ (already listed as /node_modules)
-# .env*.local (already listed)
 .firebase/
