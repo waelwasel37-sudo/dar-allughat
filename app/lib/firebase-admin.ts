@@ -1,3 +1,4 @@
+
 import { initializeApp, getApps, cert, type App } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
@@ -23,6 +24,13 @@ function initializeAdmin() {
 
   if (projectId && clientEmail && privateKey) {
     try {
+      // --- Diagnostic Logging ---
+      console.log(`Private key received. Length: ${privateKey.length}`);
+      console.log(`Starts with correct header? ${privateKey.startsWith('-----BEGIN PRIVATE KEY-----')}`);
+      console.log(`Ends with correct footer? ${privateKey.endsWith('-----END PRIVATE KEY-----')}`);
+      console.log(`Raw value contains literal \\n characters? ${privateKey.includes('\\n')}`);
+      // --- End of Diagnostic Logging ---
+
       const cleanPrivateKey = privateKey
         .replace(/^"/, '')   
         .replace(/"$/, '')   
