@@ -4,71 +4,49 @@ import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
 import { getStorage } from 'firebase-admin/storage';
 import * as admin from 'firebase-admin';
 
-let app: App | null = null;
+let app: App;
 
-function initializeAdmin() {
-  if (app) return;
-
-  const apps = getApps();
-  if (apps.length > 0) {
-    app = apps[0];
-    return;
-  }
-
+if (getApps().length === 0) {
   const base64Sdk = process.env.FIREBASE_ADMIN_SDK_BASE64;
 
-  if (base64Sdk) {
-    console.log("Attempting to initialize Firebase Admin SDK from Base64 secret...");
+  // 🚀 إذا كنا في السيرفر أو لم يتم العثور على متغير التشفير، يتم التفعيل التلقائي الآمن مجاناً بدون كود
+  if (!base64Sdk) {
+    console.log("Initializing Firebase Admin SDK using Auto-Credentials...");
+    app = initializeApp({
+      storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
+    });
+  } else {
+    // 💻 هذا الجزء سيعمل فقط في جهازك المحلي إذا كنت تستخدم بيئة قديمة أو قمت بتوفير المفتاح
     try {
-      // Decode the Base64 string to a JSON string
       const sdkJson = Buffer.from(base64Sdk, 'base64').toString('utf-8');
-
-      // Parse the JSON string into a service account object
       const serviceAccount = JSON.parse(sdkJson);
 
       app = initializeApp({
         credential: cert(serviceAccount),
         storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
       });
-
-      console.log("Firebase Admin SDK initialized successfully from Base64 secret.");
+      console.log("Firebase Admin SDK initialized successfully from Base64.");
     } catch (error: any) {
-      console.error("FATAL: Firebase Admin initialization from Base64 failed:", error);
-      app = null;
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error(`Firebase Admin SDK critical boot failure from Base64: ${error?.message || error}`);
-      }
-    }
-  } else {
-    console.warn("WARNING: FIREBASE_ADMIN_SDK_BASE64 environment variable not found. Some features may not work.");
-  }
-}
-
-initializeAdmin();
-
-function ensureInitialized(): App {
-  if (!app) {
-    initializeAdmin();
-    if (!app) {
-      throw new Error("Firebase Admin SDK is not initialized. Check server logs for initialization errors.");
+      console.warn("Base64 decoding failed, falling back to Auto-Credentials...");
+      app = initializeApp({
+        storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
+      });
     }
   }
-  return app;
+} else {
+  app = getApps()[0];
 }
 
 export function getDb(): Firestore {
-  const currentApp = ensureInitialized();
-  return getFirestore(currentApp); 
+  return getFirestore(app);
 }
 
 export function getAuth(): Auth {
-  const currentApp = ensureInitialized();
-  return getAdminAuth(currentApp); 
+  return getAdminAuth(app);
 }
 
 export function getBucket(bucketName?: string) {
-  const currentApp = ensureInitialized();
-  const storage = getStorage(currentApp);
+  const storage = getStorage(app);
   return bucketName ? storage.bucket(bucketName) : storage.bucket();
 }
 
