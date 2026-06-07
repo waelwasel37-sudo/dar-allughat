@@ -9,14 +9,15 @@ let app: App;
 if (getApps().length === 0) {
   const base64Sdk = process.env.FIREBASE_ADMIN_SDK_BASE64;
 
-  // 🚀 إذا كنا في السيرفر أو لم يتم العثور على متغير التشفير، يتم التفعيل التلقائي الآمن مجاناً بدون كود
+  // 🚀 التفعيل التلقائي الآمن المتكامل مع الـ API لمنع خطأ 500
   if (!base64Sdk) {
-    console.log("Initializing Firebase Admin SDK using Auto-Credentials...");
+    console.log("Initializing Firebase Admin SDK using specific Service Account ID...");
     app = initializeApp({
       storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
+      serviceAccountId: "firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"
     });
   } else {
-    // 💻 هذا الجزء سيعمل فقط في جهازك المحلي إذا كنت تستخدم بيئة قديمة أو قمت بتوفير المفتاح
+    // 💻 بيئة التطوير المحلية في جهازك
     try {
       const sdkJson = Buffer.from(base64Sdk, 'base64').toString('utf-8');
       const serviceAccount = JSON.parse(sdkJson);
@@ -27,9 +28,10 @@ if (getApps().length === 0) {
       });
       console.log("Firebase Admin SDK initialized successfully from Base64.");
     } catch (error: any) {
-      console.warn("Base64 decoding failed, falling back to Auto-Credentials...");
+      console.warn("Base64 decoding failed, falling back to specific Service Account ID...");
       app = initializeApp({
         storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
+        serviceAccountId: "firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"
       });
     }
   }
