@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,54 +6,46 @@ import { db } from '@/app/lib/firebase-client';
 import Link from 'next/link';
 import { FaExternalLinkAlt, FaTrash } from 'react-icons/fa';
 
+// 1. تعريف واجهة البيانات لطلبات المدارس
 interface SchoolListRequest {
     id: string;
-    fullName: string;
-    phone: string;
-    address: string;
-    imageUrl: string;
-    status: 'new' | 'in-progress' | 'completed' | 'cancelled';
-    createdAt: any; // Keep as any to handle Firebase Timestamp
+    schoolName: string;
+    email: string;
+    phone?: string;
+    status: 'pending' | 'approved' | 'rejected';
+    createdAt: any; // يدعم كائن طابع الوقت أو النص
 }
 
-// --- Translation mapping for statuses ---
-const statusTranslations: { [key in SchoolListRequest['status']]: string } = {
-    new: 'جديد',
-    'in-progress': 'قيد التنفيذ',
-    completed: 'مكتمل',
-    cancelled: 'ملغى',
+// 2. ترجمة الحالات لغة عربية
+const statusTranslations = {
+    pending: { text: 'قيد الانتظار', color: 'bg-yellow-100 text-yellow-800' },
+    approved: { text: 'مقبول', color: 'bg-green-100 text-green-800' },
+    rejected: { text: 'مرفوض', color: 'bg-red-100 text-red-800' }
 };
-
-const statusStyles: { [key in SchoolListRequest['status']]: string } = {
-    new: 'bg-blue-100 text-blue-800',
-    'in-progress': 'bg-yellow-100 text-yellow-800',
-    completed: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800',
-};
-
-const statusOptions: SchoolListRequest['status'][] = ['new', 'in-progress', 'completed', 'cancelled'];
 
 export default function AdminSchoolLists() {
     const [requests, setRequests] = useState<SchoolListRequest[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // 3. جلب البيانات اللحظية من Firestore بنظام التحديث التلقائي
     useEffect(() => {
-        const requestsCollection = collection(db, 'schoolListRequests');
+        const requestsCollection = collection(db, 'school-lists');
         const q = query(requestsCollection, orderBy('createdAt', 'desc'));
 
         const unsubscribe = onSnapshot(q, 
-            (querySnapshot) => {
-                const requestsData = querySnapshot.docs.map(doc => ({
+            (snapshot) => {
+                const data = snapshot.docs.map(doc => ({
                     id: doc.id,
-                    ...doc.data(),
-                } as SchoolListRequest));
-                setRequests(requestsData);
+                    ...doc.data()
+                })) as SchoolListRequest[];
+                
+                setRequests(data);
                 setIsLoading(false);
-            },
+            }, 
             (err) => {
-                console.error("Error fetching school lists:", err);
-                setError("فشل في تحميل الطلبات. يرجى تحديث الصفحة.");
+                console.error("Firestore loading error:", err);
+                setError("فشل في تحميل قوائم المدارس من قاعدة البيانات.");
                 setIsLoading(false);
             }
         );
@@ -62,100 +53,92 @@ export default function AdminSchoolLists() {
         return () => unsubscribe();
     }, []);
 
+    // 4. دالة تحديث حالة الطلب (مقبول / مرفوض)
     const handleStatusChange = async (id: string, newStatus: SchoolListRequest['status']) => {
         try {
-            const requestDocRef = doc(db, 'schoolListRequests', id);
-            await updateDoc(requestDocRef, {
-                status: newStatus,
-                updatedAt: new Date(),
-            });
+            const docRef = doc(db, 'school-lists', id);
+            await updateDoc(docRef, { status: newStatus });
         } catch (err) {
-            console.error("Error updating status:", err);
-            alert("فشل في تحديث الحالة. الرجاء المحاولة مرة أخرى.");
+            alert("حدث خطأ أثناء تحديث حالة الطلب.");
         }
     };
 
-    // --- New handler for deleting a request ---
+    // 5. دالة حذف الطلب نهائياً
     const handleDeleteRequest = async (id: string) => {
-        if (!window.confirm("هل أنت متأكد من حذف هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.")) {
-            return;
-        }
+        if (!confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) return;
         try {
-            const requestDocRef = doc(db, 'schoolListRequests', id);
-            await deleteDoc(requestDocRef);
-            // The UI will update automatically thanks to the onSnapshot listener
+            const docRef = doc(db, 'school-lists', id);
+            await deleteDoc(docRef);
         } catch (err) {
-            console.error("Error deleting request:", err);
-            alert("فشل في حذف الطلب. الرجاء المحاولة مرة أخرى.");
+            alert("حدث خطأ أثناء حذف الطلب.");
         }
     };
 
-    if (isLoading) {
-        return <div>جاري تحميل الطلبات...</div>;
-    }
-
-    if (error) {
-        return <div className="text-red-500 text-center">{error}</div>;
-    }
-
-    if (requests.length === 0) {
-        return <div className="text-center text-gray-500 py-8">لا توجد طلبات قوائم مدرسية حتى الآن.</div>;
-    }
+    // 6. واجهات التحميل والأخطاء
+    if (isLoading) return <div className="text-center p-10 font-bold">جاري تحميل البيانات...</div>;
+    if (error) return <div className="text-center p-10 text-red-600 font-bold">{error}</div>;
 
     return (
-        <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                    <tr>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">التاريخ</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الاسم</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الهاتف</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">صورة القائمة</th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">حذف</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {requests.map((req) => (
-                        <tr key={req.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {req.createdAt?.toDate ? new Date(req.createdAt.toDate()).toLocaleDateString('ar-EG') : '-'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{req.fullName}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{req.phone}</td>
-                            <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{req.address}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                                <Link href={req.imageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                                    <FaExternalLinkAlt className="inline-block h-5 w-5" />
-                                </Link>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                               <select
-                                  value={req.status}
-                                  onChange={(e) => handleStatusChange(req.id, e.target.value as SchoolListRequest['status'])}
-                                  className={`p-1.5 rounded-md text-xs border-0 outline-none ${statusStyles[req.status]}`}
-                               >
-                                   {statusOptions.map(option => (
-                                       <option key={option} value={option}>
-                                           {statusTranslations[option]}
-                                       </option>
-                                   ))}
-                               </select>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                                <button
-                                    onClick={() => handleDeleteRequest(req.id)}
-                                    className="text-red-600 hover:text-red-800 p-2 rounded-full transition-colors"
-                                    title="حذف الطلب"
-                                >
-                                    <FaTrash />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+        <div className="p-6 bg-gray-50 min-h-screen" dir="rtl">
+            <h1 className="text-2xl font-bold mb-6 text-gray-800">إدارة قوائم المدارس</h1>
+            
+            {requests.length === 0 ? (
+                <p className="text-gray-500 text-center py-10">لا توجد طلبات مسجلة حالياً.</p>
+            ) : (
+                <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+                    <table className="min-w-full table-auto">
+                        <thead className="bg-gray-200 text-gray-700">
+                            <tr>
+                                <th className="px-4 py-3 text-right">اسم المدرسة</th>
+                                <th className="px-4 py-3 text-right">البريد الإلكتروني</th>
+                                <th className="px-4 py-3 text-right">تاريخ الطلب</th>
+                                <th className="px-4 py-3 text-right">الحالة</th>
+                                <th className="px-4 py-3 text-center">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {requests.map((req) => (
+                                <tr key={req.id} className="hover:bg-gray-50">
+                                    <td className="px-4 py-3 font-medium text-gray-900">{req.schoolName}</td>
+                                    <td className="px-4 py-3 text-gray-600">{req.email}</td>
+                                    <td className="px-4 py-3 text-gray-600">
+                                        {/* 🚀 معالجة عرض طابع الوقت الآمن لمنع تدمير الـ Render */}
+                                        {req.createdAt?.toDate 
+                                            ? new Date(req.createdAt.toDate()).toLocaleDateString('ar-EG') 
+                                            : req.createdAt 
+                                                ? new Date(req.createdAt).toLocaleDateString('ar-EG') 
+                                                : '-'}
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <span className={`px-2 py-1 text-xs rounded-full font-semibold ${statusTranslations[req.status]?.color}`}>
+                                            {statusTranslations[req.status]?.text}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3 text-center flex items-center justify-center gap-3">
+                                        <select 
+                                            value={req.status}
+                                            onChange={(e) => handleStatusChange(req.id, e.target.value as SchoolListRequest['status'])}
+                                            className="border rounded px-2 py-1 text-sm bg-white"
+                                        >
+                                            <option value="pending">تعليق</option>
+                                            <option value="approved">قبول</option>
+                                            <option value="rejected">رفض</option>
+                                        </select>
+                                        
+                                        <button 
+                                            onClick={() => handleDeleteRequest(req.id)}
+                                            className="text-red-600 hover:text-red-900 p-1"
+                                            title="حذف"
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 }
