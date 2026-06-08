@@ -9,15 +9,8 @@ let app: App;
 if (getApps().length === 0) {
   const base64Sdk = process.env.FIREBASE_ADMIN_SDK_BASE64;
 
-  // 🚀 التفعيل التلقائي الآمن المتكامل مع الـ API لمنع خطأ 500
-  if (!base64Sdk) {
-    console.log("Initializing Firebase Admin SDK using specific Service Account ID...");
-    app = initializeApp({
-      storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
-      serviceAccountId: "firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"
-    });
-  } else {
-    // 💻 بيئة التطوير المحلية في جهازك
+  if (base64Sdk) {
+    // 💻 Local development environment
     try {
       const sdkJson = Buffer.from(base64Sdk, 'base64').toString('utf-8');
       const serviceAccount = JSON.parse(sdkJson);
@@ -26,14 +19,21 @@ if (getApps().length === 0) {
         credential: cert(serviceAccount),
         storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
       });
-      console.log("Firebase Admin SDK initialized successfully from Base64.");
-    } catch (error: any) {
-      console.warn("Base64 decoding failed, falling back to specific Service Account ID...");
+      console.log("Firebase Admin SDK initialized successfully from Base64 for local dev.");
+    } catch (error) {
+      console.error("Failed to initialize Firebase Admin SDK from Base64. Ensure FIREBASE_ADMIN_SDK_BASE64 is set correctly.", error);
       app = initializeApp({
         storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
-        serviceAccountId: "firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com"
       });
     }
+  } else {
+    // 🚀 Deployed environment (App Hosting)
+    // serviceAccountId is explicitly set to sign session cookies.
+    app = initializeApp({
+      storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
+      serviceAccountId: "firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com",
+    });
+    console.log("Firebase Admin SDK initialized for deployed environment with serviceAccountId.");
   }
 } else {
   app = getApps()[0];
