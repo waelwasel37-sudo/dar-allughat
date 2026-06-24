@@ -2,13 +2,11 @@ version: 1
 framework: nextjs
 
 env:
-  # الربط المباشر والآمن مع الأسرار المخزنة في Secret Manager
   - variable: SERVER_FB_PROJECT_ID
-    secret: FIREBASE_PROJECT_ID  # 🔐 مربوط الآن بالسر مباشرة
+    secret: FIREBASE_PROJECT_ID
 
   - variable: SERVER_FB_CLIENT_EMAIL
-    secret: FIREBASE_CLIENT_EMAIL # 🔐 مربوط الآن بالسر مباشرة
+    secret: FIREBASE_CLIENT_EMAIL
 
   - variable: SERVER_FB_PRIVATE_KEY
-    secret: FIREBASE_PRIVATE_KEY    # 🔐 مربوط الآن بالسر مباشرة
-
+    secret: FIREBASE_PRIVATE_KEY
