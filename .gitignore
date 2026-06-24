@@ -19,9 +19,6 @@
 .env.production.local
 .env.local
 
-# --- ✨ ملف إعدادات الاستضافة والمفتاح السري (App Hosting Config) ✨ ---
-apphosting.yaml
-
 # --- ملفات حسابات الخدمة السرية (Sensitive Keys) ---
 firebase-service-account.json
 firebase-service-account-key.json

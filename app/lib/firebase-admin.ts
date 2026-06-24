@@ -4,34 +4,38 @@ import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
 import { getStorage } from 'firebase-admin/storage';
 import * as admin from 'firebase-admin';
 
-// تأمين تهيئة التطبيق كـ Singleton آمن للـ SSR
+// تأمين تهيئة التطبيق كـ Singleton آمن لبيئة الـ SSR في Firebase App Hosting
 if (getApps().length === 0) {
-  const base64Sdk = process.env.FIREBASE_ADMIN_SDK_BASE64;
+  // قراءة المتغيرات مباشرة من ملف apphosting.yaml
+  const pKey = process.env.SERVER_FB_PRIVATE_KEY;
+  
+  const serviceAccount = {
+    projectId: process.env.SERVER_FB_PROJECT_ID,
+    clientEmail: process.env.SERVER_FB_CLIENT_EMAIL,
+    // معالجة الـ \n البرمجية لفك تشفير المفتاح بالشكل الذي يتطلبه الخادم
+    privateKey: pKey ? pKey.replace(/\\n/g, '\n') : undefined,
+  };
 
-  if (base64Sdk) {
-    // 💻 Local development environment
+  if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
     try {
-      const sdkJson = Buffer.from(base64Sdk, 'base64').toString('utf-8');
-      const serviceAccount = JSON.parse(sdkJson);
-
       initializeApp({
         credential: cert(serviceAccount),
         storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
       });
-      console.log("Firebase Admin SDK initialized successfully from Base64 for local dev.");
+      console.log("Firebase Admin SDK initialized successfully using apphosting.yaml variables.");
     } catch (error) {
-      console.error("Failed to initialize Firebase Admin SDK from Base64. Ensure FIREBASE_ADMIN_SDK_BASE64 is set correctly.", error);
+      console.error("Failed to initialize Firebase Admin with structured service account:", error);
       initializeApp({
         storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
       });
     }
   } else {
-    // 🚀 Deployed environment (App Hosting)
+    // حل احتياطي أوتوماتيكي بناءً على الصلاحيات الافتراضية للـ Container
     initializeApp({
       storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
       serviceAccountId: "firebase-app-hosting-compute@dar-allughat-97483992-fc6c5.iam.gserviceaccount.com",
     });
-    console.log("Firebase Admin SDK initialized for deployed environment with serviceAccountId.");
+    console.log("Firebase Admin SDK initialized with default compute serviceAccountId.");
   }
 }
 
