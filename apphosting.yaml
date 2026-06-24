@@ -10,3 +10,5 @@ env:
 
   - variable: SERVER_FB_PRIVATE_KEY
     secret: FIREBASE_PRIVATE_KEY
+
+# Re-trigger build by adding a comment
