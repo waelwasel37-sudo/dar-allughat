@@ -3,8 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
-// *** CORRECTED PATH ***
-import { auth } from '@/app/lib/firebase'; 
+import { auth } from '../lib/firebase'; // Corrected relative path
 
 interface AuthContextType {
   user: User | null;
@@ -28,13 +27,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       if (currentUser) {
         setUser(currentUser);
-        const idToken = await currentUser.getIdToken();
+        const idToken = await currentUser.getIdToken(true); // إجبار توليد طازج للـ Token
 
         const response = await fetch('/api/auth/session-login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include', // أساسي جداً للسماح بعبور وتخزين الـ Cookies بين النطاقات المختلفة
             body: JSON.stringify({ idToken }),
         });
 
@@ -42,12 +42,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const ADMIN_EMAIL = 'waelwasel37@gmail.com'; 
             const userIsAdmin = currentUser.email === ADMIN_EMAIL;
             setIsAdmin(userIsAdmin);
+            
             if (userIsAdmin && pathname === '/login') {
-                router.push('/admin');
+                // تأخير بسيط جداً لضمان ثبات الكوكي على الخادم قبل الانتقال
+                setTimeout(() => {
+                    router.push('/admin');
+                }, 100);
             }
         } else {
-            const errorData = await response.json();
-            console.error('Failed to create server session:', errorData.details || errorData.error);
+            try {
+                const errorData = await response.json();
+                console.error('Failed to create server session (from JSON):', errorData.details || errorData.error);
+            } catch (jsonError) {
+                const errorText = await response.text();
+                console.error('Failed to create server session (non-JSON response):', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    body: errorText,
+                });
+            }
             setIsAdmin(false);
             setUser(null);
         }
@@ -55,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setUser(null);
         setIsAdmin(false);
-        await fetch('/api/auth/session-logout', { method: 'POST' });
+        await fetch('/api/auth/session-logout', { method: 'POST', credentials: 'include' });
 
         if (pathname.startsWith('/admin')) {
           router.push('/login');
