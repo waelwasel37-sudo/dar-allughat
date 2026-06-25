@@ -23,53 +23,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
   useEffect(() => {
+    let isProcessing = false; // قفل ذكي لمنع تكرار الطلبات المتزامنة مسببة الـ 500
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
         setUser(currentUser);
-        const idToken = await currentUser.getIdToken(true); // إجبار توليد طازج للـ Token
 
-        const response = await fetch('/api/auth/session-login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include', // أساسي جداً للسماح بعبور وتخزين الـ Cookies بين النطاقات المختلفة
-            body: JSON.stringify({ idToken }),
-        });
+        // إذا كان هناك طلب قيد المعالجة الآن، تجاهل هذا الحدث المكرر
+        if (isProcessing) return; 
+        isProcessing = true; 
 
-        if (response.ok) {
-            const ADMIN_EMAIL = 'waelwasel37@gmail.com'; 
-            const userIsAdmin = currentUser.email === ADMIN_EMAIL;
-            setIsAdmin(userIsAdmin);
-            
-            if (userIsAdmin && pathname === '/login') {
-                // تأخير بسيط جداً لضمان ثبات الكوكي على الخادم قبل الانتقال
-                setTimeout(() => {
-                    router.push('/admin');
-                }, 100);
-            }
-        } else {
-            try {
-                const errorData = await response.json();
-                console.error('Failed to create server session (from JSON):', errorData.details || errorData.error);
-            } catch (jsonError) {
-                const errorText = await response.text();
-                console.error('Failed to create server session (non-JSON response):', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    body: errorText,
-                });
-            }
-            setIsAdmin(false);
-            setUser(null);
+        try {
+          const idToken = await currentUser.getIdToken(true);
+
+          const response = await fetch('/api/auth/session-login', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+              body: JSON.stringify({ idToken }),
+          });
+
+          if (response.ok) {
+              const ADMIN_EMAIL = 'waelwasel37@gmail.com'; 
+              const userIsAdmin = currentUser.email === ADMIN_EMAIL;
+              setIsAdmin(userIsAdmin);
+              
+              if (userIsAdmin && pathname === '/login') {
+                  setTimeout(() => {
+                      router.push('/admin');
+                  }, 150);
+              }
+          } else {
+              const errorData = await response.json().catch(() => ({}));
+              console.error('Server integration error:', errorData.details || 'Identity conflict.');
+              setIsAdmin(false);
+              setUser(null);
+          }
+        } catch (err) {
+          console.error('Network catch during session init:', err);
+        } finally {
+          isProcessing = false; // فتح القفل بعد انتهاء العملية بالكامل
         }
 
       } else {
         setUser(null);
         setIsAdmin(false);
-        await fetch('/api/auth/session-logout', { method: 'POST', credentials: 'include' });
-
+        if (!isProcessing) {
+          await fetch('/api/auth/session-logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+        }
         if (pathname.startsWith('/admin')) {
           router.push('/login');
         }
