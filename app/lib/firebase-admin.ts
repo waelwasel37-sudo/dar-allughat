@@ -15,8 +15,33 @@ const privateKey = process.env.SERVER_FB_PRIVATE_KEY || process.env.FIREBASE_PRI
 console.log(`[Firebase Admin] Client Email loaded: ${!!clientEmail}`);
 console.log(`[Firebase Admin] Private Key loaded: ${!!privateKey}`);
 
-if (!privateKey) {
-  console.error('[Firebase Admin] FATAL: PRIVATE KEY IS UNDEFINED. Check Secret Manager and Cloud Run environment variable configuration.');
+// دالة فك تشفير Base64 رياضية نقية %100 لتفادي تعارض الـ Build والـ Buffer
+function safeBase64Decode(str: string): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  const buffer = new Uint8Array(str.length);
+  let bits = 0;
+  let value = 0;
+  let index = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (c === '=') break;
+    const v = chars.indexOf(c);
+    if (v === -1) continue;
+    value = (value << 6) | v;
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      buffer[index++] = (value >> bits) & 0xff;
+    }
+  }
+  
+  // تحويل الـ Uint8Array إلى نص يونيكود صافي بشكل آمن بيئياً
+  let result = '';
+  for (let i = 0; i < index; i++) {
+    result += String.fromCharCode(buffer[i]);
+  }
+  return result;
 }
 
 try {
@@ -31,10 +56,10 @@ try {
         effectivePrivateKey = effectivePrivateKey.slice(1, -1).trim();
       }
 
-      // خطوة السحر البيئية المضمونة في Next 15 وقت البناء والتشغيل
+      // الفحص والفك الرياضي الآمن تماماً وقت البناء
       if (!effectivePrivateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        console.log('[Firebase Admin] Base64 encoded key detected. Decoding via globalThis.atob...');
-        effectivePrivateKey = globalThis.atob(effectivePrivateKey).trim();
+        console.log('[Firebase Admin] Base64 encoded key detected. Decoding via safe decoder...');
+        effectivePrivateKey = safeBase64Decode(effectivePrivateKey).trim();
       }
 
       effectivePrivateKey = effectivePrivateKey.replace(/\n/g, '
