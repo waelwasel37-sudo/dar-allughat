@@ -7,40 +7,26 @@ import * as admin from 'firebase-admin';
 let app: App | undefined;
 let auth: Auth | undefined;
 
-console.log('[Firebase Admin] Final Adaptive Cloud-Native Initialization...');
+console.log('[Firebase Admin] Adaptive JSON Initialization...');
 
 try {
   if (getApps().length === 0) {
     const rawSecret = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
-    const projectId = process.env.SERVER_FB_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || "dar-allughat-97483992-fc6c5";
-    const clientEmail = process.env.SERVER_FB_CLIENT_EMAIL || process.env.FIREBASE_CLIENT_EMAIL;
 
     if (!rawSecret) {
-      throw new Error('CRITICAL: FIREBASE_PRIVATE_KEY environment variable is missing.');
+      throw new Error('CRITICAL: FIREBASE_PRIVATE_KEY is missing.');
     }
 
     let credentialConfig: any;
+    const trimmedSecret = rawSecret.trim();
 
-    // الفحص الذكي: إذا كان النص يبدأ بقوس JSON، نقوم بتحليله كملف كامل مثل خطتك
-    if (rawSecret.trim().startsWith('{')) {
-      console.log('[Firebase Admin] Full Service Account JSON structure detected.');
-      const serviceAccount = JSON.parse(rawSecret.trim());
+    if (trimmedSecret.startsWith('{')) {
+      console.log('[Firebase Admin] Full Service Account JSON parsed.');
+      const serviceAccount = JSON.parse(trimmedSecret);
       credentialConfig = admin.credential.cert(serviceAccount);
     } else {
-      // إذا كان النص هو سطر المفتاح الخاص الصافي فقط
-      console.log('[Firebase Admin] Individual Private Key string detected.');
-      let cleanKey = rawSecret.trim();
-      if (cleanKey.startsWith('"') && cleanKey.endsWith('"')) {
-        cleanKey = cleanKey.slice(1, -1).trim();
-      }
-      cleanKey = cleanKey.replace(/\n/g, '
-');
-
-      credentialConfig = admin.credential.cert({
-        projectId: projectId,
-        clientEmail: clientEmail,
-        privateKey: cleanKey,
-      });
+      console.log('[Firebase Admin] Using Application Default Credentials fallback.');
+      credentialConfig = admin.credential.applicationDefault();
     }
 
     initializeApp({
@@ -48,31 +34,33 @@ try {
       storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
     });
     
-    console.log('[Firebase Admin] SUCCESS! Initialized with adaptive configuration.');
+    console.log('[Firebase Admin] SUCCESS! Initialized cleanly.');
   } else {
-    console.log('[Firebase Admin] Existing app found.');
+    app = getApp();
   }
   
-  app = getApp();
-  auth = getAdminAuth(app);
+  auth = getAdminAuth(app || getApp());
 
 } catch (error) {
   console.error('[Firebase Admin] FATAL INITIALIZATION ERROR:', error);
 }
 
 export function getDb(): Firestore {
-  if (!app) throw new Error("Firebase Admin App not initialized.");
-  return getFirestore(app);
+  const currentApp = app || getApp();
+  if (!currentApp) throw new Error("App not initialized.");
+  return getFirestore(currentApp);
 }
 
 export function getAuth(): Auth {
-  if (!auth) throw new Error("Firebase Admin Auth not initialized.");
-  return auth;
+  const currentAuth = auth || getAdminAuth(app || getApp());
+  if (!currentAuth) throw new Error("Auth not initialized.");
+  return currentAuth;
 }
 
 export function getBucket(bucketName?: string) {
-  if (!app) throw new Error("Firebase Admin App not initialized.");
-  const storage = getStorage(app);
+  const currentApp = app || getApp();
+  if (!currentApp) throw new Error("App not initialized.");
+  const storage = getStorage(currentApp);
   return bucketName ? storage.bucket(bucketName) : storage.bucket();
 }
 
