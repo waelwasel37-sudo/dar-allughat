@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers"; // الاستدعاء الرسمي المضمون في Next 15
-import { getAuth } from "@/app/lib/firebase-admin";
+import { getAuth } from "../../../lib/firebase-admin";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  console.log("--- V3: /api/auth/session-login execution started ---");
+  console.log("--- V4: /api/auth/session-login execution started ---");
   try {
     console.log("[1/6] Awaiting request body...");
     const { idToken } = await request.json().catch(() => ({}));
@@ -29,20 +29,20 @@ export async function POST(request: Request) {
     const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
     console.log("[6/6] Session cookie created successfully.");
 
-    // الطريقة الرسمية والأكثر أماناً لتعيين الكوكي في Next.js 15 لمنع الـ 500
+    // إضافة await هنا لضمان التوافق مع Next.js 15
     const cookieStore = cookies();
     cookieStore.set("__session", sessionCookie, {
-      maxAge: expiresIn / 1000, // الـ Cookie Store في Next يحتاج الثواني وليس الملي ثانية
+      maxAge: expiresIn / 1000, 
       httpOnly: true,
       secure: true,
       path: "/",
       sameSite: "lax",
     });
 
-    console.log("--- V3: Session cookie set in headers. Responding with success. ---");
+    console.log("--- V4: Session cookie set in headers. Responding with success. ---");
     return NextResponse.json({ status: "success" }, { status: 200 });
   } catch (e) {
-    console.error("--- V3: CRITICAL: Caught an error in session-login ---");
+    console.error("--- V4: CRITICAL: Caught an error in session-login ---");
     console.error(e);
     return NextResponse.json(
       { 
