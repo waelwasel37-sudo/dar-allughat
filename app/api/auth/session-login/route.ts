@@ -1,54 +1,76 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers"; // الاستدعاء الرسمي المضمون في Next 15
 import { getAuth } from "../../../lib/firebase-admin";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  console.log("--- V4: /api/auth/session-login execution started ---");
+  console.log("--- V5 DEBUG: /api/auth/session-login execution started ---");
+  
+  let idToken;
   try {
-    console.log("[1/6] Awaiting request body...");
-    const { idToken } = await request.json().catch(() => ({}));
-    console.log("[2/6] Request body parsed.");
-
-    if (!idToken) {
-      console.log("[3/6] No idToken found. Skipping session for guest.");
-      return NextResponse.json(
-        { status: "skipped", message: "No token for guest user." },
-        { status: 200 }
-      );
-    }
-    console.log("[3/6] idToken is present.");
-
-    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
-
-    console.log("[4/6] Calling getAuth() to get Firebase Auth instance...");
-    const auth = getAuth();
-    
-    console.log("[5/6] Firebase Auth instance received. Calling createSessionCookie...");
-    const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
-    console.log("[6/6] Session cookie created successfully.");
-
-    // إضافة await هنا لضمان التوافق مع Next.js 15
-    const cookieStore = cookies();
-    cookieStore.set("__session", sessionCookie, {
-      maxAge: expiresIn / 1000, 
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite: "lax",
-    });
-
-    console.log("--- V4: Session cookie set in headers. Responding with success. ---");
-    return NextResponse.json({ status: "success" }, { status: 200 });
+    console.log("[1/8] Awaiting request body...");
+    const body = await request.json();
+    idToken = body.idToken;
+    console.log("[2/8] Request body parsed successfully.");
   } catch (e) {
-    console.error("--- V4: CRITICAL: Caught an error in session-login ---");
-    console.error(e);
+    console.error("[DEBUG] Error parsing request JSON:", e);
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  if (!idToken) {
+    console.log("[3/8] No idToken found. Skipping session for guest.");
     return NextResponse.json(
-      { 
-        error: "Failed to create session.", 
-        details: e instanceof Error ? e.message : "An unknown error occurred during session creation." 
-      }, 
+      { status: "skipped", message: "No token for guest user." },
+      { status: 200 }
+    );
+  }
+  console.log("[3/8] idToken is present.");
+
+  const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
+
+  let auth;
+  try {
+    console.log("[4/8] Calling getAuth()...");
+    auth = getAuth();
+    console.log("[5/8] getAuth() successful.");
+  } catch (e) {
+    console.error("--- V5 CRITICAL: Error initializing Firebase Admin (getAuth) ---", e);
+    return NextResponse.json(
+      { error: "Server configuration error.", details: e instanceof Error ? e.message : "Failed to get auth instance." }, 
+      { status: 500 } 
+    );
+  }
+
+  let sessionCookie;
+  try {
+    console.log("[6/8] Calling createSessionCookie...");
+    sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
+    console.log("[7/8] createSessionCookie successful.");
+  } catch (e) {
+    console.error("--- V5 CRITICAL: Error creating session cookie ---", e);
+    return NextResponse.json(
+      { error: "Session creation failed.", details: e instanceof Error ? e.message : "Invalid ID token or Firebase error." }, 
+      { status: 500 } 
+    );
+  }
+
+  try {
+    console.log("[8/8] Generating raw response and headers...");
+    const response = NextResponse.json({ status: "success" }, { status: 200 });
+    
+    // الحل الجذري لتخطي حظر متصفح فايرفوكس والـ Partitioning عن طريق الهيدرز الخام
+    const maxAgeSeconds = expiresIn / 1000;
+    response.headers.append(
+      "Set-Cookie",
+      `__session=${sessionCookie}; Path=/; Max-Age=${maxAgeSeconds}; HttpOnly; Secure; SameSite=Lax`
+    );
+
+    console.log("--- V5 DEBUG: Raw Set-Cookie header applied. Responding with success. ---");
+    return response;
+  } catch (e) {
+    console.error("--- V5 CRITICAL: Error setting response cookie ---", e);
+    return NextResponse.json(
+      { error: "Response configuration error.", details: e instanceof Error ? e.message : "Failed to set cookie on response." }, 
       { status: 500 } 
     );
   }
