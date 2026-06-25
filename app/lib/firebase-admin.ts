@@ -4,60 +4,65 @@ import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
 import { getStorage } from 'firebase-admin/storage';
 import * as admin from 'firebase-admin';
 
-let app: App | undefined;
-let auth: Auth | undefined;
+let appInstance: App | undefined;
+let authInstance: Auth | undefined;
 
-console.log('[Firebase Admin] Comprehensive Adaptive Initialization...');
+console.log('[Firebase Admin] Invoking Clean Cloud Initialization...');
 
 try {
   if (getApps().length === 0) {
-    const rawSecret = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
+    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.SERVER_FB_PROJECT_ID || "dar-allughat-97483992-fc6c5";
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || process.env.SERVER_FB_CLIENT_EMAIL;
+    let privateKey = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
 
-    let credentialConfig: any;
-    if (rawSecret && rawSecret.trim().startsWith('{')) {
-      console.log('[Firebase Admin] Full Service Account JSON parsed.');
-      const serviceAccount = JSON.parse(rawSecret.trim());
-      credentialConfig = admin.credential.cert(serviceAccount);
-    } else {
-      console.log('[Firebase Admin] Using Application Default Credentials fallback.');
-      credentialConfig = admin.credential.applicationDefault();
+    if (privateKey) {
+      privateKey = privateKey.trim();
+      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+        privateKey = privateKey.slice(1, -1).trim();
+      }
     }
 
-    initializeApp({
-      credential: credentialConfig,
+    appInstance = initializeApp({
+      credential: admin.credential.cert({
+        projectId: projectId,
+        clientEmail: clientEmail,
+        privateKey: privateKey,
+      }),
       storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
     });
-    
-    console.log('[Firebase Admin] SUCCESS! Initialized cleanly.');
+    console.log('[Firebase Admin] Initialization Success with Clean Cloud Version 4 Cert.');
+  } else {
+    appInstance = getApp();
   }
   
-  app = getApp();
-  auth = getAdminAuth(app);
+  if (appInstance) {
+    authInstance = getAdminAuth(appInstance);
+  }
 
 } catch (error) {
-  console.error('[Firebase Admin] FATAL INITIALIZATION ERROR:', error);
+  console.error('[Firebase Admin] CRITICAL INIT ERROR:', error);
+  appInstance = getApps().length > 0 ? getApp() : initializeApp();
+  authInstance = getAdminAuth(appInstance);
 }
 
-// تصدير كافة الدوال والمحارف الأساسية التي تبحث عنها الملفات الأخرى لإنهاء الأخطاء الخمسة
-export { admin };
-
 export function getDb(): Firestore {
-  const currentApp = app || getApp();
-  if (!currentApp) throw new Error("App not initialized.");
+  const currentApp = getApps().length > 0 ? getApp() : appInstance;
+  if (!currentApp) throw new Error("Firebase app instance is missing.");
   return getFirestore(currentApp);
 }
 
 export function getAuth(): Auth {
-  const currentApp = app || getApp();
-  if (!currentApp) throw new Error("Auth not initialized.");
+  const currentApp = getApps().length > 0 ? getApp() : appInstance;
+  if (!currentApp) throw new Error("Firebase app instance is missing.");
   return getAdminAuth(currentApp);
 }
 
 export function getBucket(bucketName?: string) {
-  const currentApp = app || getApp();
-  if (!currentApp) throw new Error("App not initialized.");
+  const currentApp = getApps().length > 0 ? getApp() : appInstance;
+  if (!currentApp) throw new Error("Firebase app instance is missing.");
   const storage = getStorage(currentApp);
   return bucketName ? storage.bucket(bucketName) : storage.bucket();
 }
 
+export { admin };
 export default admin;
