@@ -16,6 +16,9 @@
 
     # The Java Development Kit is sometimes required by the Firebase emulators.
     pkgs.jdk
+    
+    # Provides the curl command.
+    pkgs.curl
   ];
 
   # Environment variables can be set here, but for Next.js, it's best
