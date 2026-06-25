@@ -1,3 +1,5 @@
+import './firebase-admin'; // استيراد حاسم لضمان التهيئة الفورية
+
 // app/lib/data-server.ts - نسخة محسنة مع معالجة آمنة للبيانات
 import admin, { getDb } from './firebase-admin';
 import { Product, Category, Post } from './types'; // افترض وجود نوع Post

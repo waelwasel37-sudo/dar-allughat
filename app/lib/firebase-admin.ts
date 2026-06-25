@@ -7,22 +7,16 @@ import * as admin from 'firebase-admin';
 let app: App | undefined;
 let auth: Auth | undefined;
 
-console.log('[Firebase Admin] Adaptive JSON Initialization...');
+console.log('[Firebase Admin] Comprehensive Adaptive Initialization...');
 
 try {
   if (getApps().length === 0) {
     const rawSecret = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
 
-    if (!rawSecret) {
-      throw new Error('CRITICAL: FIREBASE_PRIVATE_KEY is missing.');
-    }
-
     let credentialConfig: any;
-    const trimmedSecret = rawSecret.trim();
-
-    if (trimmedSecret.startsWith('{')) {
+    if (rawSecret && rawSecret.trim().startsWith('{')) {
       console.log('[Firebase Admin] Full Service Account JSON parsed.');
-      const serviceAccount = JSON.parse(trimmedSecret);
+      const serviceAccount = JSON.parse(rawSecret.trim());
       credentialConfig = admin.credential.cert(serviceAccount);
     } else {
       console.log('[Firebase Admin] Using Application Default Credentials fallback.');
@@ -35,15 +29,17 @@ try {
     });
     
     console.log('[Firebase Admin] SUCCESS! Initialized cleanly.');
-  } else {
-    app = getApp();
   }
   
-  auth = getAdminAuth(app || getApp());
+  app = getApp();
+  auth = getAdminAuth(app);
 
 } catch (error) {
   console.error('[Firebase Admin] FATAL INITIALIZATION ERROR:', error);
 }
+
+// تصدير كافة الدوال والمحارف الأساسية التي تبحث عنها الملفات الأخرى لإنهاء الأخطاء الخمسة
+export { admin };
 
 export function getDb(): Firestore {
   const currentApp = app || getApp();
@@ -52,9 +48,9 @@ export function getDb(): Firestore {
 }
 
 export function getAuth(): Auth {
-  const currentAuth = auth || getAdminAuth(app || getApp());
-  if (!currentAuth) throw new Error("Auth not initialized.");
-  return currentAuth;
+  const currentApp = app || getApp();
+  if (!currentApp) throw new Error("Auth not initialized.");
+  return getAdminAuth(currentApp);
 }
 
 export function getBucket(bucketName?: string) {
