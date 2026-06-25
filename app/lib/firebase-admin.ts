@@ -7,35 +7,45 @@ import * as admin from 'firebase-admin';
 let app: App | undefined;
 let auth: Auth | undefined;
 
-console.log('[Firebase Admin] Starting Base64 Decoding Initialization...');
+console.log('[Firebase Admin] RUNTIME ENVIRONMENT DIAGNOSTICS...');
+
+const clientEmail = process.env.SERVER_FB_CLIENT_EMAIL || process.env.FIREBASE_CLIENT_EMAIL;
+const privateKey = process.env.SERVER_FB_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY;
+
+console.log(`[Firebase Admin] Client Email loaded: ${!!clientEmail}`);
+console.log(`[Firebase Admin] Private Key loaded: ${!!privateKey}`);
+
+if (!privateKey) {
+  console.error('[Firebase Admin] FATAL: PRIVATE KEY IS UNDEFINED. Check Secret Manager and Cloud Run environment variable configuration.');
+}
 
 try {
   if (getApps().length === 0) {
     const projectId = process.env.SERVER_FB_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || "dar-allughat-97483992-fc6c5";
-    const clientEmail = process.env.SERVER_FB_CLIENT_EMAIL || process.env.FIREBASE_CLIENT_EMAIL;
-    let privateKey = process.env.SERVER_FB_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY;
+    
+    let effectivePrivateKey = privateKey;
 
-    if (privateKey) {
-      // تنظيف علامات التنصيص الزائدة إن وجدت
-      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-        privateKey = privateKey.slice(1, -1);
+    if (effectivePrivateKey) {
+      effectivePrivateKey = effectivePrivateKey.trim();
+      if (effectivePrivateKey.startsWith('"') && effectivePrivateKey.endsWith('"')) {
+        effectivePrivateKey = effectivePrivateKey.slice(1, -1).trim();
       }
 
-      // خطوة السحر: إذا كان المفتاح لا يبدأ بالصيغة التقليدية، فإنه مشفر بـ Base64 ونقوم بفكه فورا
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        console.log('[Firebase Admin] Base64 encoded key detected. Decoding now...');
-        privateKey = Buffer.from(privateKey, 'base64').toString('utf8');
+      // خطوة السحر البيئية المضمونة في Next 15 وقت البناء والتشغيل
+      if (!effectivePrivateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        console.log('[Firebase Admin] Base64 encoded key detected. Decoding via globalThis.atob...');
+        effectivePrivateKey = globalThis.atob(effectivePrivateKey).trim();
       }
 
-      // إصلاح أسطر المفتاح بعد الفك لضمان قراءته في السيرفر السحابي
-      privateKey = privateKey.replace(/\\n/g, '\n');
+      effectivePrivateKey = effectivePrivateKey.replace(/\n/g, '
+');
     }
 
     initializeApp({
       credential: admin.credential.cert({
         projectId: projectId,
         clientEmail: clientEmail,
-        privateKey: privateKey,
+        privateKey: effectivePrivateKey,
       }),
       storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
     });
