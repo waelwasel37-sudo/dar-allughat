@@ -6,16 +6,41 @@ import * as admin from 'firebase-admin';
 
 let appInstance: App | undefined;
 
-console.log('[Firebase Admin] Invoking Clean Cloud Initialization...');
+console.log('[Firebase Admin] Invoking Flexible Cloud Initialization...');
 
 try {
   if (getApps().length === 0) {
-    // الحل السحري: تفعيل البيئة السحابية الافتراضية بدون الحاجة لـ privateKey يدوي
-    appInstance = initializeApp({
-      credential: admin.credential.applicationDefault(), // يسحب الصلاحيات تلقائياً من سيرفر جوجل الآمن
-      storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
-    });
-    console.log('[Firebase Admin] Initialization Success via Application Default Credentials.');
+    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.SERVER_FB_PROJECT_ID || "dar-allughat-97483992-fc6c5";
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || process.env.SERVER_FB_CLIENT_EMAIL;
+    let privateKey = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
+
+    // إصلاح شامل للمفتاح السري وتفادي قيود الـ Linter والـ Decoder
+    if (privateKey) {
+      privateKey = privateKey.trim();
+      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+        privateKey = privateKey.slice(1, -1).trim();
+      }
+      privateKey = privateKey.replace(/\\n/g, String.fromCharCode(10));
+    }
+
+    // إذا كانت المفاتيح متوفرة في الـ Secrets نستخدمها، وإلا نعتمد على الصلاحيات الافتراضية
+    if (privateKey && clientEmail) {
+      appInstance = initializeApp({
+        credential: admin.credential.cert({
+          projectId: projectId,
+          clientEmail: clientEmail,
+          privateKey: privateKey,
+        }),
+        storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
+      });
+      console.log('[Firebase Admin] Initialization Success via Custom Private Key.');
+    } else {
+      appInstance = initializeApp({
+        credential: admin.credential.applicationDefault(),
+        storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
+      });
+      console.log('[Firebase Admin] Initialization Success via Application Default.');
+    }
   } else {
     appInstance = getApp();
   }
