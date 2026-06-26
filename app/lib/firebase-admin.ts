@@ -5,47 +5,23 @@ import { getStorage } from 'firebase-admin/storage';
 import * as admin from 'firebase-admin';
 
 let appInstance: App | undefined;
-let authInstance: Auth | undefined;
 
 console.log('[Firebase Admin] Invoking Clean Cloud Initialization...');
 
 try {
   if (getApps().length === 0) {
-    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.SERVER_FB_PROJECT_ID || "dar-allughat-97483992-fc6c5";
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || process.env.SERVER_FB_CLIENT_EMAIL;
-    let privateKey = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
-
-    if (privateKey) {
-      privateKey = privateKey.trim();
-      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-        privateKey = privateKey.slice(1, -1).trim();
-      }
-      // The linter is very strict about newline literals.
-      // Using String.fromCharCode(10) is a safer way to represent a newline.
-      privateKey = privateKey.replace(/\\n/g, String.fromCharCode(10));
-    }
-
+    // الحل السحري: تفعيل البيئة السحابية الافتراضية بدون الحاجة لـ privateKey يدوي
     appInstance = initializeApp({
-      credential: admin.credential.cert({
-        projectId: projectId,
-        clientEmail: clientEmail,
-        privateKey: privateKey,
-      }),
+      credential: admin.credential.applicationDefault(), // يسحب الصلاحيات تلقائياً من سيرفر جوجل الآمن
       storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
     });
-    console.log('[Firebase Admin] Initialization Success with Clean Cloud Version 4 Cert.');
+    console.log('[Firebase Admin] Initialization Success via Application Default Credentials.');
   } else {
     appInstance = getApp();
   }
-
-  if (appInstance) {
-    authInstance = getAdminAuth(appInstance);
-  }
-
 } catch (error) {
   console.error('[Firebase Admin] CRITICAL INIT ERROR:', error);
   appInstance = getApps().length > 0 ? getApp() : initializeApp();
-  authInstance = getAdminAuth(appInstance);
 }
 
 export function getDb(): Firestore {
