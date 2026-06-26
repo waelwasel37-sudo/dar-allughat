@@ -17,9 +17,12 @@ try {
 
     if (privateKey) {
       privateKey = privateKey.trim();
+      // Remove quotes if they exist at the beginning and end
       if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
         privateKey = privateKey.slice(1, -1).trim();
       }
+      // A robust solution: convert literal "\n" to actual newlines for the Node.js server
+      privateKey = privateKey.replace(/\n/g, '\n');
     }
 
     appInstance = initializeApp({

@@ -1,3 +1,4 @@
+import '../../lib/firebase-admin'; // ENGINEERING: Force immediate initialization to prevent race conditions.
 
 // ENGINEERING UPGRADE: V8 (Architectural Fix)
 // This page is now a Server Component, responsible for fetching data 
