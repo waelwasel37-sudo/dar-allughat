@@ -17,12 +17,12 @@ try {
 
     if (privateKey) {
       privateKey = privateKey.trim();
-      // Remove quotes if they exist at the beginning and end
       if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
         privateKey = privateKey.slice(1, -1).trim();
       }
-      // A robust solution: convert literal "\n" to actual newlines for the Node.js server
-      privateKey = privateKey.replace(/\n/g, '\n');
+      // The linter is very strict about newline literals.
+      // Using String.fromCharCode(10) is a safer way to represent a newline.
+      privateKey = privateKey.replace(/\\n/g, String.fromCharCode(10));
     }
 
     appInstance = initializeApp({
@@ -37,7 +37,7 @@ try {
   } else {
     appInstance = getApp();
   }
-  
+
   if (appInstance) {
     authInstance = getAdminAuth(appInstance);
   }
