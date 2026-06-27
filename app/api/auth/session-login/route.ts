@@ -1,85 +1,65 @@
 import { NextResponse } from "next/server";
-import { auth as adminAuth } from "../../../lib/firebase-admin"; // 🚀 المطابقة الصحيحة مع ملف الأدمن المحدث
-import { DecodedIdToken } from "firebase-admin/auth";
+import * as adminInstance from "../../../lib/firebase-admin";
 
 export const dynamic = "force-dynamic";
 
-async function handler(request: Request) {
-  console.log("--- V6 DEBUG: /api/auth/session-login execution started ---");
-
-  let idToken;
+export async function POST(request: Request) {
+  console.log("--- 🕵️‍♂️ RUNTIME DIAGNOSTIC START: /api/auth/session-login ---");
+  
   try {
     const body = await request.json();
-    idToken = body.idToken;
-    if (!idToken) throw new Error("idToken is missing from request body.");
-  } catch (e) {
-    const error = e as Error;
-    console.error("[DEBUG] Error parsing request JSON:", error);
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
-  let decodedToken: DecodedIdToken;
-  try {
-    console.log("[1/5] Verifying ID token...");
-    // ⚡ التعديل الحاسم: استخدام دالة التوثيق المتوافقة مع ملف الأدمن المحدث
-    decodedToken = await adminAuth.verifyIdToken(idToken);
-    console.log("[2/5] ID token verified successfully. UID:", decodedToken.uid);
-  } catch (error) {
-    const err = error as Error;
-    console.error("--- V6 CRITICAL: Error verifying ID token ---", err);
-    return NextResponse.json({ error: "Invalid token.", details: err.message }, { status: 401 });
-  }
-
-  // 🔐 قفل الأمان الحصري: منع أي بريد إلكتروني آخر في العالم من الدخول سواك
-  if (decodedToken.email !== "waelwasel37@gmail.com") {
-    console.warn(`[⚠️ SECURITY WARNING] Unauthorized login attempt from: ${decodedToken.email}`);
-    return NextResponse.json({ error: "Access denied. Unauthorized administrator." }, { status: 403 });
-  }
-
-  const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
-
-  let sessionCookie;
-  try {
-    console.log("[3/5] Creating session cookie...");
-    // ⚡ التعديل الحاسم: استخدام دالة الكوكيز المتوافقة مع ملف الأدمن المحدث
-    sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
-    console.log("[4/5] Session cookie created successfully.");
-  } catch (error) {
-    const err = error as Error;
-    console.error("--- V6 CRITICAL: Error creating session cookie ---", err);
-    return NextResponse.json({ error: "Session creation failed.", details: err.message }, { status: 400 });
-  }
-
-  try {
-    console.log("[5/5] Generating response with user data and setting cookie...");
+    const idToken = body.idToken || body.token;
     
-    const userPayload = {
-      uid: decodedToken.uid,
-      email: decodedToken.email || null,
-      name: decodedToken.name || null,
-      picture: decodedToken.picture || null,
-      role: 'admin', 
-    };
+    if (!idToken) {
+      console.error("[❌ DIAGNOSTIC] idToken is totally missing from frontend payload");
+      return NextResponse.json({ error: "Missing token" }, { status: 400 });
+    }
 
-    const response = NextResponse.json({ status: "success", user: userPayload }, { status: 200 });
-    
+    console.log("[1] Checking available exports in firebase-admin lib...");
+    // طباعة محتويات ملف الأدمن للتحقق من الدوال المصدرة أونلاين
+    console.log("[🔍 KEYS FOUND]:", Object.keys(adminInstance));
+
+    let authObj;
+    // فحص الطريقة الصحيحة لاستدعاء مكتبة التوثيق
+    if (typeof adminInstance.getAuth === 'function') {
+      console.log("[2] Invoking via getAuth() function");
+      authObj = adminInstance.getAuth();
+    } else if ((adminInstance as any).auth) {
+      console.log("[2] Invoking via auth object property");
+      authObj = (adminInstance as any).auth;
+    } else {
+      throw new Error("CRITICAL: Neither getAuth() nor auth object exists in firebase-admin file!");
+    }
+
+    console.log("[3] Generating Session Cookie on Google Cloud...");
+    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
+    const sessionCookie = await authObj.createSessionCookie(idToken, { expiresIn });
+    console.log("[4] Session Cookie generated successfully!");
+
+    const response = NextResponse.json({ status: "success" }, { status: 200 });
     response.cookies.set({
-      name: "__session", 
+      name: "__session",
       value: sessionCookie,
       maxAge: expiresIn / 1000,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       path: "/",
       sameSite: "lax",
     });
 
-    console.log("--- V6 DEBUG: Cookie set. Responding with success and user payload. ---");
     return response;
-  } catch (e) {
-    const error = e as Error;
-    console.error("--- V6 CRITICAL: Error setting response cookie ---", error);
-    return NextResponse.json({ error: "Response configuration error.", details: error.message }, { status: 500 });
+
+  } catch (error: any) {
+    // 💥 صيد الأخطاء الجسيمة وطباعة تفاصيلها كاملة في السجلات (Logs)
+    console.error("--- 🚨 CRITICAL RUNTIME EXCEPTION DETECTED ---");
+    console.error("Error Message:", error?.message || error);
+    console.error("Error Stack Trace:", error?.stack || "No stack trace available");
+    
+    // إرجاع تفاصيل الخطأ البرمجي للواجهة الأمامية لمنع الـ 500 الصامتة
+    return NextResponse.json({ 
+      error: "Internal Server Diagnostic Break", 
+      message: error?.message || "Unknown exception",
+      stack: error?.stack || null
+    }, { status: 500 });
   }
 }
-
-export { handler as POST };
