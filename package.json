@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "next build",
+    "build": "rm -rf .next && rm -rf out && next build",
     "start": "next start",
     "lint": "next lint",
     "seed:categories": "npx ts-node -r dotenv/config --project tsconfig.scripts.json scripts/seed-categories.ts"
@@ -34,7 +34,7 @@
     "@types/uuid": "^9.0.8",
     "dotenv": "^16.6.1",
     "eslint": "^9.0.0",
-    "eslint-config-next": "15.0.3",
+    "eslint-config-next": "^15.5.13",
     "firebase-functions": "^7.2.5",
     "firebase-tools": "^15.16.0",
     "postcss": "^8",

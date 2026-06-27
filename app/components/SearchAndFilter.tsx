@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import styles from '@/app/page.module.css';
 import { Category } from '../lib/types';
-import SchoolListForm from './SchoolListForm'; // Import the modal form
-import { FaListAlt } from 'react-icons/fa'; // Import an icon
+import SchoolListForm from './SchoolListForm';
+import { FaListAlt } from 'react-icons/fa';
 
 interface SearchAndFilterProps {
     categories: Category[];
@@ -16,9 +16,9 @@ const SearchAndFilter = ({ categories = [] }: SearchAndFilterProps) => {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
-    const [isFormOpen, setFormOpen] = useState(false); // State to control the modal
+    const [isFormOpen, setFormOpen] = useState(false);
     
-    const selectedCategory = searchParams.get('category') || 'الكل';
+    const selectedCategorySlug = searchParams.get('category') || 'all';
 
     const handleSearch = (term: string) => {
         const params = new URLSearchParams(searchParams);
@@ -30,10 +30,10 @@ const SearchAndFilter = ({ categories = [] }: SearchAndFilterProps) => {
         replace(`${pathname}?${params.toString()}`);
     };
 
-    const handleCategoryChange = (categoryName: string) => {
+    const handleCategoryChange = (categorySlug: string) => {
         const params = new URLSearchParams(searchParams);
-        if (categoryName && categoryName !== 'الكل') {
-            params.set('category', categoryName);
+        if (categorySlug && categorySlug !== 'all') {
+            params.set('category', categorySlug);
         } else {
             params.delete('category');
         }
@@ -54,15 +54,14 @@ const SearchAndFilter = ({ categories = [] }: SearchAndFilterProps) => {
                     {categories.map(category => (
                         <button
                             key={category.id}
-                            className={`${styles.categoryButton} ${selectedCategory === category.name ? styles.active : ''}`}
-                            onClick={() => handleCategoryChange(category.name)}
+                            className={`${styles.categoryButton} ${selectedCategorySlug === category.slug ? styles.active : ''}`}
+                            onClick={() => handleCategoryChange(category.slug)}
                         >
                             <span className={styles.icon}>{category.emoji}</span>
                             {category.name}
                         </button> 
                     ))}
 
-                    {/* Add the new button to open the modal */}
                     <button 
                         className={`${styles.categoryButton} ${styles.schoolListButton}`}
                         onClick={() => setFormOpen(true)}
@@ -73,7 +72,6 @@ const SearchAndFilter = ({ categories = [] }: SearchAndFilterProps) => {
                 </div>
             </div>
 
-            {/* Render the modal form, controlled by isFormOpen state */}
             <SchoolListForm isOpen={isFormOpen} onClose={() => setFormOpen(false)} />
         </>
     );
