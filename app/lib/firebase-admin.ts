@@ -4,69 +4,47 @@ import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
 import { getStorage } from 'firebase-admin/storage';
 import * as admin from 'firebase-admin';
 
-let appInstance: App | undefined;
+// 🎯 المتغير العالمي لتخزين نسخة التطبيق المبدئية لضمان عدم تكرار التهيئة
+let app: App;
 
-console.log('[Firebase Admin] Invoking Flexible Cloud Initialization...');
+// قراءة المتغيرات الأساسية مرة واحدة عند بدء تشغيل الخادم
+const projectId = process.env.FIREBASE_PROJECT_ID || process.env.SERVER_FB_PROJECT_ID;
+const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || process.env.SERVER_FB_CLIENT_EMAIL;
+let privateKey = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
 
-try {
-  if (getApps().length === 0) {
-    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.SERVER_FB_PROJECT_ID || "dar-allughat-97483992-fc6c5";
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || process.env.SERVER_FB_CLIENT_EMAIL;
-    let privateKey = process.env.FIREBASE_PRIVATE_KEY || process.env.SERVER_FB_PRIVATE_KEY;
-
-    // إصلاح شامل للمفتاح السري وتفادي قيود الـ Linter والـ Decoder
-    if (privateKey) {
-      privateKey = privateKey.trim();
-      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-        privateKey = privateKey.slice(1, -1).trim();
-      }
-      privateKey = privateKey.replace(/\\n/g, String.fromCharCode(10));
-    }
-
-    // إذا كانت المفاتيح متوفرة في الـ Secrets نستخدمها، وإلا نعتمد على الصلاحيات الافتراضية
-    if (privateKey && clientEmail) {
-      appInstance = initializeApp({
-        credential: admin.credential.cert({
-          projectId: projectId,
-          clientEmail: clientEmail,
-          privateKey: privateKey,
-        }),
-        storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
-      });
-      console.log('[Firebase Admin] Initialization Success via Custom Private Key.');
-    } else {
-      appInstance = initializeApp({
-        credential: admin.credential.applicationDefault(),
-        storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
-      });
-      console.log('[Firebase Admin] Initialization Success via Application Default.');
-    }
-  } else {
-    appInstance = getApp();
+// 🛡️ الإصلاح الجذري والنهائي لمعالجة المفتاح الخاص بشكل صحيح وآمن
+if (privateKey) {
+  // 1. إزالة علامات الاقتباس إذا وجدت بالخطأ
+  if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+    privateKey = privateKey.slice(1, -1);
   }
-} catch (error) {
-  console.error('[Firebase Admin] CRITICAL INIT ERROR:', error);
-  appInstance = getApps().length > 0 ? getApp() : initializeApp();
+  // 2. ⚡ السطر الحاسم والمظبوط للسيرفر: تحويل النص إلى أسطر برمجية حقيقية ليفك التشفير بنجاح
+  privateKey = privateKey.replace(/\\n/g, '\n');
 }
 
-export function getDb(): Firestore {
-  const currentApp = getApps().length > 0 ? getApp() : appInstance;
-  if (!currentApp) throw new Error("Firebase app instance is missing.");
-  return getFirestore(currentApp);
+if (getApps().length === 0) {
+  if (projectId && clientEmail && privateKey) {
+    app = initializeApp({
+      credential: admin.credential.cert({
+        projectId: projectId,
+        clientEmail: clientEmail,
+        privateKey: privateKey,
+      }),
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    });
+    console.log('[Firebase Admin] Initialized successfully with Service Account.');
+  } else {
+    initializeApp();
+    app = getApp();
+    console.log('[Firebase Admin] Initialized successfully with Application Default Credentials.');
+  }
+} else {
+  app = getApp();
 }
 
-export function getAuth(): Auth {
-  const currentApp = getApps().length > 0 ? getApp() : appInstance;
-  if (!currentApp) throw new Error("Firebase app instance is missing.");
-  return getAdminAuth(currentApp);
-}
+// تصدير دوال نظيفة ومتوافقة مع أنواع TypeScript الصارمة
+const db: Firestore = getFirestore(app);
+const auth: Auth = getAdminAuth(app);
+const storage = getStorage(app);
 
-export function getBucket(bucketName?: string) {
-  const currentApp = getApps().length > 0 ? getApp() : appInstance;
-  if (!currentApp) throw new Error("Firebase app instance is missing.");
-  const storage = getStorage(currentApp);
-  return bucketName ? storage.bucket(bucketName) : storage.bucket();
-}
-
-export { admin };
-export default admin;
+export { db, auth, storage, admin };
