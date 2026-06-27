@@ -6,12 +6,21 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   console.log("--- V5 DEBUG: /api/auth/session-login execution started ---");
   
+  // حاقن أمن للمزامنة: تأمين قراءة المتغيرات أونلاين إذا كانت مرفوعة بأسماء SERVER_FB
+  if (!process.env.FIREBASE_PRIVATE_KEY && process.env.SERVER_FB_PRIVATE_KEY) {
+    process.env.FIREBASE_PRIVATE_KEY = process.env.SERVER_FB_PRIVATE_KEY;
+  }
+  if (!process.env.FIREBASE_CLIENT_EMAIL && process.env.SERVER_FB_CLIENT_EMAIL) {
+    process.env.FIREBASE_CLIENT_EMAIL = process.env.SERVER_FB_CLIENT_EMAIL;
+  }
+  if (!process.env.FIREBASE_PROJECT_ID && process.env.SERVER_FB_PROJECT_ID) {
+    process.env.FIREBASE_PROJECT_ID = process.env.SERVER_FB_PROJECT_ID;
+  }
+
   let idToken;
   try {
     console.log("[1/8] Awaiting request body...");
     const body = await request.json();
-    
-    // حل مرن: التقاط التوكن سواء تم إرساله باسم idToken أو token
     idToken = body.idToken || body.token;
     console.log("[2/8] Request body parsed successfully.");
   } catch (e) {
@@ -19,7 +28,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  // منع السيرفر من الانهيار إذا كان التوكن مفقوداً تماماً وإعادة استجابة صريحة للمتصفح
   if (!idToken) {
     console.log("[❌] Error: No idToken or token found in request body.");
     return NextResponse.json(
@@ -53,22 +61,25 @@ export async function POST(request: Request) {
     console.error("--- V5 CRITICAL: Error creating session cookie ---", e);
     return NextResponse.json(
       { error: "Session creation failed. Your token might be expired or invalid.", details: e instanceof Error ? e.message : "Invalid ID token." }, 
-      { status: 400 } // تحويله لـ 400 لمنع السيرفر من الانهيار بـ 500 إذا كان التوكن تالفاً
+      { status: 400 }
     );
   }
 
   try {
-    console.log("[8/8] Generating raw response and headers...");
+    console.log("[8/8] Generating response and setting cookie...");
     const response = NextResponse.json({ status: "success" }, { status: 200 });
     
-    // حل مشكلة المتصفحات الصارمة بتمرير الـ __session cookie في الهيدر مباشرة
-    const maxAgeSeconds = expiresIn / 1000;
-    response.headers.append(
-      "Set-Cookie",
-      `__session=${sessionCookie}; Path=/; Max-Age=${maxAgeSeconds}; HttpOnly; Secure; SameSite=Lax`
-    );
+    response.cookies.set({
+      name: "__session", 
+      value: sessionCookie,
+      maxAge: expiresIn / 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: "/",
+      sameSite: "lax",
+    });
 
-    console.log("--- V5 DEBUG: Raw Set-Cookie header applied. Responding with success. ---");
+    console.log("--- V5 DEBUG: Cookie set via NextResponse API. Responding with success. ---");
     return response;
   } catch (e) {
     console.error("--- V5 CRITICAL: Error setting response cookie ---", e);
