@@ -1,12 +1,11 @@
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { getPosts } from '../lib/data-server'; 
 import { Post } from '../lib/types'; 
 import styles from './Blog.module.css';
 
-// Revalidate the blog page every 60 seconds to allow for new posts to appear.
-export const revalidate = 60;
+// 🚀 السطر السحري الحتمي: إجبار الصفحة على العمل بوضع ديناميكي لتخطي وقت البناء بنجاح
+export const dynamic = 'force-dynamic';
 
 export default async function BlogPage() {
     const posts: Post[] = await getPosts();

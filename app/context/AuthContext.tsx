@@ -2,20 +2,11 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
-// 1. هيكل كائن المستخدم المخصص لقراءة وتطابق ميزات الواجهة الخلفية الناجحة
-interface ServerUserPayload {
-  uid: string;
-  email: string | null;
-  name: string | null;
-  picture: string | null;
-  role: string; // استقبال الـ role الموثق أونلاين
-}
-
 interface AuthContextType {
-  user: ServerUserPayload | null; // يقرأ كائن السيرفر الكامل بمميزاته
+  user: User | null;
   isAdmin: boolean;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
@@ -25,45 +16,44 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<ServerUserPayload | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
+        setUser(currentUser);
+
         try {
-          const idToken = await currentUser.getIdToken(true); 
+          const idToken = await currentUser.getIdToken();
           const response = await fetch('/api/auth/session-login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ idToken }),
           });
 
-          const data = await response.json();
-
-          // 2. المطابقة البرمجية: قراءة الـ Response الناجح القادم من السيرفر
-          if (response.ok && data.status === "success") {
-              // حفظ كائن المستخدم كامل الصلاحيات والمميزات في الواجهة الأمامية
-              setUser(data.user);
-              
-              // قراءة ميزة الـ role المقررة والآتية من الواجهة الخلفية مباشرة
-              const userIsAdmin = data.user.role === 'admin' && data.user.email === 'waelwasel37@gmail.com';
+          if (response.ok) {
+              // 🛡️ التطابق الكامل مع منطق خلفيتك المستقرة الأصلية:
+              // نتحقق من البريد إلكتروني المسجل مباشرة لحسابك لفتح كافة الميزات
+              const ADMIN_EMAIL = 'waelwasel37@gmail.com'; 
+              const userIsAdmin = currentUser.email === ADMIN_EMAIL;
               setIsAdmin(userIsAdmin);
               
               if (userIsAdmin && pathname === '/login') {
-                  window.location.href = '/admin'; // تحديث النطاق لبيئة SSR/ISR
+                  window.location.href = '/admin'; // تحديث النطاق بالكامل لزرع الكوكيز وجلب الـ SSR
               }
           } else {
-              console.error('Server session login failed or unauthorized:', data.error);
+              console.error('Server session login failed.');
               await signOut(auth);
               setUser(null);
               setIsAdmin(false);
           }
         } catch (e) {
-          console.error('Error during token sync with backend:', e);
+          console.error('Error during session creation lookup:', e);
           setUser(null);
           setIsAdmin(false);
         }
