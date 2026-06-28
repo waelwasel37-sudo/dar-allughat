@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(currentUser);
 
         try {
-          const idToken = await currentUser.getIdToken();
+          const idToken = await currentUser.getIdToken(true);
           const response = await fetch('/api/auth/session-login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -37,14 +37,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
 
           if (response.ok) {
-              // 🛡️ التطابق الكامل مع منطق خلفيتك المستقرة الأصلية:
-              // نتحقق من البريد إلكتروني المسجل مباشرة لحسابك لفتح كافة الميزات
               const ADMIN_EMAIL = 'waelwasel37@gmail.com'; 
               const userIsAdmin = currentUser.email === ADMIN_EMAIL;
               setIsAdmin(userIsAdmin);
               
               if (userIsAdmin && pathname === '/login') {
-                  window.location.href = '/admin'; // تحديث النطاق بالكامل لزرع الكوكيز وجلب الـ SSR
+                  window.location.href = '/admin';
               }
           } else {
               console.error('Server session login failed.');
