@@ -62,9 +62,8 @@ async function handler(request: Request) {
     try {
       console.log("[6/6] Attempting to set session cookie on response...");
       
-      // ✅ تم تعديل الاسم إلى "session" لمنع انهيار جدار حماية Firebase CDN
       response.cookies.set({
-        name: "session", 
+        name: "__session", 
         value: sessionCookie,
         maxAge: expiresIn / 1000,
         httpOnly: true,
