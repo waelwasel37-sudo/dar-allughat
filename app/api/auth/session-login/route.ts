@@ -10,7 +10,6 @@ async function handler(request: Request) {
   let idToken;
   try {
     const body = await request.json();
-    // 🛡️ User's flexible token capture
     idToken = body.idToken || body.token;
     if (!idToken) throw new Error("Token payload is missing from request body.");
   } catch (e) {
@@ -41,7 +40,6 @@ async function handler(request: Request) {
   try {
     console.log("[3/6] Creating session cookie...");
     sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
-    // AI's detailed diagnostics
     console.log("[4/6] Session cookie created successfully. Type:", typeof sessionCookie);
     console.log("[4/6b] Cookie preview:", sessionCookie ? sessionCookie.substring(0, 30) : "N/A");
   } catch (error) {
@@ -63,12 +61,13 @@ async function handler(request: Request) {
 
     try {
       console.log("[6/6] Attempting to set session cookie on response...");
+      
+      // ✅ تم تعديل الاسم إلى "session" لمنع انهيار جدار حماية Firebase CDN
       response.cookies.set({
-        name: "__session",
+        name: "session", 
         value: sessionCookie,
         maxAge: expiresIn / 1000,
         httpOnly: true,
-        // User's security enhancement
         secure: true,
         path: "/",
         sameSite: "lax",
@@ -76,7 +75,6 @@ async function handler(request: Request) {
       console.log("--- V8 SUCCESS: Cookie set. Responding with success. ---");
       return response;
     } catch (e) {
-      // AI's specific error isolation
       const error = e as Error;
       console.error("--- V8 FATAL: FAILED TO SET COOKIE ON RESPONSE ---", error);
       return NextResponse.json({
