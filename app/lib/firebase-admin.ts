@@ -7,25 +7,21 @@ import * as adminInstance from 'firebase-admin';
 let app: App;
 
 if (getApps().length === 0) {
-  // 💡 الاعتماد على كائن JSON الكامل والنظيف من الأسرار السحابية
   if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
     try {
-      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON.trim());
       
       app = initializeApp({
         credential: adminInstance.credential.cert(serviceAccount),
         storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
       });
-      console.log('[Firebase Admin] Initialized successfully with Unified Service Account JSON.');
+      console.log('[Firebase Admin] Initialized with Unified JSON.');
     } catch (parseError: any) {
-      console.error('[Firebase Admin FATAL] Failed to parse Service Account JSON:', parseError.message);
-      // Fallback to default credentials if parsing fails, which should not happen with the clean secret
+      console.error('[Firebase Admin Fatal]:', parseError.message);
       initializeApp();
       app = getApp();
     }
   } else {
-    // Fallback for local development or other environments
-    console.log('[Firebase Admin] Initializing with Application Default Credentials.');
     initializeApp();
     app = getApp();
   }
@@ -33,25 +29,22 @@ if (getApps().length === 0) {
   app = getApp();
 }
 
-const db: Firestore = getFirestore(app);
-const auth: Auth = getAdminAuth(app);
-const storage = getAdminStorage(app);
+// 🎯 التصدير القياسي الصافي لحل أزمة instanceof وعودة المنتجات والأقسام فوراً
+export const db = getFirestore(app);
+export const auth = getAdminAuth(app);
+export const storage = getAdminStorage(app);
 
-export { db, auth, storage, adminInstance as admin };
-
-// Convenience exports
 export const getDb = () => db;
 export const getAuth = () => auth;
 export const getBucket = () => storage.bucket();
 
-// Default export for full admin object
 const adminDefaultExport = {
-  ...adminInstance,
   apps: getApps(),
   app: () => app,
   firestore: () => db,
   auth: () => auth,
-  storage: () => storage
+  storage: () => storage,
+  ...adminInstance
 };
 
 export default adminDefaultExport;
