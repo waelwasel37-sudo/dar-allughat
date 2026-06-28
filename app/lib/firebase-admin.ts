@@ -6,19 +6,16 @@ import * as adminInstance from 'firebase-admin';
 
 let app: App;
 
-const projectId = process.env.FIREBASE_PROJECT_ID;
-const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-let privateKey = process.env.FIREBASE_PRIVATE_KEY; 
+const projectId = process.env.SERVER_FB_PROJECT_ID;
+const clientEmail = process.env.SERVER_FB_CLIENT_EMAIL;
+let privateKey = process.env.SERVER_FB_PRIVATE_KEY;
 
-// 🛡️ حبل الإنقاذ للتشغيل أونلاين: تحويل الرموز النصية لأسطر حقيقية لتجنب خطأ الـ DECODER
+// 🎯 التطهير الحاسم والنهائي لـ Private Key لكسر الدائرة المغلقة للأبد
 if (privateKey) {
-  // إزالة أي علامات اقتباس مزدوجة قد تفرضها المنصة أونلاين
-  privateKey = privateKey.trim().replace(/^[\"']|[\"']$/g, '');
-  
-  // تحويل الـ \n النصية لأسطر برمجية حقيقية ليفك التشفير بنجاح أونلاين
-  if (privateKey.includes('\\n')) {
-    privateKey = privateKey.replace(/\\n/g, '\n');
-  }
+  privateKey = privateKey.trim()
+    .replace(/^["']|["']$/g, '')              // إزالة علامات الاقتباس الخارجية إن وجدت
+    .replace(/\\n/g, '\n')                     // تحويل أسطر \n النصية إلى أسطر حقيقية
+    .replace(/\\/g, '');                       // مسح أي علامات مائلة زائدة (Backslashes) تخرب التشفير
 }
 
 if (getApps().length === 0) {
@@ -47,7 +44,6 @@ const storage = getAdminStorage(app);
 
 export { db, auth, storage, adminInstance as admin };
 
-// 🚀 مصفوفة التوافق الرجعي المكتملة والمثالية التي أصلحت الـ APIs والـ Upload
 export const getDb = () => db;
 export const getAuth = () => auth;
 export const getBucket = () => storage.bucket(); 
