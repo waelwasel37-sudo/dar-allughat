@@ -7,10 +7,9 @@ import * as adminInstance from 'firebase-admin';
 let app: App;
 
 if (getApps().length === 0) {
-  // 💡 الحل الموحد والأكثر أمانًا: استخدام كائن JSON الكامل من الأسرار
+  // 💡 الاعتماد على كائن JSON الكامل والنظيف من الأسرار السحابية
   if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
     try {
-      // 🎯 تحويل نص الـ JSON السحابي الموحد القادم من الخزنة إلى كائن كامل جاهز
       const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
       
       app = initializeApp({
@@ -20,7 +19,7 @@ if (getApps().length === 0) {
       console.log('[Firebase Admin] Initialized successfully with Unified Service Account JSON.');
     } catch (parseError: any) {
       console.error('[Firebase Admin FATAL] Failed to parse Service Account JSON:', parseError.message);
-      // Fallback to default credentials if parsing fails
+      // Fallback to default credentials if parsing fails, which should not happen with the clean secret
       initializeApp();
       app = getApp();
     }
@@ -40,12 +39,12 @@ const storage = getAdminStorage(app);
 
 export { db, auth, storage, adminInstance as admin };
 
-// 🚀 Compatibility exports
+// Convenience exports
 export const getDb = () => db;
 export const getAuth = () => auth;
-export const getBucket = () => storage.bucket(); 
+export const getBucket = () => storage.bucket();
 
-// Default export for convenience
+// Default export for full admin object
 const adminDefaultExport = {
   ...adminInstance,
   apps: getApps(),
