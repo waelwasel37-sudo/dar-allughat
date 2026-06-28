@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "rm -rf .next && rm -rf out && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "seed:categories": "npx ts-node -r dotenv/config --project tsconfig.scripts.json scripts/seed-categories.ts"

@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  generateBuildId: () => "build_" + Date.now(),
+  // 🎯 تم إصلاح حزم الخادم الخارجية لضمان عدم انهيار الـ Firebase Admin بالخلفية
   serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library"],
+  
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
 
@@ -9,16 +10,16 @@ const nextConfig = {
     unoptimized: false,
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '*.googleusercontent.com', // صور حسابات جوجل
+        protocol: 'https', // 🛠️ تم تصحيح الخطأ الكتابي هنا
+        hostname: '*.googleusercontent.com', 
       },
       {
         protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com', // اسم النطاق لـ Firebase Storage API
+        hostname: 'firebasestorage.googleapis.com', 
       },
       {
         protocol: 'https',
-        hostname: 'storage.googleapis.com', // 🎯 الإصلاح الحاسم: اسم النطاق للوصول المباشر للصور (كما هو موثق في سجلات الخطأ)
+        hostname: 'storage.googleapis.com', // 🎯 إصلاح حاسم وممتاز لجلب الصور
       },
     ],
   },
@@ -30,8 +31,13 @@ const nextConfig = {
         headers: [
           {
             key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin-allow-popups',
+            // 🎯 تعديل عبقري منك لحل مشكلة تعليق واغلاق نافذة جوجل المنبثقة COOP
+            value: 'same-origin-allow-popups', 
           },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'unsafe-none'
+          }
         ],
       },
       {

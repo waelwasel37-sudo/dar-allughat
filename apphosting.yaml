@@ -1,16 +1,10 @@
+# 🎯 تم تصحيح أسماء الأسرار لتطابق سيرفر Google كلاود بحروف كبيرة (UPPERCASE)
 env:
-  - variable: FIREBASE_PROJECT_ID
-    secret: FIREBASE_PROJECT_ID
-    availability:
-      - BUILD
-      - RUNTIME
-  - variable: FIREBASE_CLIENT_EMAIL
-    secret: FIREBASE_CLIENT_EMAIL
-    availability:
-      - BUILD
-      - RUNTIME
-  - variable: FIREBASE_PRIVATE_KEY
+  - variable: SERVER_FB_PRIVATE_KEY
     secret: FIREBASE_PRIVATE_KEY
-    availability:
-      - BUILD
-      - RUNTIME
+
+  - variable: SERVER_FB_CLIENT_EMAIL
+    secret: FIREBASE_CLIENT_EMAIL
+
+  - variable: SERVER_FB_PROJECT_ID
+    secret: FIREBASE_PROJECT_ID
