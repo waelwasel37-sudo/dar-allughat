@@ -1,10 +1,51 @@
-# 🎯 تم تصحيح أسماء الأسرار لتطابق سيرفر Google كلاود بحروف كبيرة (UPPERCASE)
+version: 1
 env:
-  - variable: SERVER_FB_PRIVATE_KEY
-    secret: FIREBASE_PRIVATE_KEY
+  - variable: FIREBASE_SERVICE_ACCOUNT_JSON
+    secret: FIREBASE_SERVICE_ACCOUNT_JSON
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyCX0RCPBcg0_eL28snWBn0bNfDf8ACWzWM
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: dar-allughat-97483992-fc6c5.firebaseapp.com
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: dar-allughat-97483992-fc6c5
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: dar-allughat-97483992-fc6c5.firebasestorage.app
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "118615668327"
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:118615668327:web:394407c7f6ab1e801a06c2
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: G-5B1BGCLTM8
+  - variable: NEXT_PUBLIC_META_PIXEL_ID
+    value: "2031832027677972"
+  - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    value: AIzaSyBazLf9qCoXwrjx77SiH8Qs1MeGOLdtoGI
 
-  - variable: SERVER_FB_CLIENT_EMAIL
-    secret: FIREBASE_CLIENT_EMAIL
+settings:
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memory: "1GiB"
 
-  - variable: SERVER_FB_PROJECT_ID
-    secret: FIREBASE_PROJECT_ID
+headers:
+  - path: "/.*"
+    headers:
+      - key: "Strict-Transport-Security"
+        value: "max-age=31536000; includeSubDomains; preload"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+      - key: "X-Frame-Options"
+        value: "SAMEORIGIN"
+      - key: "X-XSS-Protection"
+        value: "1; mode=block"
+      - key: "Referrer-Policy"
+        value: "strict-origin-when-cross-origin"
+
+# build:
+#   run: |
+#     npm install -g firebase-tools
+#     firebase deploy --only hosting
+#   env:
+#     - variable: FIREBASE_TOKEN
+#       secret: FIREBASE_TOKEN
