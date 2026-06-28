@@ -3,9 +3,5 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function POST() {
-  const response = NextResponse.json({ status: "success" });
-  
-  response.cookies.delete("__session");
-  
-  return response;
+  return NextResponse.json({ status: "success" }, { status: 200 });
 }
