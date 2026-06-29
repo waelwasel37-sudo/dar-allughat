@@ -59,7 +59,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setUser(null);
         setIsAdmin(false);
-        await fetch('/api/auth/session-logout', { method: 'POST' });
+        if (user) { // Check if user object exists before trying to logout
+          await fetch('/api/auth/session-logout', { 
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ uid: user.uid }),
+          });
+        }
         if (pathname.startsWith('/admin')) {
           window.location.href = '/login';
         }
@@ -68,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => unsubscribe();
-  }, [pathname]);
+  }, [pathname, user]);
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
@@ -82,7 +90,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/session-logout', { method: 'POST' });
+      if (user) {
+        await fetch('/api/auth/session-logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ uid: user.uid }),
+        });
+      }
       await signOut(auth);
       setUser(null);
       setIsAdmin(false);

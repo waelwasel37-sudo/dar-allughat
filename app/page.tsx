@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
 import nextDynamic from 'next/dynamic';
+// 🚀 السطر السحري: إجبار خادم Next.js على تشغيل initializeApp() أولاً وقبل جلب أي منتجات أو أقسام
+import { auth as adminAuth } from './lib/firebase-admin'; 
 import styles from './page.module.css';
 import Hero from './components/Hero';
 import SearchAndFilter from './components/SearchAndFilter';

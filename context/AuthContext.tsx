@@ -1,47 +1,111 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, User, signOut } from 'firebase/auth';
-import { auth } from '@/app/lib/firebase';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 interface AuthContextType {
   user: User | null;
+  isAdmin: boolean;
   loading: boolean;
-  logOut: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({ 
-  user: null, 
-  loading: true,
-  logOut: () => Promise.resolve(),
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setLoading(true);
+      if (currentUser) {
+        setUser(currentUser);
+
+        try {
+          const idToken = await currentUser.getIdToken(true);
+          const response = await fetch('/api/auth/session-login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken }),
+          });
+
+          if (response.ok) {
+              const ADMIN_EMAIL = 'waelwasel37@gmail.com'; 
+              const userIsAdmin = currentUser.email === ADMIN_EMAIL;
+              setIsAdmin(userIsAdmin);
+              
+              if (userIsAdmin && pathname === '/login') {
+                  router.push('/admin');
+              }
+          } else {
+              console.error('Server session login failed.');
+              await signOut(auth);
+              setUser(null);
+              setIsAdmin(false);
+          }
+        } catch (e) {
+          console.error('Error during session creation lookup:', e);
+          setUser(null);
+          setIsAdmin(false);
+        }
+
+      } else {
+        setUser(null);
+        setIsAdmin(false);
+        if (pathname.startsWith('/admin')) {
+          router.push('/login');
+        }
+      }
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [pathname, router]); // تم حذف [user] لمنع الـ Infinite Loop نهائياً
 
-  const logOut = async () => {
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
     try {
-      await signOut(auth);
+      await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error("Error signing out: ", error);
+      console.error("Error during Google sign-in:", error);
+      alert("فشل تسجيل الدخول باستخدام جوجل. يرجى المحاولة مرة أخرى.");
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, logOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const logout = async () => {
+    try {
+      if (user) {
+        await fetch('/api/auth/session-logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid: user.uid }),
+        });
+      }
+    } catch (error) {
+      console.error("Error calling session-logout API:", error);
+    } finally {
+      await signOut(auth);
+      setUser(null);
+      setIsAdmin(false);
+      router.push('/');
+    }
+  };
+
+  const value = { user, isAdmin, loading, loginWithGoogle, logout };
+  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed:categories": "npx ts-node -r dotenv/config --project tsconfig.scripts.json scripts/seed-categories.ts"
+    "seed:categories": "npx ts-node -r dotenv/config --project tsconfig.scripts.json scripts/seed-categories.ts",
+    "test": "jest"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^5.0.2",
