@@ -9,8 +9,8 @@ import Cart from './Cart';
 import ShareButton from './ShareButton';
 import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaUserCircle } from 'react-icons/fa';
 
-// استيراد الشعار
-import logo from '../../../public/images/logo-horizontal.png';
+// لا حاجة لاستيراد الشعار من هنا بعد الآن
+// import logo from '../../../public/images/logo-horizontal.png';
 
 const Header = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,9 +48,9 @@ const Header = () => {
     <header className={styles.header}>
       <div className={styles.logo}>
         <Link href="/" onClick={closeMobileMenu}>
-          {/* استخدام مكون Image لعرض الشعار */}
+          {/* استخدام المسار العام مباشرة من مجلد public */}
           <Image 
-            src={logo} 
+            src="/images/logo-horizontal.png" 
             alt="شعار مكتبات دار اللغات" 
             width={200} // تحديد عرض مناسب
             height={50} // تحديد ارتفاع مناسب

@@ -4,10 +4,15 @@ import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
 import { getStorage as getAdminStorage } from 'firebase-admin/storage';
 import * as adminInstance from 'firebase-admin';
 
-// استيراد مباشر لملف Service Account بالاسم الصحيح الحقيقي المتواجد بمشروعك
-import serviceAccount from '../../../dar-allughat-97483992-fc6c5-0bf7cef38dad.json';
-
 let app: App;
+
+// طريقة التهيئة السحابية المستقرة المعتمدة تماماً على متغيرات البيئة
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  // معالجة الحروف النصية المكررة \n لضمان توافق تشفير مفتاح السيرفر
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+};
 
 if (getApps().length === 0) {
   try {
@@ -15,31 +20,32 @@ if (getApps().length === 0) {
       credential: adminInstance.credential.cert(serviceAccount),
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
     });
-    console.log('[Firebase Admin] Initialized successfully using the correct service account file.');
+    console.log('[Firebase Admin] Initialized successfully using environment variables.');
   } catch (error: any) {
     console.error('[Firebase Admin Fatal Error]: Failed to initialize.', error.message);
-    initializeApp();
+    if (!getApps().length) {
+      initializeApp();
+    }
     app = getApp();
   }
 } else {
   app = getApp();
 }
 
-// تصدير دوال getter لضمان الحصول على النسخة المهيأة دائمًا
 export const getDb = (): Firestore => getFirestore(app);
 export const getAuth = (): Auth => getAdminAuth(app);
 export const getBucket = () => getAdminStorage(app).bucket();
 
 export const admin = adminInstance;
 
-// التصدير الافتراضي المحدث بالاستدعاء الفوري لتوافقه ككائنات مباشرة مع ملفات APIs والـ Slugs
+// ✅ تَمّ تقديم معامل النشر أولاً لضمان عدم الكتابة فوق دوال الجلب المتوافقة مع السيرفر
 const adminDefaultExport = {
+  ...adminInstance,
   apps: getApps(),
   app: () => app,
-  firestore: getDb(), // تنفيذ فوري لجلب الكائن
-  auth: getAuth(),     // تنفيذ فوري لتشغيل revokeRefreshTokens مباشرة بالسيرفر
-  storage: getAdminStorage, 
-  ...adminInstance
+  firestore: getDb(), 
+  auth: getAuth(),     
+  storage: getAdminStorage 
 };
 
 export default adminDefaultExport;
