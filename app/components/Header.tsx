@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image'; // استيراد مكون Image
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from './Header.module.css';
@@ -8,13 +9,16 @@ import Cart from './Cart';
 import ShareButton from './ShareButton';
 import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaUserCircle } from 'react-icons/fa';
 
+// استيراد الشعار
+import logo from '../../../public/images/logo-horizontal.png';
+
 const Header = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout, loading, isAdmin } = useAuth();
   const [newRequestsCount, setNewRequestsCount] = useState(0);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (!loading && isAdmin) {
       const fetchNewRequestsCount = async () => {
         try {
           const response = await fetch('/api/school-list?status=new');
@@ -22,7 +26,7 @@ const Header = () => {
             const data = await response.json();
             setNewRequestsCount(data.count || 0);
           } else {
-            console.error('Failed to fetch new requests count');
+            setNewRequestsCount(0);
           }
         } catch (error) {
           console.error('Error fetching new requests count:', error);
@@ -30,10 +34,12 @@ const Header = () => {
       };
 
       fetchNewRequestsCount();
-      const intervalId = setInterval(fetchNewRequestsCount, 60000);
+      const intervalId = setInterval(fetchNewRequestsCount, 60000); 
       return () => clearInterval(intervalId);
+    } else {
+      setNewRequestsCount(0);
     }
-  }, [isAdmin]);
+  }, [isAdmin, loading]);
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
@@ -41,9 +47,19 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <Link href="/" onClick={closeMobileMenu}>مكتبات دار اللغات</Link>
+        <Link href="/" onClick={closeMobileMenu}>
+          {/* استخدام مكون Image لعرض الشعار */}
+          <Image 
+            src={logo} 
+            alt="شعار مكتبات دار اللغات" 
+            width={200} // تحديد عرض مناسب
+            height={50} // تحديد ارتفاع مناسب
+            priority // لإعطاء الأولوية في التحميل
+          />
+        </Link>
       </div>
       <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileMenu : ''}`}>
+        {/* ... باقي روابط القائمة ... */}
         <Link href="/" onClick={closeMobileMenu}>الرئيسية</Link>
         <Link href="/about" onClick={closeMobileMenu}>من نحن</Link>
         <Link href="/contact" onClick={closeMobileMenu}>اتصل بنا</Link>
