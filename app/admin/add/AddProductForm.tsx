@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -67,7 +66,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [isGeneratingDesc, setIsGeneratingDesc] = useState(false); // AI State
+    const [isGeneratingDesc, setIsGeneratingDesc] = useState(false); 
     
     const [mainImageFile, setMainImageFile] = useState<File | null>(null);
     const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
@@ -133,7 +132,6 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
         }
     };
 
-    // AI Description Generation Function
     const handleGenerateDescription = async () => {
         if (!formData.name) {
             setError('الرجاء إدخال اسم المنتج أولاً لتوليد الوصف.');
@@ -178,22 +176,31 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
         setError(null);
 
         try {
-            const slug = generateSlug(formData.name);
+            const slug = generateSlug(formData.name) || `product-${Date.now()}`;
             
-            const mainImageUrl = await uploadFile(mainImageFile, `products/${slug}/main-${mainImageFile.name}`, setMainImageUploadProgress);
+            const mainExt = mainImageFile.name.split('.').pop();
+            const mainImagePath = `products/${slug}/main-${slug}.${mainExt}`;
+            const mainImageUrl = await uploadFile(mainImageFile, mainImagePath, setMainImageUploadProgress);
+            
             let secondaryImageUrl: string | undefined = undefined;
             if (secondaryImageFile) {
-                secondaryImageUrl = await uploadFile(secondaryImageFile, `products/${slug}/secondary-${secondaryImageFile.name}`, setSecondaryImageUploadProgress);
+                const secExt = secondaryImageFile.name.split('.').pop();
+                const secondaryImagePath = `products/${slug}/secondary-${slug}.${secExt}`;
+                secondaryImageUrl = await uploadFile(secondaryImageFile, secondaryImagePath, setSecondaryImageUploadProgress);
             }
+            
             let videoUrl: string | undefined = undefined;
             if (videoFile) {
-                videoUrl = await uploadFile(videoFile, `products/${slug}/video-${videoFile.name}`, setVideoUploadProgress);
+                const vidExt = videoFile.name.split('.').pop();
+                const videoPath = `products/${slug}/video-${slug}.${vidExt}`;
+                videoUrl = await uploadFile(videoFile, videoPath, setVideoUploadProgress);
             }
 
             const productData: Omit<Product, 'id'> & { id?: string } = {
                 ...formData,
                 slug,
                 imageUrl: mainImageUrl,
+                imagePath: mainImagePath, 
                 ...(secondaryImageUrl && { secondaryImageUrl }),
                 ...(videoUrl && { videoUrl }),
                 createdAt: new Date().toISOString(),
@@ -217,7 +224,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
 
         } catch (err: any) {
             console.error("Client-side error during product submission:", err);
-            setError(err.message || "حدث خطأ غير متوقع أثناء إرسال البيانات.");
+            setError(err.message || "حدث خطأ غير متوقع.");
         } finally {
             setIsLoading(false);
         }
@@ -247,7 +254,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                           <label htmlFor="category" className="block text-sm font-medium text-gray-700">الفئة</label>
                            <select id="category" name="category" value={formData.category} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-white">
                                <option value="" disabled>الرجاء اختيار فئة...</option>
-                               {categories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}\
+                               {categories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
                            </select>
                        </div>
                        <div>
@@ -282,7 +289,6 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                        </div>
                    </div>
 
-                   {/* --- File Upload Sections --- */}
                    <div className="md:col-span-2">
                        <label className="block text-sm font-medium text-gray-700">صورة المنتج الرئيسية</label>
                        <div className="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">

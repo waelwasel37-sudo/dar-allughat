@@ -1,22 +1,33 @@
-
 import { NextRequest, NextResponse } from 'next/server';
+// استيراد التهيئة المباشرة لضمان عدم حدوث خطأ Firebase app does not exist بالسيرفر
 import admin, { getDb, getAuth } from '@/app/lib/firebase-admin';
 import { cookies } from 'next/headers';
 import { SchoolListRequest } from '@/app/lib/types';
 
 export const dynamic = 'force-dynamic';
 
-// GET endpoint for admin to view requests and get counts
+// دالة داخلية لتوليد السلوج وتنظيف الحروف
+const generateSlug = (name: string) => {
+    if (!name) return '';
+    return name.trim().toLowerCase()
+        .replace(/[^\w\d\s\u0600-\u06FF]/g, '')
+        .replace(/\s+/g, '-');
+};
+
+// 1️⃣ دالة الـ GET: محمية وصارمة للأدمن فقط (تمنع ظهور خطأ 401 للزوار العاديين)
 export async function GET(req: NextRequest) {
     const auth = getAuth();
     const db = getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
+        const sessionCookie = cookieStore.get("__session")?.value; 
+        
+        // إذا لم يكن أدمن يمتلك كوكيز الجلسة، نرفض الطلب فوراً لمنع حشو السجلات بالتحذيرات
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
+        
         const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
         if (decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -54,7 +65,7 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// POST endpoint for PUBLIC new requests
+// 2️⃣ دالة الـ POST: عامة للجمهور لرفع القوائم وتوجيههم لرقم الواتساب الخاص بك
 export async function POST(req: NextRequest) {
     const db = getDb();
 
@@ -67,8 +78,12 @@ export async function POST(req: NextRequest) {
 
         const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
         
+        // توليد السلوج النظيف بناءً على اسم الزبون لتسمية وحفظ الطلب
+        const slug = `${generateSlug(data.fullName)}-${Date.now()}`;
+        
         const newRequest = {
             fullName: data.fullName,
+            slug: slug,
             phone: data.phone || null,
             address: data.address || null,
             imageUrl: data.imageUrl,
@@ -79,9 +94,18 @@ export async function POST(req: NextRequest) {
 
         const docRef = await db.collection('schoolListRequests').add(newRequest);
 
+        // 🚀 رقم الواتساب الخاص بك بالصيغة الدولية المضبوطة
+        const myWhatsAppNumber = "201220396597"; 
+        const messageText = `مرحباً دار اللغات، لقد قمت برفع قائمة مدرستي عبر الموقع:\n\n👤 *الاسم:* ${data.fullName}\n📞 *الهاتف:* ${data.phone || 'غير محدد'}\n📍 *العنوان:* ${data.address || 'غير محدد'}\n🖼️ *رابط القائمة:* ${data.imageUrl}`;
+        
+        const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(messageText)}`;
+
+        // إرجاع الـ slug ورابط الواتساب الجاهز للواجهة الأمامية
         return NextResponse.json({ 
             message: "Request submitted successfully, pending review.", 
-            id: docRef.id 
+            id: docRef.id,
+            slug: slug,
+            whatsappUrl: whatsappUrl
         }, { status: 201 });
 
     } catch (error: any) {
@@ -90,14 +114,14 @@ export async function POST(req: NextRequest) {
     }
 }
 
-// PATCH endpoint for admin to update request status
+// 3️⃣ دالة الـ PATCH: لتحديث حالة الطلب للأدمن من لوحة التحكم
 export async function PATCH(req: NextRequest) {
     const auth = getAuth();
     const db = getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
+        const sessionCookie = cookieStore.get("__session")?.value; 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
