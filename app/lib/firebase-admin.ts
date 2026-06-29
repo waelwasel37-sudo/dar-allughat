@@ -6,11 +6,9 @@ import * as adminInstance from 'firebase-admin';
 
 let app: App;
 
-// طريقة التهيئة السحابية المستقرة المعتمدة تماماً على متغيرات البيئة
 const serviceAccount = {
   projectId: process.env.FIREBASE_PROJECT_ID,
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  // معالجة الحروف النصية المكررة \n لضمان توافق تشفير مفتاح السيرفر
   privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
 };
 
@@ -38,13 +36,16 @@ export const getBucket = () => getAdminStorage(app).bucket();
 
 export const admin = adminInstance;
 
-// ✅ تَمّ تقديم معامل النشر أولاً لضمان عدم الكتابة فوق دوال الجلب المتوافقة مع السيرفر
+// This named export is necessary for the API routes that use: import { auth } from '...'
+export const auth = getAuth();
+
 const adminDefaultExport = {
   ...adminInstance,
   apps: getApps(),
   app: () => app,
-  firestore: getDb(), 
-  auth: getAuth(),     
+  // Using getters ensures lazy evaluation and prevents initialization race conditions.
+  get firestore() { return getDb(); },
+  get auth() { return getAuth(); },
   storage: getAdminStorage 
 };
 
