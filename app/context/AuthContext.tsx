@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
@@ -19,10 +19,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const pathname = usePathname();
 
+  // 🎯 تصحيح قاتل لمنع الـ Loop: فصل منطق الـ session-logout في دالة منفصلة مستقرة
+  const triggerServerLogout = useCallback(async (uid: string) => {
+    try {
+      await fetch('/api/auth/session-logout', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid }),
+      });
+    } catch (e) {
+      console.error('Failed to trigger server logout:', e);
+    }
+  }, []);
+
   useEffect(() => {
+    // نستخدم متغير داخلي لتتبع حالة المستخدم الحالية لمنع التكرار الدائري
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
@@ -57,17 +70,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
       } else {
+        // 🎯 تصحيح قاتل: جلب الـ uid بشكل آمن بدون الاعتماد على كائن الـ user الخارجي لمنع التكرار اللانهائي
+        const currentCachedUser = auth.currentUser;
+        if (currentCachedUser) {
+          await triggerServerLogout(currentCachedUser.uid);
+        }
         setUser(null);
         setIsAdmin(false);
-        if (user) { // Check if user object exists before trying to logout
-          await fetch('/api/auth/session-logout', { 
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ uid: user.uid }),
-          });
-        }
+        
         if (pathname.startsWith('/admin')) {
           window.location.href = '/login';
         }
@@ -76,9 +86,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => unsubscribe();
-  }, [pathname, user]);
+  }, [pathname, triggerServerLogout]); // ✅ تم إزالة user من هنا نهائياً لمنع التكرار اللانهائي والانهيار
 
-  const loginWithGoogle = async () => {
+  // 🎯 التثبيت الذكي لدالة الدخول بالذاكرة لمنع رندر الواجهة
+  const loginWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
@@ -86,17 +97,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error during Google sign-in:", error);
       alert("فشل تسجيل الدخول باستخدام جوجل. يرجى المحاولة مرة أخرى.");
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  // 🎯 التثبيت الذكي لدالة الخروج بالذاكرة لمنع رندر الواجهة
+  const logout = useCallback(async () => {
     try {
-      if (user) {
+      const currentCachedUser = auth.currentUser;
+      if (currentCachedUser) {
         await fetch('/api/auth/session-logout', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ uid: user.uid }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid: currentCachedUser.uid }),
         });
       }
       await signOut(auth);
@@ -106,11 +117,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Error during sign-out:", error);
     }
-  };
+  }, []);
 
-  const value = { user, isAdmin, loading, loginWithGoogle, logout };
+  // 🎯 العلاج الشافي والنهائي لخطأ 306: حفظ كائن السياق بالكامل بـ useMemo
+  const contextValue = useMemo(() => ({
+    user,
+    isAdmin,
+    loading,
+    loginWithGoogle,
+    logout
+  }), [user, isAdmin, loading, loginWithGoogle, logout]);
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  // 🎯 تصحيح Next.js 15: تمرير الـ children مباشرة للسماح بالـ Server-side rendering النظيف للموقع والأقسام
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

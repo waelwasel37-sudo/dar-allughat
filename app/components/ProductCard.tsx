@@ -3,11 +3,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect } from 'react'; // 🎯 حقن خطافات التثبيت لمنع الانهيار
+import { useState, useEffect } from 'react'; 
 import { Product } from '../lib/types';
 import styles from './ProductCard.module.css';
 import AddToCartButton from './AddToCartButton';
-import ShareButton from './ShareButton';
+// import ShareButton from './ShareButton'; // Temporarily remove ShareButton
 import { FaStar } from 'react-icons/fa';
 
 interface ProductCardProps {
@@ -16,7 +16,6 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, priority = false }: ProductCardProps) => {
-  // 🎯 تصحيح حاسم لمنع خطأ 306: توليد الروابط بداخل هيدريشن آمن بعد جاهزية المتصفح
   const [productUrl, setProductUrl] = useState<string>('');
 
   useEffect(() => {
@@ -41,8 +40,7 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
 
   return (
     <div className={styles.cardContainer}>
-      <div className={styles.shareIconContainer}>
-        {/* 🎯 نمرر الرابط فقط بعد توليده بأمان لمنع الـ Hydration Object Error #306 */}
+      {/* <div className={styles.shareIconContainer}>
         {productUrl && (
           <ShareButton
             title={shareTitle}
@@ -50,7 +48,7 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
             url={productUrl}
           />
         )}
-      </div>
+      </div> */}
       <Link href={`/products/${product.slug}`} className={styles.cardLink}>
         <div className={styles.card}>
           <div className={styles.imageContainer}>
