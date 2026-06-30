@@ -1,17 +1,33 @@
+'use client';
 
 import Link from 'next/link';
-import styles from './page.module.css';
 
+// 🎯 التصدير الافتراضي الصريح والإجباري لمنع خطأ Prerender Object بنسبة 100%
 export default function NotFound() {
   return (
-    <main className={styles.main}>
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        <h1 style={{ fontSize: '2.5rem' }}>404 - الصفحة غير موجودة</h1>
-        <p style={{ fontSize: '1.2rem', margin: '20px 0' }}>عذراً، لم نتمكن من العثور على الصفحة التي تبحث عنها.</p>
-        <Link href="/" style={{ color: '#0070f3', textDecoration: 'underline' }}>
-          العودة إلى الصفحة الرئيسية
-        </Link>
-      </div>
-    </main>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '60vh',
+      padding: '20px',
+      textAlign: 'center',
+      fontFamily: 'sans-serif'
+    }}>
+      <h1 style={{ fontSize: '4rem', color: '#dc3545', margin: '0 0 10px 0' }}>404</h1>
+      <h2 style={{ fontSize: '1.5rem', marginBottom: '20px', color: '#333' }}>عذراً، الصفحة غير موجودة!</h2>
+      <p style={{ color: '#666', marginBottom: '30px' }}>الرابط الذي تحاول الوصول إليه قد يكون تم حذفه أو نقله.</p>
+      <Link href="/" style={{
+        padding: '10px 20px',
+        backgroundColor: '#0070f3',
+        color: '#fff',
+        borderRadius: '5px',
+        textDecoration: 'none',
+        fontWeight: 'bold'
+      }}>
+        العودة للصفحة الرئيسية
+      </Link>
+    </div>
   );
 }
