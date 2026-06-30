@@ -3,6 +3,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect } from 'react'; // 🎯 حقن خطافات التثبيت لمنع الانهيار
 import { Product } from '../lib/types';
 import styles from './ProductCard.module.css';
 import AddToCartButton from './AddToCartButton';
@@ -11,10 +12,19 @@ import { FaStar } from 'react-icons/fa';
 
 interface ProductCardProps {
   product?: Product;
-  priority?: boolean; // Accept the new priority prop
+  priority?: boolean; 
 }
 
 const ProductCard = ({ product, priority = false }: ProductCardProps) => {
+  // 🎯 تصحيح حاسم لمنع خطأ 306: توليد الروابط بداخل هيدريشن آمن بعد جاهزية المتصفح
+  const [productUrl, setProductUrl] = useState<string>('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setProductUrl(`${window.location.origin}/products/${product?.slug || ''}`);
+    }
+  }, [product?.slug]);
+
   if (!product || !product.id) {
     return <div className={styles.cardContainer} aria-hidden="true"></div>;
   }
@@ -27,17 +37,19 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
     ? originalPrice - (originalPrice * (discountPercentage / 100))
     : originalPrice;
 
-  const productUrl = typeof window !== 'undefined' ? `${window.location.origin}/products/${product.slug}` : '';
   const shareTitle = `${product.name} - مكتبات دار اللغات`;
 
   return (
     <div className={styles.cardContainer}>
       <div className={styles.shareIconContainer}>
-        <ShareButton
-          title={shareTitle}
-          text={`شاهد هذا المنتج الرائع: ${product.name}`}
-          url={productUrl}
-        />
+        {/* 🎯 نمرر الرابط فقط بعد توليده بأمان لمنع الـ Hydration Object Error #306 */}
+        {productUrl && (
+          <ShareButton
+            title={shareTitle}
+            text={`شاهد هذا المنتج الرائع: ${product.name}`}
+            url={productUrl}
+          />
+        )}
       </div>
       <Link href={`/products/${product.slug}`} className={styles.cardLink}>
         <div className={styles.card}>
@@ -49,7 +61,7 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
               height={300}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               className={styles.image}
-              priority={priority} // Apply the priority prop here
+              priority={priority} 
             />
             {hasDiscount && (
               <div className={styles.discountBadge}>
