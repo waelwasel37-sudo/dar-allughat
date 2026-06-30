@@ -1,6 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react'; // 🎯 حقن السسبنس لحماية المتصفح من الانهيار
 import { Product, Category } from '@/app/lib/types';
 import ProductsView from './ProductsView';
 import styles from './HomeProductsView.module.css';
@@ -10,7 +11,8 @@ interface HomeProductsViewProps {
   categories: Category[];
 }
 
-const HomeProductsView = ({ initialProducts, categories }: HomeProductsViewProps) => {
+// 🎯 المكون الداخلي الصافي الذي يقوم بالعمليات الرياضية والتصفية بأمان
+const HomeProductsViewContent = ({ initialProducts, categories }: HomeProductsViewProps) => {
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get('q') || '';
     const selectedCategorySlug = searchParams.get('category') || 'all';
@@ -22,8 +24,8 @@ const HomeProductsView = ({ initialProducts, categories }: HomeProductsViewProps
 
     // 2. Determine which categories to display.
     const categoriesToShow = selectedCategorySlug === 'all' 
-        ? categories.filter(c => c.slug !== 'all') // Show all categories except the meta 'All' one.
-        : categories.filter(c => c.slug === selectedCategorySlug); // Show only the selected category.
+        ? categories.filter(c => c.slug !== 'all') 
+        : categories.filter(c => c.slug === selectedCategorySlug); 
 
     return (
         <div>
@@ -39,7 +41,7 @@ const HomeProductsView = ({ initialProducts, categories }: HomeProductsViewProps
                             {category.emoji} {category.name}
                         </h2>
                         
-                        {/* 4. Render products or the empty message, as you suggested. */}
+                        {/* 4. Render products or the empty message */}
                         {productsForCategory.length > 0 ? (
                             <ProductsView products={productsForCategory} searchQuery={searchQuery} />
                         ) : (
@@ -54,4 +56,11 @@ const HomeProductsView = ({ initialProducts, categories }: HomeProductsViewProps
     );
 };
 
-export default HomeProductsView;
+// 🎯 المكون الرئيسي المصدر والمغلف بالـ Suspense بشكل قانوني وصارم يمنع خطأ 306 نهائياً
+export default function HomeProductsView({ initialProducts, categories }: HomeProductsViewProps) {
+  return (
+    <Suspense fallback={<div style={{textAlign: 'center', padding: '30px'}}>جاري تصفية المنتجات والأقسام...</div>}>
+      <HomeProductsViewContent initialProducts={initialProducts} categories={categories} />
+    </Suspense>
+  );
+}
