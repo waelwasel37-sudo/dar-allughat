@@ -1,17 +1,11 @@
 import { Suspense } from 'react';
-import nextDynamic from 'next/dynamic';
-// 🎯 تصحيح المسار: استخدام المعرف الصارم @/app/lib لضمان قراءة الملفات بنجاح ومنع الـ Exception
-import { initializeAdminApp } from '@/app/lib/firebase-admin'; 
 import styles from './page.module.css';
 import Hero from './components/Hero';
 import { getProducts, getCategories } from '@/app/lib/data-server'; 
 import { Product, Category } from '@/app/lib/types';
-
-// 🎯 تصحيح قاتل: إجبار Next.js 15 على تحميل المكون في المتصفح فقط عبر ssr: false لمنع الـ Client exception
-const HomeProductsView = nextDynamic(
-  () => import('./components/HomeProductsView'),
-  { ssr: false }
-);
+import { initializeAdminApp } from '@/app/lib/firebase-admin'; 
+// 💡 الخطوة 2: استيراد مكون التحميل الجديد بدلاً من المكون الأصلي
+import HomeProductsLoader from './components/HomeProductsLoader';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -19,9 +13,7 @@ export const revalidate = 0;
 async function loadData(): Promise<{ products: Product[], categories: Category[] }> {
   const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
   try {
-    // 🔑 التأكد من تهيئة Firebase قبل أي عمليات قراءة من قاعدة البيانات
     await initializeAdminApp();
-
     const [products, rawCategories] = await Promise.all([
       getProducts(), 
       getCategories() 
@@ -47,13 +39,13 @@ export default async function Home() {
     <main className={styles.main}>
       <Hero />
       
-      {/* 🎯 تركنا المكونات معلقة كما طلب المبرمج لعزل الخطأ بالكامل والتأكد من فتح الهيكل أولاً */}
       {/* <Suspense fallback={<div className={styles.loading}>جاري تحميل الفلاتر...</div>}> 
         <SearchAndFilter categories={categories || []} />
       </Suspense> */}
       
+      {/* 💡 الخطوة 3: استخدام مكون التحميل الجديد، والذي سيهتم بعرض المكون الأصلي في المتصفح فقط */}
       <Suspense fallback={<div className={styles.loading}>جاري تحميل المنتجات...</div>}> 
-        <HomeProductsView initialProducts={initialProducts || []} categories={categories || []} />
+        <HomeProductsLoader initialProducts={initialProducts || []} categories={categories || []} />
       </Suspense>
     </main>
   );
