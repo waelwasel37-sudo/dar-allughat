@@ -47,7 +47,7 @@ const Header = () => {
     } else {
       // إذا لم يكن المستخدم أدمن، تأكد من أن العدد هو صفر
       setNewRequestsCount(0);
-    }
+    } 
   }, [isAdmin, user]); // ✅ تم استخدام user لضمان قراءة التوكن فور جاهزيته ومنع التكرار العشوائي
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
@@ -97,7 +97,7 @@ const Header = () => {
         <Cart />
         {!loading && user ? (
           <div className={styles.userSection}>
-            <span className={styles.welcomeMessage}>أهلاً، {user.displayName?.split(' ')[0] || 'زائر'}</span>
+            <span className={styles.welcomeMessage}>أهلاً، {user && user.displayName ? user.displayName.split(' ')[0] : 'زائر'}</span>
             <button onClick={() => { logout(); closeMobileMenu(); }} className={styles.logoutButton}>خروج</button>
           </div>
         ) : !loading && (
