@@ -1,12 +1,14 @@
 // app/api/product-feed/route.ts
 import { NextResponse } from 'next/server';
-import admin, { getDb } from '@/app/lib/firebase-admin';
-import { Product } from '../../lib/types';
+// 🎯 تصحيح: استيراد admin و getDb بشكل صحيح
+import { getDb, admin } from '@/app/lib/firebase-admin';
+import { Product } from '@/app/lib/types'; // 🎯 تصحيح: مسار الاستيراد
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const db = getDb();
+  // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
+  const db = await getDb();
 
   try {
     const productsCollection = db.collection("products");
@@ -74,9 +76,10 @@ export async function GET() {
 
   } catch (error: any) {
     console.error("Error generating product feed:", error);
-    return new NextResponse(
-      JSON.stringify({ message: "Internal Server Error", error: error.message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    // 🎯 تحديث: استخدام NextResponse.json لتوحيد أسلوب إرجاع الأخطاء
+    return NextResponse.json(
+      { message: "Internal Server Error", error: error.message },
+      { status: 500 }
     );
   }
 }

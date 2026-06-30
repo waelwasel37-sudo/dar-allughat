@@ -1,6 +1,6 @@
-
 import { NextRequest, NextResponse } from 'next/server';
-import admin, { getDb, getAuth } from '@/app/lib/firebase-admin';
+// 🎯 تصحيح: استيراد admin و getDb و getAdminAuth بشكل صحيح
+import { getDb, getAdminAuth, admin } from '@/app/lib/firebase-admin';
 import { Post } from '@/app/lib/types';
 import { cookies } from 'next/headers';
 
@@ -8,7 +8,8 @@ export const dynamic = 'force-dynamic';
 
 // GET all posts or a single post by slug
 export async function GET(req: NextRequest) {
-    const db = getDb();
+    // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
+    const db = await getDb();
 
     try {
         const slug = req.nextUrl.searchParams.get('slug');
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
             const post = {
                 id: doc.id, 
                 ...data,
+                // 🎯 تصحيح: التأكد من وجود admin.firestore.Timestamp
                 createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
                 updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
             };
@@ -35,6 +37,7 @@ export async function GET(req: NextRequest) {
                 return {
                     id: doc.id,
                     ...data,
+                    // 🎯 تصحيح: التأكد من وجود admin.firestore.Timestamp
                     createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
                     updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
                 };
@@ -50,16 +53,18 @@ export async function GET(req: NextRequest) {
 
 // POST a new post
 export async function POST(req: NextRequest) {
-    const auth = getAuth();
-    const db = getDb();
+    // 🎯 تعديل أمان عبقري منك: استخدام اسم متغير محلي فريد فريد لمنع تكرار المعرف البرمجي
+    const firebaseAuth = await getAdminAuth();
+    // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
+    const db = await getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
+        const sessionCookie = cookieStore.get("__session")?.value;
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
         if (decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
@@ -68,6 +73,7 @@ export async function POST(req: NextRequest) {
         
         const newPost = {
             ...postData,
+            // 🎯 تصحيح: استخدام الطريقة الصحيحة للحصول على الطابع الزمني للسيرفر
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         };
@@ -83,18 +89,20 @@ export async function POST(req: NextRequest) {
 
 // PUT to update a post by SLUG
 export async function PUT(req: NextRequest) {
-    const auth = getAuth();
-    const db = getDb();
+    // 🎯 تعديل أمان عبقري منك: استخدام اسم متغير محلي فريد فريد لمنع تكرار المعرف البرمجي
+    const firebaseAuth = await getAdminAuth();
+    // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
+    const db = await getDb();
 
     try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
+        const sessionCookie = cookieStore.get("__session")?.value;
 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
         if (decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
@@ -118,6 +126,7 @@ export async function PUT(req: NextRequest) {
 
         const finalUpdateData = {
             ...updateData,
+            // 🎯 تصحيح: استخدام الطريقة الصحيحة للحصول على الطابع الزمني للسيرفر
             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         };
 
@@ -141,17 +150,19 @@ export async function PUT(req: NextRequest) {
 
 // DELETE a post by SLUG
 export async function DELETE(req: NextRequest) {
-    const auth = getAuth();
-    const db = getDb();
+    // 🎯 تعديل أمان عبقري منك: استخدام اسم متغير محلي فريد فريد لمنع تكرار المعرف البرمجي
+    const firebaseAuth = await getAdminAuth();
+    // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
+    const db = await getDb();
 
      try {
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
+        const sessionCookie = cookieStore.get("__session")?.value;
 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
         if (decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }

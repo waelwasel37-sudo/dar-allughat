@@ -1,8 +1,8 @@
-
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"; 
 import { cookies } from "next/headers";
 import { generateSlug } from "@/app/lib/utils";
-import { getDb, getAuth } from "@/app/lib/firebase-admin";
+// 🎯 تصحيح: استيراد دوال Firebase الجديدة كـ Named Exports
+import { getDb, getAdminAuth } from "@/app/lib/firebase-admin";
 
 export const dynamic = 'force-dynamic';
 
@@ -12,23 +12,22 @@ export const dynamic = 'force-dynamic';
  * SECURITY:
  * This is a powerful, one-off maintenance endpoint. 
  * It is protected and can only be run by an authenticated admin user.
- * It iterates through all products, checks if a `slug` field is missing or empty,
- * generates a new unique slug from the product's name, and updates the document.
  */
-export async function POST(req: Request) {
-    const auth = getAuth();
-    const db = getDb();
+export async function POST(req: NextRequest) { 
+    // 🎯 تصحيح أمان: استخدام اسم متغير فريد لمنع تكرار المعرف البرمجي وتعطيل الـ Build
+    const firebaseAuth = await getAdminAuth();
+    const db = await getDb();
 
     try {
         // --- Admin Authentication Check ---
-        const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("__session")?.value; // CORRECT COOKIE NAME
+        const cookieStore = await cookies(); // 🎯 تصحيح قاتل: الكوكيز في Next.js 15 تحتاج إجبارياً لـ await لضمان قراءة الجلسة
+        const sessionCookie = cookieStore.get("__session")?.value;
 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized. No session cookie provided.' }, { status: 401 });
         }
 
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true).catch(() => null);
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true).catch(() => null);
         if (!decodedToken || decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden. You must be an admin to perform this action.' }, { status: 403 });
         }

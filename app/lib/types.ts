@@ -86,3 +86,60 @@ export type CartContextType = {
     isCartOpen: boolean;
     toggleCart: () => void;
 };
+
+// --- Order Schema Definitions ---
+
+// واجهة لبيانات عنوان الشحن
+export interface ShippingAddress {
+    recipientName: string;
+    streetAddress: string;
+    city: string;
+    governorate: string; // محافظة
+    postalCode?: string;
+    phone: string;
+}
+
+// واجهة لكل منتج داخل الطلب
+export interface OrderItem {
+    productId: string;
+    name: string;
+    slug: string;
+    price: number;
+    quantity: number;
+    imageUrl?: string;
+}
+
+// واجهة لمعلومات الدفع
+export interface PaymentDetails {
+    method: 'credit_card' | 'cash_on_delivery' | 'installment';
+    transactionId?: string; // ID من بوابة الدفع
+    status: 'pending' | 'paid' | 'failed' | 'refunded';
+    amount: number;
+    currency: 'EGP' | 'USD'; // عملة الدفع
+}
+
+// واجهة لمعلومات التقسيط (إذا كان الدفع بالتقسيط)
+export interface InstallmentDetails {
+    provider: string; // اسم شركة التقسيط (e.g., 'valu', 'souhoola')
+    plan: string; // وصف الخطة (e.g., '6 months, 0% interest')
+    monthlyPayment: number;
+    totalAmount: number;
+    numberOfMonths: number;
+}
+
+// الواجهة الرئيسية للطلب (Order Schema)
+export interface Order {
+    id: string;
+    userId: string; // ID المستخدم الذي قام بالطلب
+    items: OrderItem[];
+    totalAmount: number; // المبلغ الإجمالي للطلب
+    shippingAddress: ShippingAddress;
+    shippingFee: number; // رسوم الشحن
+    status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+    payment: PaymentDetails;
+    installment?: InstallmentDetails; // اختياري: يضاف فقط في حالة الدفع بالتقسيط
+    createdAt: string;
+    updatedAt: string;
+    trackingNumber?: string; // رقم تتبع الشحنة
+    notes?: string; // ملاحظات من العميل
+}

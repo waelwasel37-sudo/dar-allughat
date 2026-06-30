@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-// 🎯 تم تعديل الاستيراد لـ getAdminAuth ليتوافق مع تعديلات ملف الحماية ويمنع الـ Build Error
+// 🎯 الكود هنا بالفعل يستخدم الدوال المحدثة، لا حاجة لتغيير الاستيرادات
 import { getDb, getAdminAuth, admin } from '@/app/lib/firebase-admin';
 import { SchoolListRequest } from '@/app/lib/types';
 
@@ -16,22 +16,21 @@ const generateSlug = (name: string) => {
 // GET method - مخصص للأدمن لقراءة طلبات المدارس والعدد الجديد
 export async function GET(req: NextRequest) {
     try {
-        const firebaseAuth = await getAdminAuth(); // 🔑 تم تعديل اسم الدالة والمتغير لمنع التعارض الحرج
+        const firebaseAuth = await getAdminAuth();
         const db = await getDb();     
 
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value; 
         
-        // 🎯 إذا كان الطلب قادم من الـ Header وبدون كوكيز، يتحقق السيرفر من الـ Authorization Header أيضاً
         let decodedToken: any = null;
         
         if (sessionCookie) {
-            decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
+            decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true).catch(() => null);
         } else {
             const authHeader = req.headers.get('Authorization');
             if (authHeader && authHeader.startsWith('Bearer ')) {
-                const token = authHeader.split('Bearer ')[1];
-                decodedToken = await firebaseAuth.verifyIdToken(token);
+                const token = authHeader.substring(7); // 🎯 تحسين: استخدام substring بدلاً من split
+                decodedToken = await firebaseAuth.verifyIdToken(token).catch(() => null);
             }
         }
 
@@ -84,17 +83,15 @@ export async function POST(req: NextRequest) {
         const slug = `${generateSlug(data.fullName)}-${Date.now()}`;
         
         const newRequest = {
-            fullName: data.fullName,
+            ...data, // 🎯 تحسين: استخدام spread operator لمرونة أكبر
             slug: slug,
-            phone: data.phone || null,
-            address: data.address || null,
-            imageUrl: data.imageUrl,
-            imagePath: data.imagePath || null,
             status: 'new',
             createdAt: serverTimestamp,
         };
 
         const docRef = await db.collection('schoolListRequests').add(newRequest);
+        
+        // 🎯 تنبيه: الرقم hard-coded، في المستقبل يفضل نقله إلى متغيرات البيئة
         const myWhatsAppNumber = "201220396597"; 
         const messageText = `مرحباً دار اللغات، لقد قمت برفع قائمة مدرستي عبر الموقع:\n\n👤 *الاسم:* ${data.fullName}\n📞 *الهاتف:* ${data.phone || 'غير محدد'}\n📍 *العنوان:* ${data.address || 'غير محدد'}\n🖼️ *رابط القائمة:* ${data.imageUrl}`;
         const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(messageText)}`;
@@ -115,7 +112,7 @@ export async function POST(req: NextRequest) {
 // PATCH method - تحديث حالة الطلبات للأدمن فقط
 export async function PATCH(req: NextRequest) {
     try {
-        const firebaseAuth = await getAdminAuth(); // 🔑 تعديل مصلح وآمن
+        const firebaseAuth = await getAdminAuth();
         const db = await getDb();     
 
         const cookieStore = await cookies();

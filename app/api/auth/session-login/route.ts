@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { auth as adminAuth } from "../../../lib/firebase-admin";
+// 🎯 تصحيح: استيراد getAdminAuth بدلاً من الاستيراد المباشر
+import { getAdminAuth } from "../../../lib/firebase-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -7,6 +8,8 @@ export async function POST(request: Request) {
   console.log("--- V8 (Hybrid) DEBUG: /api/auth/session-login execution started ---");
 
   try {
+    // 🎯 تصحيح: استدعاء getAdminAuth للحصول على كائن المصادقة
+    const adminAuth = await getAdminAuth();
     const body = await request.json();
     const idToken = body.idToken || body.token;
     

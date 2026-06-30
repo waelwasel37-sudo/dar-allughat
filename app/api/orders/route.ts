@@ -1,28 +1,25 @@
+// app/api/orders/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { headers, cookies } from 'next/headers'; 
-
-import admin, { getDb, getAuth } from '@/app/lib/firebase-admin';
-import { Product } from '@/app/lib/types';
+// 🎯 استيراد الأدوات المحدثة وقاعدة البيانات السليمة
+import { getDb, getAdminAuth, admin } from '@/app/lib/firebase-admin';
+import { Order, OrderItem, ShippingAddress, PaymentDetails, InstallmentDetails } from '@/app/lib/types';
 import { sendPurchaseEvent } from '@/app/lib/meta-capi';
 
 export const dynamic = 'force-dynamic';
 
-interface CartItem extends Product {
-  quantity: number;
-}
-
-// GET all orders (for admin panel)
+// --- GET: جلب جميع الطلبات بتفاصيلها البنكية والتقسيط (للأدمن فقط) ---
 export async function GET(req: NextRequest) {
-    const auth = getAuth();
-    const db = getDb();
+    const firebaseAuth = await getAdminAuth();
+    const db = await getDb();
 
     try {
-        const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get("__session")?.value; // ممتاز ومطابق للبند 1
+        const cookieStore = await cookies(); // 🎯 التوافق مع Next.js 15 الإجباري
+        const sessionCookie = cookieStore.get("__session")?.value;
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
         if (decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
@@ -34,13 +31,11 @@ export async function GET(req: NextRequest) {
             return NextResponse.json([]);
         }
 
-        // تحسين النوع ليتوافق تماماً مع مستندات Firestore وعمليات الـ Map
         const orders = snapshot.docs.map((doc) => {
             const data = doc.data();
             return {
                 id: doc.id,
                 ...data,
-                // التعديل المستهدف (البند 4): الفحص الذكي والآمن للتواريخ لمنع الانهيار أثناء الـ Pending Timestamps
                 createdAt: data.createdAt instanceof admin.firestore.Timestamp 
                     ? data.createdAt.toDate().toISOString() 
                     : new Date(data.createdAt || Date.now()).toISOString(),
@@ -58,77 +53,113 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// POST a new order (from customer cart)
+// --- POST: إنشاء طلبية شراء جديدة لجميع المنتجات متوافقة مع الـ Installment API ---
 export async function POST(req: NextRequest) {
-    const db = getDb();
+    const db = await getDb();
 
     try {
         const body = await req.json();
 
+        // 🎯 تفكيك البيانات بناءً على الـ Order Schema الدقيق الذي أرسلته
         const {
+            userId,
             items,
-            total,
-            customerName,
-            customerPhone,
-            customerAddress,
-            paymentMethod
+            totalAmount,
+            shippingAddress,
+            shippingFee,
+            payment,        // تفاصيل الـ PaymentDetails (البنك أو الكاش)
+            installment,    // تفاصيل الـ InstallmentDetails (شركة التقسيط)
+            notes
         }: { 
-            items: CartItem[], 
-            total: number, 
-            customerName: string,
-            customerPhone: string,
-            customerAddress: string,
-            paymentMethod?: string
+            userId: string,
+            items: OrderItem[], 
+            totalAmount: number, 
+            shippingAddress: ShippingAddress,
+            shippingFee: number,
+            payment: Omit<PaymentDetails, 'amount' | 'currency'> & { method: string, status: string, transactionId?: string },
+            installment?: InstallmentDetails,
+            notes?: string
         } = body;
 
-        if (!items || items.length === 0 || total === undefined || !customerName || !customerPhone || !customerAddress) {
-            return NextResponse.json({ error: 'All fields, including cart data and customer details, are required.' }, { status: 400 });
+        // التحقق الصارم من الحقول الأساسية المطلوبة هندسياً
+        if (!items || items.length === 0 || totalAmount === undefined || !shippingAddress || !shippingAddress.phone || !shippingAddress.recipientName) {
+            return NextResponse.json({ error: 'Missing required order fields: items, totalAmount, or shipping details.' }, { status: 400 });
         }
 
+        const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+
+        // 💳 بناء كائن الطلب المطابق تماماً للـ Schema المحترف والجاهز لبوابات التقسيط
         const orderData = {
+            userId: userId || 'guest',
             items: items.map(item => ({
-                productId: item.id,
-                slug: item.slug,
+                productId: item.productId,
                 name: item.name,
+                slug: item.slug,
                 price: item.price,
                 quantity: item.quantity,
-                imageUrl: item.imageUrl,
+                imageUrl: item.imageUrl || null,
             })),
-            total, 
-            customerName,
-            customerPhone,
-            customerAddress,
-            paymentMethod: paymentMethod || 'cash',
-            status: 'processing', 
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            totalAmount, 
+            shippingAddress: {
+                recipientName: shippingAddress.recipientName,
+                streetAddress: shippingAddress.streetAddress,
+                city: shippingAddress.city,
+                governorate: shippingAddress.governorate,
+                postalCode: shippingAddress.postalCode || null,
+                phone: shippingAddress.phone
+            },
+            shippingFee: shippingFee || 0,
+            status: 'new', // حالة الطلب الافتراضية
+            
+            // بيانات الدفع البنكي الرقمي أو الكاش الجاهزة
+            payment: {
+                method: payment?.method || 'cash_on_delivery',
+                transactionId: payment?.transactionId || null,
+                status: payment?.status || 'pending',
+                amount: totalAmount + (shippingFee || 0),
+                currency: 'EGP'
+            },
+            
+            // حقن بيانات التقسيط الذكية إذا قوطعت المعاملة بنجاح مع الـ API للبنك
+            ...(payment?.method === 'installment' && installment ? {
+                installment: {
+                    provider: installment.provider, // مثل valu أو souhoola
+                    plan: installment.plan,
+                    monthlyPayment: installment.monthlyPayment,
+                    totalAmount: installment.totalAmount,
+                    numberOfMonths: installment.numberOfMonths
+                }
+            } : {}),
+
+            notes: notes || null,
+            createdAt: serverTimestamp,
+            updatedAt: serverTimestamp,
         };
 
-        // حفظ الطلب في Firestore بنجاح
+        // حفظ الطلبية في قاعدة البيانات
         const newOrderRef = await db.collection('orders').add(orderData);
 
-        // --- Meta CAPI Integration ---
+        // 🚀 إرسال حدث الشراء الفوري إلى فيسبوك لتتبع الحملات التسويقية (Meta CAPI)
         try {
             const headersList = await headers();
             const ipAddress = headersList.get('x-forwarded-for') || '127.0.0.1';
             const userAgent = headersList.get('user-agent') || '';
 
             sendPurchaseEvent({
-                value: total,
+                value: totalAmount,
                 content_ids: items.map(item => item.slug).filter((slug): slug is string => !!slug),
                 num_items: items.reduce((sum, item) => sum + item.quantity, 0),
                 ipAddress: ipAddress,
                 userAgent: userAgent,
             });
         } catch (capiError) {
-            console.error("Error triggering CAPI event:", capiError);
+            console.error("Error triggering Meta CAPI purchase event:", capiError);
         }
-        // --- End of CAPI Integration ---
 
         return NextResponse.json({ 
             message: 'Order created successfully', 
             orderId: newOrderRef.id 
-        });
+        }, { status: 201 });
 
     } catch (error: any) {
         console.error('[POST /api/orders] Error:', error);

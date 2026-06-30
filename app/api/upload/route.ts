@@ -1,22 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { getAuth, getBucket } from '@/app/lib/firebase-admin';
+// 🎯 تصحيح: استيراد الدوال المحدثة
+import { getAdminAuth, getBucket } from '@/app/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
-    const auth = getAuth();
-    const bucket = getBucket();
+    // 🎯 تصحيح: استخدام الدوال المحدثة مع await وأسماء متغيرات آمنة
+    const firebaseAuth = await getAdminAuth();
+    const bucket = await getBucket();
 
     try {
         // 1. التحقق من صلاحيات المستخدم (Admin Check)
+        // 🎯 تصحيح: التأكد من استخدام await مع cookies() كما اتفقنا
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value;
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized: No session cookie found.' }, { status: 401 });
         }
         
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
         if (decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden: User is not an admin.' }, { status: 403 });
         }
@@ -37,7 +40,6 @@ export async function POST(req: NextRequest) {
         const blobStream = blob.createWriteStream({
             metadata: { 
                 contentType: file.type,
-                // إضافة Cache-Control لتحسين أداء تحميل الصور عند المستخدم
                 cacheControl: 'public, max-age=31536000, immutable',
             }
         });
@@ -50,20 +52,15 @@ export async function POST(req: NextRequest) {
 
             blobStream.on('finish', async () => {
                 try {
-                    // بعد انتهاء الرفع، نجعل الملف قابلاً للوصول العام
                     await blob.makePublic();
-                    
-                    // ✅ الحل الصحيح: استخدام دالة publicUrl() المضمنة للحصول على الرابط الصحيح
                     const publicUrl = blob.publicUrl();
                     resolve(publicUrl);
-
                 } catch (error) {
                     console.error("Error making file public or getting URL:", error);
                     reject('Failed to process file after upload.');
                 }
             });
 
-            // بدء عملية الرفع
             blobStream.end(buffer);
         });
 
@@ -72,7 +69,6 @@ export async function POST(req: NextRequest) {
 
     } catch (error: any) {
         console.error("[API/UPLOAD] Error:", error.message);
-        // التعامل مع أخطاء التحقق من الكوكي أو الأخطاء العامة
         if (error.code === 'auth/session-cookie-expired' || error.code === 'auth/invalid-session-cookie') {
             return NextResponse.json({ error: 'Unauthorized: Session expired or invalid.' }, { status: 401 });
         }

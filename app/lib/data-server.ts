@@ -1,12 +1,18 @@
-import './firebase-admin'; // استيراد حاسم لضمان التهيئة الفورية
+// 🎯 تحديث: إزالة الاستيراد غير الضروري، التهيئة تتم الآن عند أول استدعاء
+// import './firebase-admin'; 
 
 // app/lib/data-server.ts - نسخة محسنة مع معالجة آمنة للبيانات
-import admin, { getDb } from './firebase-admin';
-import { Product, Category, Post } from './types'; // افترض وجود نوع Post
+// 🎯 تصحيح: استيراد admin و getDb بشكل سليم
+import { getDb, admin } from './firebase-admin';
+import { Product, Category, Post } from './types';
 
 // دالة مساعدة لتحويل المستندات بأمان
 function serializeDocument<T>(doc: admin.firestore.DocumentSnapshot): T {
     const data = doc.data() as any;
+    if (!data) {
+        // 🎯 تحسين: معالجة حالة عدم وجود بيانات في المستند
+        return { id: doc.id } as T;
+    }
     const serializedData: { [key: string]: any } = { id: doc.id };
 
     for (const key in data) {
@@ -14,11 +20,8 @@ function serializeDocument<T>(doc: admin.firestore.DocumentSnapshot): T {
             const value = data[key];
             if (value instanceof admin.firestore.Timestamp) {
                 serializedData[key] = value.toDate().toISOString();
-            } else if (key === 'title' || key === 'content' || key === 'summary') {
-                // معالجة النصوص التي قد تحتوي على مشاكل
-                serializedData[key] = safeCleanString(value);
-            }
-             else {
+            } else {
+                // 🎯 تبسيط: لا حاجة للمعالجة الخاصة للنصوص هنا، فالمشكلة كانت في مكان آخر
                 serializedData[key] = value;
             }
         }
@@ -26,22 +29,11 @@ function serializeDocument<T>(doc: admin.firestore.DocumentSnapshot): T {
     return serializedData as T;
 }
 
-// دالة لتنظيف النصوص
-const safeCleanString = (rawStr: any): string => {
-    if (!rawStr || typeof rawStr !== 'string') return '';
-    try {
-        // محاولة لإصلاح JSON غير صالح ضمنيًا
-        const serialized = JSON.stringify(rawStr);
-        return JSON.parse(serialized.replace(/\\([^"\\\/bfnrtu])/g, '$1'));
-    } catch {
-        // العودة إلى حل بسيط إذا فشل تحليل JSON
-        return rawStr.replace(/[\x00-\x1F\x7F]/g, ''); // إزالة المحارف غير القابلة للطباعة
-    }
-};
 
 // 1. جلب جميع المنتجات
 export async function getProducts(): Promise<Product[]> {
-    const db = getDb();
+    // 🎯 تصحيح: استخدام await مع getDb()
+    const db = await getDb();
     try {
         const snapshot = await db.collection("products").orderBy("createdAt", "desc").get();
         if (snapshot.empty) return [];
@@ -54,7 +46,7 @@ export async function getProducts(): Promise<Product[]> {
 
 // 2. جلب جميع التصنيفات
 export async function getCategories(): Promise<Category[]> {
-    const db = getDb();
+    const db = await getDb();
     try {
         const snapshot = await db.collection("categories").get();
         if (snapshot.empty) return [];
@@ -67,7 +59,7 @@ export async function getCategories(): Promise<Category[]> {
 
 // 3. جلب منتج واحد بالـ Slug
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-    const db = getDb();
+    const db = await getDb();
     try {
         const snapshot = await db.collection("products").where("slug", "==", slug).limit(1).get();
         if (snapshot.empty) return null;
@@ -80,7 +72,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
 // 4. جلب المنتجات ذات الصلة
 export async function getRelatedProducts(category: string, currentSlug: string): Promise<Product[]> {
-    const db = getDb();
+    const db = await getDb();
     try {
         const snapshot = await db.collection("products").where("category", "==", category).limit(4).get();
         if (snapshot.empty) return [];
@@ -95,29 +87,14 @@ export async function getRelatedProducts(category: string, currentSlug: string):
 
 // 5. جلب المقالات مع معالجة آمنة
 export async function getPosts(): Promise<Post[]> {
-    const db = getDb();
+    const db = await getDb();
     try {
         const snapshot = await db.collection("posts").orderBy("createdAt", "desc").get();
         if (snapshot.empty) return [];
         
-        // استخدام الدالة المساعدة لضمان الأمان
-        return snapshot.docs.reduce<Post[]>((acc, doc) => {
-            try {
-                // سيتم معالجة كل شيء بما في ذلك التواريخ والنصوص داخل هذه الدالة
-                const post = serializeDocument<Post>(doc);
-                acc.push(post);
-            } catch (error) {
-                console.error(`--- Skipped Corrupted Document ---`);
-                console.error(`Document ID: ${doc.id}`);
-                console.error(`Error during serialization:`, error);
-                console.error(`Raw Data:`, JSON.stringify(doc.data(), null, 2));
-                console.error(`---------------------------------`);
-            }
-            return acc;
-        }, []);
-
+        return snapshot.docs.map(doc => serializeDocument<Post>(doc));
     } catch (error) {
-        console.error("Error in getPosts (initial fetch):", error);
+        console.error("Error in getPosts:", error);
         return [];
     }
 }
