@@ -10,7 +10,7 @@ const nextConfig = {
     unoptimized: false,
     remotePatterns: [
       {
-        protocol: 'https', // 🛠️ تم تصحيح الخطأ الكتابي هنا
+        protocol: 'https',
         hostname: '*.googleusercontent.com', 
       },
       {
@@ -19,8 +19,16 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'storage.googleapis.com', // 🎯 إصلاح حاسم وممتاز لجلب الصور
+        hostname: 'storage.googleapis.com',
       },
+      {
+        protocol: 'https',
+        hostname: '*.run.app', // ✅ السماح بنطاقات App Hosting
+      },
+      {
+        protocol: 'https',
+        hostname: '*.firebaseapp.com', // ✅ السماح بنطاقات Firebase
+      }
     ],
   },
 

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-// استيراد التهيئة المباشرة لضمان عدم حدوث خطأ Firebase app does not exist بالسيرفر
-import admin, { getDb, getAuth } from '@/app/lib/firebase-admin';
 import { cookies } from 'next/headers';
+// 🎯 تم تعديل الاستيراد لـ getAdminAuth ليتوافق مع تعديلات ملف الحماية ويمنع الـ Build Error
+import { getDb, getAdminAuth, admin } from '@/app/lib/firebase-admin';
 import { SchoolListRequest } from '@/app/lib/types';
 
 export const dynamic = 'force-dynamic';
 
-// دالة داخلية لتوليد السلوج وتنظيف الحروف
 const generateSlug = (name: string) => {
     if (!name) return '';
     return name.trim().toLowerCase()
@@ -14,28 +13,34 @@ const generateSlug = (name: string) => {
         .replace(/\s+/g, '-');
 };
 
-// 1️⃣ دالة الـ GET: محمية وصارمة للأدمن فقط (تمنع ظهور خطأ 401 للزوار العاديين)
+// GET method - مخصص للأدمن لقراءة طلبات المدارس والعدد الجديد
 export async function GET(req: NextRequest) {
-    const auth = getAuth();
-    const db = getDb();
-
     try {
+        const firebaseAuth = await getAdminAuth(); // 🔑 تم تعديل اسم الدالة والمتغير لمنع التعارض الحرج
+        const db = await getDb();     
+
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value; 
         
-        // إذا لم يكن أدمن يمتلك كوكيز الجلسة، نرفض الطلب فوراً لمنع حشو السجلات بالتحذيرات
-        if (!sessionCookie) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        // 🎯 إذا كان الطلب قادم من الـ Header وبدون كوكيز، يتحقق السيرفر من الـ Authorization Header أيضاً
+        let decodedToken: any = null;
         
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
-        if (decodedToken.role !== 'admin') {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        if (sessionCookie) {
+            decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
+        } else {
+            const authHeader = req.headers.get('Authorization');
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.split('Bearer ')[1];
+                decodedToken = await firebaseAuth.verifyIdToken(token);
+            }
+        }
+
+        if (!decodedToken || decodedToken.role !== 'admin') {
+            return NextResponse.json({ error: 'Unauthorized or Forbidden' }, { status: 401 });
         }
 
         const { searchParams } = new URL(req.url);
         const status = searchParams.get('status');
-
         const requestsRef = db.collection('schoolListRequests');
 
         if (status === 'new') {
@@ -65,11 +70,10 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// 2️⃣ دالة الـ POST: عامة للجمهور لرفع القوائم وتوجيههم لرقم الواتساب الخاص بك
+// POST method - مفتوح للعامة والجمهور لإرسال طلباتهم وإرسال الواتساب
 export async function POST(req: NextRequest) {
-    const db = getDb();
-
     try {
+        const db = await getDb(); 
         const data: Omit<SchoolListRequest, 'id' | 'createdAt' | 'status'> = await req.json();
 
         if (!data.fullName || !data.imageUrl) {
@@ -77,8 +81,6 @@ export async function POST(req: NextRequest) {
         }
 
         const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
-        
-        // توليد السلوج النظيف بناءً على اسم الزبون لتسمية وحفظ الطلب
         const slug = `${generateSlug(data.fullName)}-${Date.now()}`;
         
         const newRequest = {
@@ -93,14 +95,10 @@ export async function POST(req: NextRequest) {
         };
 
         const docRef = await db.collection('schoolListRequests').add(newRequest);
-
-        // 🚀 رقم الواتساب الخاص بك بالصيغة الدولية المضبوطة
         const myWhatsAppNumber = "201220396597"; 
         const messageText = `مرحباً دار اللغات، لقد قمت برفع قائمة مدرستي عبر الموقع:\n\n👤 *الاسم:* ${data.fullName}\n📞 *الهاتف:* ${data.phone || 'غير محدد'}\n📍 *العنوان:* ${data.address || 'غير محدد'}\n🖼️ *رابط القائمة:* ${data.imageUrl}`;
-        
         const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(messageText)}`;
 
-        // إرجاع الـ slug ورابط الواتساب الجاهز للواجهة الأمامية
         return NextResponse.json({ 
             message: "Request submitted successfully, pending review.", 
             id: docRef.id,
@@ -114,18 +112,18 @@ export async function POST(req: NextRequest) {
     }
 }
 
-// 3️⃣ دالة الـ PATCH: لتحديث حالة الطلب للأدمن من لوحة التحكم
+// PATCH method - تحديث حالة الطلبات للأدمن فقط
 export async function PATCH(req: NextRequest) {
-    const auth = getAuth();
-    const db = getDb();
-
     try {
+        const firebaseAuth = await getAdminAuth(); // 🔑 تعديل مصلح وآمن
+        const db = await getDb();     
+
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value; 
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-        const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
         if (decodedToken.role !== 'admin') {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }

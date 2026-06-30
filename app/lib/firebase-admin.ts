@@ -1,52 +1,52 @@
 import { initializeApp, getApps, getApp, type App } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
-import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth';
-import { getStorage as getAdminStorage } from 'firebase-admin/storage';
-import * as adminInstance from 'firebase-admin';
-
-let app: App;
+import { getAuth as firebaseGetAuth, type Auth } from 'firebase-admin/auth'; // 🎯 تم تعديل الاسم هنا لمنع التعارض
+import { getStorage } from 'firebase-admin/storage';
+import * as admin from 'firebase-admin';
 
 const serviceAccount = {
-  projectId: process.env.FIREBASE_PROJECT_ID,
+  projectId: process.env.FIREBASE_PROJECT_ID || 'dar-allughat-97483992-fc6c5', // ✅ خيار احتياطي آمن للمشروع الحالي
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  // 🎯 ضمان معالجة محرف السطر الجديد بشكل صحيح من متغيرات البيئة
   privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
 };
 
-if (getApps().length === 0) {
+// 💡 دالة التهيئة القابلة للتصدير والاستدعاء عند الحاجة
+export const initializeAdminApp = async (): Promise<App> => {
+  if (getApps().length > 0) {
+    return getApp();
+  }
   try {
-    app = initializeApp({
-      credential: adminInstance.credential.cert(serviceAccount),
+    const app = initializeApp({
+      credential: admin.credential.cert(serviceAccount),
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
     });
-    console.log('[Firebase Admin] Initialized successfully using environment variables.');
+    console.log('[Firebase Admin] Initialized successfully.');
+    return app;
   } catch (error: any) {
-    console.error('[Firebase Admin Fatal Error]: Failed to initialize.', error.message);
+    console.error('[Firebase Admin Fatal Error] Failed to initialize:', error.message);
     if (!getApps().length) {
       initializeApp();
     }
-    app = getApp();
+    return getApp();
   }
-} else {
-  app = getApp();
-}
-
-export const getDb = (): Firestore => getFirestore(app);
-export const getAuth = (): Auth => getAdminAuth(app);
-export const getBucket = () => getAdminStorage(app).bucket();
-
-export const admin = adminInstance;
-
-// This named export is necessary for the API routes that use: import { auth } from '...'
-export const auth = getAuth();
-
-const adminDefaultExport = {
-  ...adminInstance,
-  apps: getApps(),
-  app: () => app,
-  // Using getters ensures lazy evaluation and prevents initialization race conditions.
-  get firestore() { return getDb(); },
-  get auth() { return getAuth(); },
-  storage: getAdminStorage 
 };
 
-export default adminDefaultExport;
+// الدوال المساعدة التي تضمن التهيئة قبل الاستخدام
+export const getDb = async (): Promise<Firestore> => {
+  const app = await initializeAdminApp();
+  return getFirestore(app);
+};
+
+export const getAdminAuth = async (): Promise<Auth> => { // 🎯 تم تغيير اسم الدالة هنا لـ getAdminAuth لمنع تكرار المعرف البرمجي
+  const app = await initializeAdminApp();
+  return firebaseGetAuth(app);
+};
+
+export const getBucket = async () => {
+    const app = await initializeAdminApp();
+    return getStorage(app).bucket();
+};
+
+// تصدير النسخة الأصلية من firebase-admin إذا لزم الأمر
+export { admin };

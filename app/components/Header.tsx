@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image'; // استيراد مكون Image
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from './Header.module.css';
@@ -9,37 +9,46 @@ import Cart from './Cart';
 import ShareButton from './ShareButton';
 import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaUserCircle } from 'react-icons/fa';
 
-// لا حاجة لاستيراد الشعار من هنا بعد الآن
-// import logo from '../../../public/images/logo-horizontal.png';
-
 const Header = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout, loading, isAdmin } = useAuth();
   const [newRequestsCount, setNewRequestsCount] = useState(0);
 
   useEffect(() => {
-    if (!loading && isAdmin) {
+    // 💡 التأكد من أن المستخدم أدمن وجاهز، وموجود فعلياً لإرسال بياناته
+    if (isAdmin && user) {
       const fetchNewRequestsCount = async () => {
         try {
-          const response = await fetch('/api/school-list?status=new');
+          // 🎯 جلب التوكن لإثبات هوية الأدمن للسيرفر ومنع خطأ 401 Unauthorized
+          const token = typeof user.getIdToken === 'function' ? await user.getIdToken() : user.token;
+          
+          const response = await fetch('/api/school-list?status=new', {
+            headers: {
+              'Authorization': `Bearer ${token || ''}`
+            }
+          });
+          
           if (response.ok) {
             const data = await response.json();
             setNewRequestsCount(data.count || 0);
           } else {
-            setNewRequestsCount(0);
+            console.error('Failed to fetch new requests count:', response.status);
           }
         } catch (error) {
           console.error('Error fetching new requests count:', error);
         }
       };
 
-      fetchNewRequestsCount();
-      const intervalId = setInterval(fetchNewRequestsCount, 60000); 
+      fetchNewRequestsCount(); // الجلب عند التحميل الأولي
+      const intervalId = setInterval(fetchNewRequestsCount, 60000); // تحديث كل دقيقة
+
+      // تنظيف الـ interval عند إزالة المكون
       return () => clearInterval(intervalId);
     } else {
+      // إذا لم يكن المستخدم أدمن، تأكد من أن العدد هو صفر
       setNewRequestsCount(0);
     }
-  }, [isAdmin, loading]);
+  }, [isAdmin, user]); // ✅ تم استخدام user لضمان قراءة التوكن فور جاهزيته ومنع التكرار العشوائي
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
@@ -48,18 +57,16 @@ const Header = () => {
     <header className={styles.header}>
       <div className={styles.logo}>
         <Link href="/" onClick={closeMobileMenu}>
-          {/* استخدام المسار العام مباشرة من مجلد public */}
           <Image 
             src="/images/logo-horizontal.png" 
             alt="شعار مكتبات دار اللغات" 
-            width={200} // تحديد عرض مناسب
-            height={50} // تحديد ارتفاع مناسب
-            priority // لإعطاء الأولوية في التحميل
+            width={200}
+            height={50}
+            priority
           />
         </Link>
       </div>
       <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileMenu : ''}`}>
-        {/* ... باقي روابط القائمة ... */}
         <Link href="/" onClick={closeMobileMenu}>الرئيسية</Link>
         <Link href="/about" onClick={closeMobileMenu}>من نحن</Link>
         <Link href="/contact" onClick={closeMobileMenu}>اتصل بنا</Link>
@@ -78,10 +85,10 @@ const Header = () => {
 
         <div className={styles.topActions}>
             <div className={styles.socialLinks}>
-                <a href="https://www.facebook.com/maktabat.dar.allughat/" target="_blank" rel="noopener noreferrer" style={{ color: '#1877F2' }}><FaFacebook /></a>
-                <a href="https://chat.whatsapp.com/LoAtW84xgZr51vQAbSEw0E" target="_blank" rel="noopener noreferrer" style={{ color: '#25D366' }}><FaWhatsapp /></a>
-                <a href="https://t.me/+10C-njs5Xoo0ZDRk" target="_blank" rel="noopener noreferrer" style={{ color: '#0088cc' }}><FaTelegram /></a>
-                <a href="https://www.google.com/maps/dir//%D8%A7%D9%85%D8%A7%D9%85+%D8%B3%D9%86%D8%AA%D8%B1%D8%A7%D9%84+%D8%A7%D9%84%D8%B9%D8%A8%D9%88%D8%B1+2%D8%8C+%D9%85%D9%88%D9%84+%D8%B1%D9%88%D8%B6%D8%A9+%D8%A7%D9%84%D8%B9%D8%A8%D9%88%D8%B1%D8%8C+%D8%A7%D9%84%D8%B9%D8%A8%D9%88%D8%B1%D8%8C+%D9%85%D8%AD%D8%A7%D9%81%D8%B8%D8%A9+%D8%A7%D9%84%D9%82%D9%84%D9%8A%D9%88%D8%A8%D9%8A%D8%A9+6361122%E2%80%AE/@30.215903,31.4800317,7901m/data=!3m1!1e3!4m8!4m7!1m0!1m5!1m1!1s0x14581b00678ba35d:0x409f8c8e3314ed66!2m2!1d31.4665634!2d30.2006245?entry=ttu" target="_blank" rel="noopener noreferrer" style={{ color: '#DB4437' }}><FaMapMarkerAlt /></a>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" style={{ color: '#1877F2' }}><FaFacebook /></a>
+                <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer" style={{ color: '#25D366' }}><FaWhatsapp /></a>
+                <a href="https://t.me" target="_blank" rel="noopener noreferrer" style={{ color: '#0088cc' }}><FaTelegram /></a>
+                <a href="https://google.com" target="_blank" rel="noopener noreferrer" style={{ color: '#DB4437' }}><FaMapMarkerAlt /></a>
             </div>
             <ShareButton />
         </div>
@@ -99,11 +106,9 @@ const Header = () => {
           </Link>
         )}
         <button className={styles.menuButton} onClick={toggleMobileMenu}>
-          &#9776; {/* Hamburger Icon */}
+          ☰
         </button>
       </div>
     </header>
   );
 };
-
-export default Header;
