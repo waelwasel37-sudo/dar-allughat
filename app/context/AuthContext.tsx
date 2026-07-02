@@ -2,9 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-// 🎯 تعديل: استيراد getRedirectResult لإكمال نظام تسجيل الدخول الجديد
 import { onAuthStateChanged, signOut, User, getRedirectResult } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { auth } from '../lib/firebase-client'; // 🎯 تصحيح المسار
 
 interface AuthContextType {
   user: User | null;
@@ -34,9 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // دالة مدمجة لمعالجة المصادقة عند التحميل
     const handleAuthFlow = async () => {
-      // أولاً: محاولة التقاط نتيجة إعادة التوجيه من جوجل فور عودة المستخدم
       try {
         const result = await getRedirectResult(auth);
         if (result) {
@@ -46,7 +43,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error("Error processing Firebase redirect result:", error);
       }
 
-      // ثانياً: المستمع الدائم لحالة المصادقة وهو مصدر الحقيقة الوحيد
       const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         setLoading(true);
         if (currentUser) {
@@ -64,7 +60,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 const userIsAdmin = currentUser.email === ADMIN_EMAIL;
                 setIsAdmin(userIsAdmin);
 
-                // 🎯 التصحيح الجذري: استخدام replace لضمان مزامنة الكوكيز قبل التحويل ومنع الطرد والخطأ
                 if (userIsAdmin && pathname === '/login') {
                     window.location.replace('/admin');
                 }
@@ -77,7 +72,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await signOut(auth);
           }
         } else {
-          // No user is signed in
           const currentCachedUser = auth.currentUser;
           if (currentCachedUser) {
             await triggerServerLogout(currentCachedUser.uid);

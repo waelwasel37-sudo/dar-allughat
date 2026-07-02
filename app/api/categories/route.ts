@@ -5,7 +5,7 @@ import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-    const db = getDb(); // Use the getter function
+    const db = await getDb(); // 🎯 تأكد من وجود كلمة await قبل getDb
 
     try {
         const categoriesCollection = db.collection("categories");

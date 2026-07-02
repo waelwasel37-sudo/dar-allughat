@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 import { MetadataRoute } from 'next';
-import { auth as adminAuth } from './lib/firebase-admin'; 
+import { getAdminAuth } from './lib/firebase-admin'; 
 import { getProducts, getPosts } from './lib/data-server'; 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -1,15 +1,14 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, User } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
+import { onAuthStateChanged, signOut, User, getRedirectResult } from 'firebase/auth';
+import { auth } from '@/app/lib/firebase-client'; // 🎯 استخدام المسار المستعار الموثوق
 
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
   loading: boolean;
-  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -19,87 +18,113 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const pathname = usePathname();
 
+  const triggerServerLogout = useCallback(async (uid: string) => {
+    try {
+      await fetch('/api/auth/session-logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid }),
+      });
+    } catch (e) {
+      console.error('Failed to trigger server logout:', e);
+    }
+  }, []);
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setLoading(true);
-      if (currentUser) {
-        setUser(currentUser);
+    const handleAuthFlow = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          console.log("Firebase redirect result processed for user:", result.user.uid);
+        }
+      } catch (error) {
+        console.error("Error processing Firebase redirect result:", error);
+      }
 
-        try {
-          const idToken = await currentUser.getIdToken(true);
-          const response = await fetch('/api/auth/session-login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ idToken }),
-          });
+      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+        setLoading(true);
+        if (currentUser) {
+          setUser(currentUser);
+          try {
+            const idToken = await currentUser.getIdToken(true);
+            const response = await fetch('/api/auth/session-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idToken }),
+            });
 
-          if (response.ok) {
-              const ADMIN_EMAIL = 'waelwasel37@gmail.com'; 
-              const userIsAdmin = currentUser.email === ADMIN_EMAIL;
-              setIsAdmin(userIsAdmin);
-              
-              if (userIsAdmin && pathname === '/login') {
-                  router.push('/admin');
-              }
-          } else {
-              console.error('Server session login failed.');
-              await signOut(auth);
-              setUser(null);
-              setIsAdmin(false);
+            if (response.ok) {
+                const ADMIN_EMAIL = 'waelwasel37@gmail.com';
+                const userIsAdmin = currentUser.email === ADMIN_EMAIL;
+                setIsAdmin(userIsAdmin);
+
+                if (userIsAdmin && pathname === '/login') {
+                    window.location.replace('/admin');
+                }
+            } else {
+                console.error('Server session login failed.');
+                await signOut(auth);
+            }
+          } catch (e) {
+            console.error('Error during session creation or token fetching:', e);
+            await signOut(auth);
           }
-        } catch (e) {
-          console.error('Error during session creation lookup:', e);
+        } else {
+          const currentCachedUser = auth.currentUser;
+          if (currentCachedUser) {
+            await triggerServerLogout(currentCachedUser.uid);
+          }
           setUser(null);
           setIsAdmin(false);
+
+          if (pathname.startsWith('/admin')) {
+            window.location.href = '/login';
+          }
         }
+        setLoading(false);
+      });
+      return unsubscribe;
+    };
 
-      } else {
-        setUser(null);
-        setIsAdmin(false);
-        if (pathname.startsWith('/admin')) {
-          router.push('/login');
-        }
-      }
-      setLoading(false);
-    });
+    const unsubscribePromise = handleAuthFlow();
 
-    return () => unsubscribe();
-  }, [pathname, router]); // تم حذف [user] لمنع الـ Infinite Loop نهائياً
+    return () => {
+      unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
+    };
 
-  const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
+  }, [pathname, triggerServerLogout]);
+
+  const logout = useCallback(async () => {
     try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error("Error during Google sign-in:", error);
-      alert("فشل تسجيل الدخول باستخدام جوجل. يرجى المحاولة مرة أخرى.");
-    }
-  };
-
-  const logout = async () => {
-    try {
-      if (user) {
+      const currentCachedUser = auth.currentUser;
+      if (currentCachedUser) {
         await fetch('/api/auth/session-logout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ uid: user.uid }),
+          body: JSON.stringify({ uid: currentCachedUser.uid }),
         });
       }
-    } catch (error) {
-      console.error("Error calling session-logout API:", error);
-    } finally {
       await signOut(auth);
-      setUser(null);
-      setIsAdmin(false);
-      router.push('/');
+      window.location.href = '/';
+    } catch (error) {
+      console.error("Error during sign-out:", error);
     }
-  };
+  }, []);
 
-  const value = { user, isAdmin, loading, loginWithGoogle, logout };
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  const contextValue = useMemo(() => ({
+    user,
+    isAdmin,
+    loading,
+    logout
+  }), [user, isAdmin, loading, logout]);
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

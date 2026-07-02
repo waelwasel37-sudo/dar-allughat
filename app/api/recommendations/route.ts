@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
-import admin, { getDb } from '@/app/lib/firebase-admin';
+// 🎯 حذف استيراد admin الافتراضي الخاطئ
+import { getDb } from '@/app/lib/firebase-admin';
 import { Product } from '@/app/lib/types';
+import type { firestore } from 'firebase-admin';
 
 // السطر السحري لضمان نجاح الـ Build
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-    const db = getDb();
+    // 🎯 إضافة await
+    const db = await getDb();
 
   try {
     const { categories, excludeSlugs } = await request.json();
@@ -25,7 +28,7 @@ export async function POST(request: Request) {
 
     const recommendedProducts: Product[] = [];
 
-    querySnapshot.forEach((doc: admin.firestore.QueryDocumentSnapshot) => {
+    querySnapshot.forEach((doc: firestore.QueryDocumentSnapshot) => {
       const data = doc.data();
       // تأكد من أن الـ slug موجود وليس ضمن المستبعدين
       const product = { id: doc.id, ...data } as Product;

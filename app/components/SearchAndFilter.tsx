@@ -55,7 +55,7 @@ const SearchAndFilter = ({ categories = [] }: SearchAndFilterProps) => {
                         <button
                             key={category.id}
                             className={`${styles.categoryButton} ${selectedCategorySlug === category.slug ? styles.active : ''}`}
-                            onClick={() => handleCategoryChange(category.slug)}
+                            onClick={() => handleCategoryChange(category.slug || '')}
                         >
                             <span className={styles.icon}>{category.emoji}</span>
                             {category.name}
