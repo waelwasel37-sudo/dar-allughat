@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 // 🎯 استيراد getAdminAuth بدلاً من الاستيراد المباشر
 import { getAdminAuth } from "../../../lib/firebase-admin";
-// 🎯 استيراد دالة جلب الجلسة الآمنة التي أنشأناها لتشفير الكوكيز
+// 🎯 استيراد دالة جلب الجلسة الآمنة لتشغيل الكوكيز
 import { getSession } from "@/app/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,6 @@ export async function POST(request: Request) {
   console.log("--- V8 (Hybrid) DEBUG: /api/auth/session-login execution started ---");
 
   try {
-    // 🎯 استدعاء getAdminAuth للحصول على كائن المصادقة
     const adminAuth = await getAdminAuth();
     const body = await request.json();
     const idToken = body.idToken || body.token;
@@ -23,18 +22,20 @@ export async function POST(request: Request) {
     const decodedToken = await adminAuth.verifyIdToken(idToken);
     console.log("[2/2] ID token verified successfully. UID:", decodedToken.uid);
 
-    // التحقق من البريد الإلكتروني الخاص بالأدمن لضمان الصلاحية
+    // التحقق الصارم من بريدك الإلكتروني
     if (decodedToken.email !== "waelwasel37@gmail.com") {
       console.warn(`[⚠️ SECURITY WARNING] Unauthorized login attempt from: ${decodedToken.email}`);
       return NextResponse.json({ error: "Access denied." }, { status: 403 });
     }
 
-    // 🎯 جديد: جلب الجلسة الحالية وتخزين البيانات المشفرة بداخلها
+    // 🎯 جلب الجلسة
     const session = await getSession();
     session.isLoggedIn = true;
+    
+    // 🎯 التصحيح: أخذ العنصر الأول من المصفوفة [0] لضمان تمرير نص (String) وليس مصفوفة
     session.username = decodedToken.email ? decodedToken.email.split('@')[0] : "Admin";
     
-    // 🎯 جديد: حفظ الجلسة لإرسال الكوكيز المشفرة إلى متصفح المستخدم تلقائياً
+    // حفظ الجلسة وتوليد الكوكيز المشفرة في متصفحك
     await session.save();
     console.log("[3/3] Session saved and encrypted cookie generated successfully.");
 
@@ -49,4 +50,10 @@ export async function POST(request: Request) {
     console.error("--- V8 CRITICAL ERROR ---", err);
     return NextResponse.json({ error: "Internal Server Error", details: err.message }, { status: 500 });
   }
+}
+
+// 🎯 جديد ومحمي: منع خطأ 405 الصادر من السيرفر تماماً
+// إذا حاول المتصفح استدعاء المسار عبر GET أثناء إعادة التوجيه، يتم تحويله لصفحة الدخول بأمان بدلاً من انهيار الطلب
+export async function GET() {
+  return NextResponse.redirect(new URL("/login", "https://hosted.app"));
 }

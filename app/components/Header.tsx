@@ -66,8 +66,8 @@ const Header = ({ session }: HeaderProps) => {
           <Image 
             src="/images/logo-horizontal.png" 
             alt="شعار مكتبات دار اللغات" 
-            width={200}
-            height={50}
+            width={256}
+            height={64}
             priority
           />
         </Link>
