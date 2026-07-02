@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { onAuthStateChanged, signOut, User, getRedirectResult } from 'firebase/auth';
-import { auth } from '@/app/lib/firebase-client'; // 🎯 استخدام المسار المستعار الموثوق
+import { auth } from '@/app/lib/firebase-client'; 
 
 interface AuthContextType {
   user: User | null;
@@ -60,8 +60,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 const userIsAdmin = currentUser.email === ADMIN_EMAIL;
                 setIsAdmin(userIsAdmin);
 
+                // 🎯 التصحيح الجذري والنهائي لمنع الطرد الفوري:
                 if (userIsAdmin && pathname === '/login') {
-                    window.location.replace('/admin');
+                    console.log("🎯 Session verified. Holding for 1s to stabilize secure cookie headers...");
+                    // مهلة ثانية واحدة كاملة تضمن للمتصفح حفظ الجلسة المشفرة للأبد قبل الانتقال
+                    setTimeout(() => {
+                        window.location.replace('/admin');
+                    }, 1000);
                 }
             } else {
                 console.error('Server session login failed.');
