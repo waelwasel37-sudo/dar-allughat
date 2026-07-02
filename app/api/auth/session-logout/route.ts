@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-// 🎯 تصحيح: استيراد getAdminAuth بدلاً من الاستيراد المباشر
+// 🎯 استيراد getAdminAuth بدلاً من الاستيراد المباشر
 import { getAdminAuth } from "../../../lib/firebase-admin";
+// 🎯 استيراد دالة جلب الجلسة الآمنة لتدمير الكوكيز المشفرة
+import { getSession } from "@/app/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +10,7 @@ export async function POST(request: Request) {
   console.log("--- API Endpoint: /api/auth/session-logout ---");
 
   try {
-    // 🎯 تصحيح: استدعاء getAdminAuth للحصول على كائن المصادقة
+    // 🎯 استدعاء getAdminAuth للحصول على كائن المصادقة
     const adminAuth = await getAdminAuth();
     const text = await request.text();
     const body = text ? JSON.parse(text) : {};
@@ -23,7 +25,12 @@ export async function POST(request: Request) {
     await adminAuth.revokeRefreshTokens(uid);
     console.log(`[2/2] Successfully revoked refresh tokens for UID: ${uid}`);
 
-    return NextResponse.json({ status: "success", message: "Tokens revoked." }, { status: 200 });
+    // 🎯 جديد: جلب الجلسة الحالية وتدميرها لمسح الكوكيز المشفرة من متصفحك تماماً
+    const session = await getSession();
+    session.destroy();
+    console.log("[3/3] Iron-session cookie destroyed successfully from client browser.");
+
+    return NextResponse.json({ status: "success", message: "Tokens revoked and session cleared." }, { status: 200 });
 
   } catch (error) {
     const err = error as Error;

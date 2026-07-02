@@ -1,22 +1,21 @@
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-
-// تعريف بيانات الجلسة
+// 1. تعريف بنية البيانات المخزنة داخل الجلسة (اسم المستخدم وحالة تسجيل الدخول)
 export interface SessionData {
   isLoggedIn: boolean;
   username: string;
 }
 
-// الإعدادات القياسية دون كلمات سر مكشوفة
+// 2. إعدادات الجلسة والكوكيز مع القيمة البديلة لحماية عملية بناء الصفحات الثابتة (Static Pages)
 export const sessionOptions = {
-  password: process.env.SECRET_COOKIE_PASSWORD as string,
+  // يقرأ المفتاح الحقيقي من Google Cloud في البيئة الحية، وإذا لم يجده أثناء الـ Build يستخدم النص البديل الآمن
+  password: (process.env.SECRET_COOKIE_PASSWORD || "a_dummy_secure_password_at_least_32_characters_long") as string,
   cookieName: 'my-app-session',
   cookieOptions: {
+    // تفعيل خاصية التشفير والأمان التام فقط في بيئة الإنتاج الحية (Firebase)
     secure: process.env.NODE_ENV === 'production',
   },
 };
 
-// دالة جلب الجلسة المتوافقة مع Next.js 15
+// 3. دالة جلب الجلسة المحدثة والمحمية المتوافقة تماماً مع Next.js 15
 export async function getSession() {
   const cookieStore = await cookies(); 
   const session = await getIronSession<SessionData>(cookieStore, sessionOptions);

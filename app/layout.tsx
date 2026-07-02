@@ -1,7 +1,3 @@
-// 1. إجبار التطبيق على الرندر الديناميكي بالكامل ليتوافق مع الـ Slugs ويمنع فحص المفتاح أثناء الـ Build
-export const dynamic = "force-dynamic";
-export const dynamicParams = true; // للسماح للمسارات الديناميكية (Slugs) بالعمل على السيرفر الحي مباشرة
-
 import './globals.css';
 import { Providers } from './providers';
 import Header from '@/app/components/Header';
@@ -9,7 +5,7 @@ import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
 import { getIronSession } from 'iron-session';
-import { sessionOptions, SessionData } from '@/app/lib/session'; 
+import { sessionOptions, SessionData } from '@/app/lib/session';
 import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
@@ -30,37 +26,26 @@ export const metadata: Metadata = {
     metadataBase: new URL('https://dar-allughat.com'),
     title: 'دار اللغات: كتب ومستلزمات مدرسية في مدينة العبور',
     description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية. دار اللغات، وجهتك الأولى للمعرفة في مدينة العبور.',
-    openGraph: {
-        title: 'مكتبات دار اللغات - كتب وأدوات مدرسية',
-        description: 'أفضل مكان لشراء الكتب والمستلزمات المدرسية في العبور. نوفر كل ما يحتاجه الطالب من الحضانة حتى الجامعة.',
-        url: 'https://dar-allughat.com',
-        siteName: 'دار اللغات',
-        images: [
-            {
-                url: '/og-image.png',
-                width: 1200,
-                height: 630,
-                alt: 'مكتبات دار اللغات',
-            },
-        ],
-        locale: 'ar_EG',
-        type: 'website',
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'دار اللغات | كتب ومستلزمات مدرسية',
-        description: 'تصفح مجموعتنا الكاملة من الكتب والأدوات المكتبية. خدمة توصيل سريعة في مدينة العبور والمناطق المجاورة.',
-        images: ['/og-image.png'],
-    },
-    verification: {
-        google: 'YOUR_GOOGLE_VERIFICATION_CODE', 
-    },
 };
 
-// 2. تحديث الـ Fetcher ليتوافق مع الـ Dynamic Slugs والـ Cookies في Next.js 15
+// 🎯 تصحيح خطأ 500: حماية الـ SessionFetcher من الانهيار أثناء الـ Build أو في الصفحات الثابتة
 async function SessionFetcher({ children }: { children: (session: SessionData) => React.ReactNode }) {
-  const cookieStore = await cookies();
-  const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
+  // إنشاء جلسة افتراضية فارغة كـ Fallback لحماية الصفحات الثابتة
+  let session: SessionData = { isLoggedIn: false, username: 'زائر' };
+  
+  try {
+    const cookieStore = await cookies();
+    // التحقق من وجود كلمة السر الخاصة بـ Google Cloud لتجنب انهيار السيرفر
+    if (process.env.SECRET_COOKIE_PASSWORD) {
+      const ironSession = await getIronSession<SessionData>(cookieStore, sessionOptions);
+      if (ironSession) {
+        session = ironSession;
+      }
+    }
+  } catch (e) {
+    console.error("--- Session Fetch Error Safely Caught to prevent 500 ---", e);
+  }
+
   return <>{children(session)}</>;
 }
 
@@ -74,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
-              {if(f.bq)return;n=f.fbq=function(){n.callMethod?
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
               n.callMethod.apply(n,arguments):n.queue.push(arguments)};
               if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
               n.queue=[];t=b.createElement(e);t.async=!0;
