@@ -6,27 +6,39 @@ import { useAuth } from '../context/AuthContext';
 import styles from './Login.module.css';
 import { FaGoogle } from 'react-icons/fa';
 
+// 🎯 جديد: استيراد دوال Firebase المباشرة لتشغيل نظام الـ Redirect
+import { getAuth, signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
+
 const LoginPage = () => {
-  const { loginWithGoogle, user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // If the user is already logged in and is an admin, redirect to the admin panel
+    // توجيه الأدمن فوراً للوحة التحكم عند نجاح الدخول
     if (!loading && user && isAdmin) {
       router.push('/admin');
     }
   }, [user, isAdmin, loading, router]);
 
+  // 🎯 تعديل: تشغيل الـ Redirect بدلاً من الـ Popup الميت لمنع حظر المتصفح
   const handleLogin = async () => {
-    await loginWithGoogle();
+    try {
+      const auth = getAuth();
+      const provider = new GoogleAuthProvider();
+      
+      // إجبار جوجل على إظهار قائمة اختيار الحسابات لضمان الدخول بحسابك الصحيح
+      provider.setCustomParameters({ prompt: 'select_account' });
+      
+      await signInWithRedirect(auth, provider);
+    } catch (error) {
+      console.error("خطأ أثناء تحويل تسجيل الدخول بجوجل:", error);
+    }
   };
 
-  // Display a loading message while checking auth status
   if (loading) {
     return <div className={styles.loading}>يتم التحقق من حالة الدخول...</div>;
   }
   
-  // If the user is logged in but not an admin, show a message
   if (user && !isAdmin) {
     return (
       <div className={styles.container}>
@@ -38,6 +50,11 @@ const LoginPage = () => {
           <p className={styles.subtitle}>
             يرجى تسجيل الدخول بالحساب المصرح له.
           </p>
+          {/* 🎯 إضافة زر لإتاحة إعادة المحاولة بالحساب الصحيح دون تعليق */}
+          <button onClick={handleLogin} className={styles.googleButton} style={{ marginTop: '20px' }}>
+            <FaGoogle className={styles.googleIcon} />
+            تبديل الحساب والدخول كمشرف
+          </button>
         </div>
       </div>
     );
@@ -52,7 +69,7 @@ const LoginPage = () => {
           <FaGoogle className={styles.googleIcon} />
           تسجيل الدخول باستخدام Google
         </button>
-        <p className={styles.privacyNote}>الدخول آمن ومباشر عبر نافذة Google.</p>
+        <p className={styles.privacyNote}>الدخول آمن ومباشر عبر إعادة توجيه Google الرسمية.</p>
       </div>
     </div>
   );
