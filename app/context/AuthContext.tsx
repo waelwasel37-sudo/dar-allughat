@@ -10,7 +10,6 @@ interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
   loading: boolean;
-  // 🎯 حذف: لم نعد بحاجة لدالة الدخول من هنا
   logout: () => Promise<void>;
 }
 
@@ -35,23 +34,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // 🎯 جديد: دالة مدمجة لمعالجة المصادقة عند التحميل
+    // دالة مدمجة لمعالجة المصادقة عند التحميل
     const handleAuthFlow = async () => {
-      // 🎯 أولاً: محاولة التقاط نتيجة إعادة التوجيه من جوجل
-      // هذا يضمن أننا نعالج تسجيل الدخول الجديد فوراً عند عودة المستخدم
+      // أولاً: محاولة التقاط نتيجة إعادة التوجيه من جوجل فور عودة المستخدم
       try {
         const result = await getRedirectResult(auth);
         if (result) {
           console.log("Firebase redirect result processed for user:", result.user.uid);
-          // لا نحتاج لكتابة كود إضافي هنا، لأن المستمع onAuthStateChanged
-          // سيتم تفعيله تلقائياً بالبيانات الصحيحة ويكمل المهمة.
         }
       } catch (error) {
         console.error("Error processing Firebase redirect result:", error);
       }
 
-      // 🎯 ثانياً: المستمع الدائم لحالة المصادقة
-      // هذا المستمع هو مصدر الحقيقة الوحيد لحالة تسجيل الدخول
+      // ثانياً: المستمع الدائم لحالة المصادقة وهو مصدر الحقيقة الوحيد
       const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         setLoading(true);
         if (currentUser) {
@@ -69,13 +64,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 const userIsAdmin = currentUser.email === ADMIN_EMAIL;
                 setIsAdmin(userIsAdmin);
 
+                // 🎯 التصحيح الجذري: استخدام replace لضمان مزامنة الكوكيز قبل التحويل ومنع الطرد والخطأ
                 if (userIsAdmin && pathname === '/login') {
-                    window.location.href = '/admin';
+                    window.location.replace('/admin');
                 }
             } else {
                 console.error('Server session login failed.');
                 await signOut(auth);
-                // The onAuthStateChanged will fire again with null, handling the state update
             }
           } catch (e) {
             console.error('Error during session creation or token fetching:', e);
@@ -85,7 +80,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // No user is signed in
           const currentCachedUser = auth.currentUser;
           if (currentCachedUser) {
-            // This case is rare but handles cleanup if state is inconsistent
             await triggerServerLogout(currentCachedUser.uid);
           }
           setUser(null);
@@ -119,7 +113,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
       }
       await signOut(auth);
-      // onAuthStateChanged will handle state cleanup
       window.location.href = '/';
     } catch (error) {
       console.error("Error during sign-out:", error);
