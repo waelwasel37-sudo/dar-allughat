@@ -8,19 +8,27 @@ import styles from './Header.module.css';
 import Cart from './Cart';
 import ShareButton from './ShareButton';
 import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaUserCircle } from 'react-icons/fa';
+import { SessionData } from '@/app/lib/session';
 
-const Header = () => {
+// إضافة تعريف الـ Props لتلقي الجلسة من الـ Layout
+interface HeaderProps {
+  session: SessionData;
+}
+
+const Header = ({ session }: HeaderProps) => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout, loading, isAdmin } = useAuth();
   const [newRequestsCount, setNewRequestsCount] = useState(0);
 
+  // استخدام بيانات الجلسة الآمنة القادمة من السيرفر كمرجع أساسي أو بديل
+  const isLoggedIn = session?.isLoggedIn || (!!user && !loading);
+  const displayName = session?.username || (user?.displayName ? user.displayName.split(' ')[0] : 'عضو');
+
   useEffect(() => {
-    // 💡 التأكد من أن المستخدم أدمن وجاهز، وموجود فعلياً لإرسال بياناته
     if (isAdmin && user) {
       const fetchNewRequestsCount = async () => {
         try {
-          // 🎯 جلب التوكن لإثبات هوية الأدمن للسيرفر ومنع خطأ 401 Unauthorized
-          const token = typeof user.getIdToken === 'function' ? await user.getIdToken() : user.token;
+          const token = typeof user.getIdToken === 'function' ? await user.getIdToken() : (user as any).token;
           
           const response = await fetch('/api/school-list?status=new', {
             headers: {
@@ -39,16 +47,14 @@ const Header = () => {
         }
       };
 
-      fetchNewRequestsCount(); // الجلب عند التحميل الأولي
-      const intervalId = setInterval(fetchNewRequestsCount, 60000); // تحديث كل دقيقة
+      fetchNewRequestsCount();
+      const intervalId = setInterval(fetchNewRequestsCount, 60000);
 
-      // تنظيف الـ interval عند إزالة المكون
       return () => clearInterval(intervalId);
     } else {
-      // إذا لم يكن المستخدم أدمن، تأكد من أن العدد هو صفر
       setNewRequestsCount(0);
     } 
-  }, [isAdmin, user]); // ✅ تم استخدام user لضمان قراءة التوكن فور جاهزيته ومنع التكرار العشوائي
+  }, [isAdmin, user]);
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
@@ -95,12 +101,12 @@ const Header = () => {
       </nav>
       <div className={styles.actionsContainer}>
         <Cart />
-        {!loading && user ? (
+        {isLoggedIn ? (
           <div className={styles.userSection}>
-            <span className={styles.welcomeMessage}>أهلاً، {user && user.displayName ? user.displayName.split(' ')[0] : 'زائر'}</span>
+            <span className={styles.welcomeMessage}>أهلاً، {displayName}</span>
             <button onClick={() => { logout(); closeMobileMenu(); }} className={styles.logoutButton}>خروج</button>
           </div>
-        ) : !loading && (
+        ) : (
           <Link href="/login" onClick={closeMobileMenu} className={styles.loginButton}>
             <FaUserCircle /> دخول
           </Link>
@@ -112,3 +118,5 @@ const Header = () => {
     </header>
   );
 };
+
+export default Header;

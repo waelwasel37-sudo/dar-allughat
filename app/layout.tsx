@@ -1,3 +1,6 @@
+// 1. إجبار التطبيق على الرندر الديناميكي بالكامل ليتوافق مع الـ Slugs ويمنع فحص المفتاح أثناء الـ Build
+export const dynamic = "force-dynamic";
+export const dynamicParams = true; // للسماح للمسارات الديناميكية (Slugs) بالعمل على السيرفر الحي مباشرة
 
 import './globals.css';
 import { Providers } from './providers';
@@ -6,7 +9,7 @@ import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
 import { getIronSession } from 'iron-session';
-import { sessionOptions, IronSessionData } from '@/app/lib/session';
+import { sessionOptions, SessionData } from '@/app/lib/session'; 
 import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
@@ -24,13 +27,13 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://www.dar-allughat.com'),
+    metadataBase: new URL('https://dar-allughat.com'),
     title: 'دار اللغات: كتب ومستلزمات مدرسية في مدينة العبور',
     description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية. دار اللغات، وجهتك الأولى للمعرفة في مدينة العبور.',
     openGraph: {
         title: 'مكتبات دار اللغات - كتب وأدوات مدرسية',
         description: 'أفضل مكان لشراء الكتب والمستلزمات المدرسية في العبور. نوفر كل ما يحتاجه الطالب من الحضانة حتى الجامعة.',
-        url: 'https://www.dar-allughat.com',
+        url: 'https://dar-allughat.com',
         siteName: 'دار اللغات',
         images: [
             {
@@ -50,17 +53,17 @@ export const metadata: Metadata = {
         images: ['/og-image.png'],
     },
     verification: {
-        google: 'YOUR_GOOGLE_VERIFICATION_CODE', // Add your Google verification code here
+        google: 'YOUR_GOOGLE_VERIFICATION_CODE', 
     },
 };
 
-// 1. Create a new async Server Component to fetch the session
-async function SessionFetcher({ children }: { children: (session: IronSessionData) => React.ReactNode }) {
-  const session = await getIronSession<IronSessionData>(cookies(), sessionOptions);
+// 2. تحديث الـ Fetcher ليتوافق مع الـ Dynamic Slugs والـ Cookies في Next.js 15
+async function SessionFetcher({ children }: { children: (session: SessionData) => React.ReactNode }) {
+  const cookieStore = await cookies();
+  const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
   return <>{children(session)}</>;
 }
 
-// 2. Make RootLayout a regular, non-async component
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className={`${noto.variable} ${cairo.variable}`}>
@@ -71,13 +74,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
-              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              {if(f.bq)return;n=f.fbq=function(){n.callMethod?
               n.callMethod.apply(n,arguments):n.queue.push(arguments)};
               if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
               n.queue=[];t=b.createElement(e);t.async=!0;
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
-              'https://connect.facebook.net/en_US/fbevents.js');
+              'https://facebook.net');
               fbq('init', '930234381970984');
               fbq('track', 'PageView');
             `,
@@ -86,7 +89,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
-          {/* 3. Use the SessionFetcher to get the session and pass it down */}
           <SessionFetcher>
             {(session) => (
               <>
