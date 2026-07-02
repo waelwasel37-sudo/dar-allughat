@@ -4,9 +4,6 @@ import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
-import { getIronSession } from 'iron-session';
-import { sessionOptions, SessionData } from '@/app/lib/session';
-import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
 
@@ -25,31 +22,13 @@ const cairo = Cairo({
 export const metadata: Metadata = {
     metadataBase: new URL('https://dar-allughat.com'),
     title: 'دار اللغات: كتب ومستلزمات مدرسية في مدينة العبور',
-    description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية. دار اللغات، وجهتك الأولى للمعرفة في مدينة العبور.',
+    description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية.',
 };
 
-// 🎯 تصحيح خطأ 500: حماية الـ SessionFetcher من الانهيار أثناء الـ Build أو في الصفحات الثابتة
-async function SessionFetcher({ children }: { children: (session: SessionData) => React.ReactNode }) {
-  // إنشاء جلسة افتراضية فارغة كـ Fallback لحماية الصفحات الثابتة
-  let session: SessionData = { isLoggedIn: false, username: 'زائر' };
-  
-  try {
-    const cookieStore = await cookies();
-    // التحقق من وجود كلمة السر الخاصة بـ Google Cloud لتجنب انهيار السيرفر
-    if (process.env.SECRET_COOKIE_PASSWORD) {
-      const ironSession = await getIronSession<SessionData>(cookieStore, sessionOptions);
-      if (ironSession) {
-        session = ironSession;
-      }
-    }
-  } catch (e) {
-    console.error("--- Session Fetch Error Safely Caught to prevent 500 ---", e);
-  }
-
-  return <>{children(session)}</>;
-}
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // تمرير جلسة افتراضية فارغة هنا لمنع انهيار الـ Static Pages
+  const guestSession = { isLoggedIn: false, username: 'زائر' };
+
   return (
     <html lang="ar" dir="rtl" className={`${noto.variable} ${cairo.variable}`}>
       <head>
@@ -74,16 +53,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
-          <SessionFetcher>
-            {(session) => (
-              <>
-                <Header session={session} />
-                <main>{children}</main>
-                <SlideOutCart />
-                <Footer />
-              </>
-            )}
-          </SessionFetcher>
+          {/* الـ Header العام يقرأ حالة الزائر الافتراضية بسلام */}
+          <Header session={guestSession} />
+          <main>{children}</main>
+          <SlideOutCart />
+          <Footer />
         </Providers>
       </body>
     </html>
