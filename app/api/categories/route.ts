@@ -5,14 +5,15 @@ import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-    const db = await getDb(); // 🎯 تأكد من وجود كلمة await قبل getDb
-
     try {
+        // 🎯 1. إعادة الـ await لكي يتصل التطبيق بقاعدة البيانات بشكل سليم تقنياً
+        const db = await getDb(); 
+        
         const categoriesCollection = db.collection("categories");
         const categoriesSnapshot = await categoriesCollection.orderBy("name", "asc").get();
 
         if (categoriesSnapshot.empty) {
-            return NextResponse.json([]);
+            return NextResponse.json({ debug_status: "collection_is_empty_or_not_found", data: [] });
         }
 
         const categories = categoriesSnapshot.docs.map((doc: QueryDocumentSnapshot) => ({
@@ -23,9 +24,17 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(categories);
 
     } catch (error: any) {
-        console.error("GET /api/categories Error:", error);
+        console.error("CRITICAL GET /api/categories Error:", error);
+        
+        // 🎯 2. التعديل الكاشف: تمرير كافة تفاصيل وأسرار الخطأ السحابي للمتصفح مباشرة لمعرفة السبب
         return NextResponse.json(
-            { message: "Internal Server Error", error: error.message },
+            { 
+              status: "server_error_unveiled", 
+              error_message: error.message || "Unknown error message", 
+              error_code: error.code || "no_code_provided",
+              error_stack: error.stack || "no_stack_provided",
+              hint: "Check if Firebase Service Account JSON or credentials match the correct Firestore database instance."
+            },
             { status: 500 }
         );
     }
