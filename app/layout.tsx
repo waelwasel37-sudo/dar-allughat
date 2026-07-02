@@ -4,6 +4,9 @@ import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
+import { getIronSession } from 'iron-session';
+import { sessionOptions, SessionData } from '@/app/lib/session';
+import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
 
@@ -25,10 +28,25 @@ export const metadata: Metadata = {
     description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // تمرير جلسة افتراضية فارغة هنا لمنع انهيار الـ Static Pages
-  const guestSession = { isLoggedIn: false, username: 'زائر' };
+// 🎯 التصحيح الجذري: حماية الـ SessionFetcher وإعادة ربط الكوكيز الحية بالمتجر لظهور المنتجات
+async function SessionFetcher({ children }: { children: (session: SessionData) => React.ReactNode }) {
+  let session: SessionData = { isLoggedIn: false, username: 'زائر' };
+  
+  try {
+    const cookieStore = await cookies();
+    // جلب الجلسة الحية الحقيقية فوراً لفتح صلاحيات المنتجات والفئات
+    const ironSession = await getIronSession<SessionData>(cookieStore, sessionOptions);
+    if (ironSession) {
+      session = ironSession;
+    }
+  } catch (e) {
+    console.error("Session fetch caught safely:", e);
+  }
 
+  return <>{children(session)}</>;
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className={`${noto.variable} ${cairo.variable}`}>
       <head>
@@ -44,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               n.queue=[];t=b.createElement(e);t.async=!0;
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
-              'https://facebook.net');
+              'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '930234381970984');
               fbq('track', 'PageView');
             `,
@@ -53,11 +71,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
-          {/* الـ Header العام يقرأ حالة الزائر الافتراضية بسلام */}
-          <Header session={guestSession} />
-          <main>{children}</main>
-          <SlideOutCart />
-          <Footer />
+          <SessionFetcher>
+            {(session) => (
+              <>
+                {/* إعادة تمرير الجلسة الحقيقية للـ Header لتنشيط أزرار الدخول والخروج */}
+                <Header session={session} />
+                <main>{children}</main>
+                <SlideOutCart />
+                <Footer />
+              </>
+            )}
+          </SessionFetcher>
         </Providers>
       </body>
     </html>

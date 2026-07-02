@@ -69,6 +69,7 @@ const Header = ({ session }: HeaderProps) => {
             width={256}
             height={64}
             priority
+            unoptimized
           />
         </Link>
       </div>
