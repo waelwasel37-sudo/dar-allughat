@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
     try {
-        // 🎯 1. إعادة الـ await لكي يتصل التطبيق بقاعدة البيانات بشكل سليم تقنياً
         const db = await getDb(); 
         
         const categoriesCollection = db.collection("categories");
@@ -26,7 +25,6 @@ export async function GET(req: NextRequest) {
     } catch (error: any) {
         console.error("CRITICAL GET /api/categories Error:", error);
         
-        // 🎯 2. التعديل الكاشف: تمرير كافة تفاصيل وأسرار الخطأ السحابي للمتصفح مباشرة لمعرفة السبب
         return NextResponse.json(
             { 
               status: "server_error_unveiled", 

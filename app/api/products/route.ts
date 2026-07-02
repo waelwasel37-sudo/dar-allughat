@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from 'next/headers';
-// 🎯 تم استخدام اسم الدالة المصلحة getAdminAuth لمنع أخطاء البناء والتعارض
-import { getDb, getAdminAuth, admin } from "@/app/lib/firebase-admin";
+import admin from 'firebase-admin'; // 🎯 1. تصحيح استيراد admin مباشرة من المكتبة الأم
+import { getDb } from "@/app/lib/firebase-admin";
+import { getSession } from "@/app/lib/session"; // 🎯 2. استيراد الجلسة الموحدة لـ iron-session
 import { Product } from "@/app/lib/types";
 import { generateSlug } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-// GET all products
+// GET all products (الكود الذكي الكاشف للأخطاء)
 export async function GET(req: NextRequest) {
     try {
-        const db = await getDb(); // 🔑 استخدام await
+        const db = await getDb();
         const productsCollection = db.collection("products");
         const productsSnapshot = await productsCollection.orderBy("createdAt", "desc").get();
         
         if (productsSnapshot.empty) {
-            return NextResponse.json([]);
+            return NextResponse.json({ debug_status: "collection_is_empty_or_not_found", data: [] });
         }
         
         const products = productsSnapshot.docs.map((doc) => {
@@ -33,24 +34,35 @@ export async function GET(req: NextRequest) {
         });
         return NextResponse.json(products);
     } catch (error: any) {
-        console.error("GET /api/products Error:", error);
-        return NextResponse.json({ message: "Internal Server Error", error: error.message }, { status: 500 });
+        console.error("CRITICAL GET /api/products Error:", error);
+        return NextResponse.json(
+            { 
+              status: "server_error_unveiled", 
+              error_message: error.message || "Unknown error message", 
+              error_code: error.code || "no_code_provided",
+              error_stack: error.stack || "no_stack_provided",
+              hint: "Check if Firebase Service Account JSON match the correct Firestore database instance."
+            },
+            { status: 500 }
+        );
     }
 }
 
-// POST a new product
+// POST a new product (إضافة منتج جديد محمي وصارم)
 export async function POST(req: NextRequest) {
     try {
-        const firebaseAuth = await getAdminAuth(); // 🔑 استخدام الدالة المصلحة واسم متغير آمن
-        const db = await getDb();     // 🔑 استخدام await
+        const db = await getDb();
 
-        const sessionCookie = (await cookies()).get("__session")?.value;
-        if (!sessionCookie) {
-            return NextResponse.json({ error: 'Unauthorized. No session cookie.' }, { status: 401 });
+        // 🎯 3. التصحيح الجذري: فحص هوية الأدمن عبر الجلسة الموحدة لـ Next.js 15 لحل خطأ الـ 401 والـ 403
+        const session = await getSession();
+        if (!session || !session.isLoggedIn || !session.username) {
+            return NextResponse.json({ error: 'Unauthorized. No active session found.' }, { status: 401 });
         }
-        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
-        if (decodedToken.role !== 'admin') {
-            return NextResponse.json({ error: 'Forbidden. User is not an admin.' }, { status: 403 });
+
+        // 🎯 4. التأكيد الصارم على بريدك الحصري كمصدر الحقيقة للأدمن لمنع الحظر
+        const ADMIN_EMAIL = 'waelwasel37@gmail.com';
+        if (session.username !== ADMIN_EMAIL) {
+            return NextResponse.json({ error: 'Forbidden. User is not authorized as admin.' }, { status: 403 });
         }
 
         const productData: Omit<Product, 'id'> = await req.json();
@@ -98,9 +110,6 @@ export async function POST(req: NextRequest) {
 
     } catch (error: any) {
         console.error("POST /api/products Error:", error);
-        if (error.code === 'auth/session-cookie-expired') {
-            return NextResponse.json({ error: 'Session expired, please log in again.' }, { status: 401 });
-        }
         return NextResponse.json({ error: "Internal Server Error", details: error.message }, { status: 500 });
     }
 }
