@@ -13,12 +13,16 @@ export const sessionOptions = {
   cookieName: 'my-app-session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
+    httpOnly: true, // مضافة لتعزيز الأمان ومنع اختراق الجلسة عبر الجافا سكريبت
   },
 };
 
 // 3. 🎯 الدالة المصححة هندسياً والمتوافقة 100% مع Next.js 15 والـ Build السحابي
 export async function getSession() {
-  // الاستدعاء المباشر المتزامن والآمن للمكتبة لضمان ربط الكوكيز بمتصفح الأدمن دون فواق برمي
-  const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
+  // فك الـ Promise الخاص بالكوكيز إجبارياً كما تفرض بيئة Next.js 15
+  const cookieStore = await cookies();
+  
+  // تمرير الـ cookieStore المفكك والجاهز للمكتبة
+  const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
   return session;
 }

@@ -9,7 +9,7 @@
   # Packages are separated by spaces, not commas.
   packages = [
     # Provides Node.js, which is required to run your Next.js application.
-    pkgs.nodejs_20
+    pkgs.nodejs_22
 
     # Provides the Firebase CLI for deploying your project and running emulators.
     pkgs.firebase-tools

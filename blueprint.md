@@ -1,43 +1,39 @@
-# Blueprint: Dar Allughat E-commerce Store
+# Blueprint: E-commerce Store Debugging
 
 ## Overview
 
-This document outlines the architecture, features, and design principles for the Dar Allughat e-commerce web application. The project is built using Next.js on the frontend and Firebase for backend services, including Firestore, Firebase Storage, and Firebase Authentication.
+This document outlines the plan to debug and fix critical issues in a Next.js-based e-commerce application. The application is currently facing problems with user authentication, data fetching from Firestore, and displaying static assets.
 
-## Core Features & Design
+## Current State Analysis
 
-*   **Framework**: Next.js 15 with App Router
-*   **Styling**: Tailwind CSS with CSS Modules for component-level styling.
-*   **Authentication**: Firebase Authentication for both customer and admin users. Admin access is role-based.
-*   **Database**: Firestore for storing products, categories, user data, and orders.
-*   **Storage**: Firebase Storage for product images, videos, and other media.
-*   **Data Integrity**: Strict Zod validation for customer data (name, Egyptian phone number, governorate, address).
-*   **Regional Logistics**: A dropdown list of 27 Egyptian governorates ensures shipping data accuracy, replacing complex map APIs.
-*   **Conversion Optimization**: A smart WhatsApp checkout flow that generates a rich, pre-filled message including customer details, product specifics, image links, and direct product URLs. This is coupled with an automated "Thank You" page and cart clearing to prevent duplicate orders.
-*   **Shopping Cart**: A client-side cart managed with React Context, designed to be converted into a slide-out drawer.
-*   **Admin Dashboard**: A protected area for managing products, categories, and viewing orders.
-*   **SEO & Marketing**:
-    *   Dynamically generated sitemaps (`sitemap.ts`) and `robots.ts`.
-    *   Server-side metadata generation and JSON-LD Schema for rich search results.
-    *   Facebook Pixel integration for conversion tracking.
+Based on the user's report and the last deployment log, the following issues have been identified:
 
----
+1.  **Login Failure:** Users cannot log into the admin dashboard.
+2.  **Data Not Displaying:** Products and categories are not visible on the main site or in the admin panel.
+3.  **Missing Logo:** The store's logo is not appearing.
+4.  **Build Warnings:** The deployment log shows warnings about an unsupported Node.js engine (`v20.20.2` is used, while some packages require `>=22`).
+5.  **Dynamic Rendering Errors:** The build log contains multiple "Dynamic server usage" errors related to the use of `cookies` during server-side rendering, which is a strong indicator of problems with session handling in the Next.js App Router.
 
-## **المهمة الحالية: تحويل السلة إلى درج منزلق (Slide-out Drawer)**
+## Remediation Plan
 
-**الهدف**: تحسين تجربة المستخدم بشكل كبير عن طريق استبدال صفحة السلة التقليدية (`/cart`) بدرج يظهر من جانب الشاشة، مما يسمح للمستخدم بإضافة المنتجات ورؤية السلة دون مغادرة الصفحة التي يتصفحها.
+The following steps will be taken to resolve these issues. Each code modification will be presented to the user for approval before being saved.
 
-### **خطة التنفيذ:**
+1.  **✅ (Done) Update Node.js Environment:**
+    *   **Action:** Modify `.idx/dev.nix` to upgrade the development environment from `pkgs.nodejs_20` to `pkgs.nodejs_22`.
+    *   **Reason:** To resolve the `EBADENGINE` warnings and ensure compatibility with all project dependencies.
 
-1.  **إنشاء مكون `SlideOutCart.tsx`:**
-    *   **التنفيذ**: بناء مكون "درج" جديد في `app/components/`. هذا المكون سيحتوي على منطق عرض محتويات السلة بالكامل، والذي سيتم نقله من `app/cart/CartClient.tsx`.
-    *   **التحكم بالحالة**: المكون سيدير حالة الفتح والإغلاق الخاصة به.
+2.  **Investigate Authentication and Session Handling:**
+    *   **Action:** Review the code in `app/lib/session.ts`, `app/context/AuthContext.tsx`, and `app/login/page.tsx`. I will check how the session cookie is being created and read.
+    *   **Reason:** The "Dynamic server usage" errors point to incorrect handling of cookies. In the Next.js App Router, server-side components must use the `cookies()` function from `next/headers` to access cookies safely during rendering. Incorrect implementation is likely the root cause of the login failure.
 
-2.  **تحديث `CartContext.tsx`:**
-    *   **التنفيذ**: إضافة حالة جديدة (`isCartOpen`) ودوال (`openCart`, `closeCart`, `toggleCart`) إلى سياق السلة (Cart Context) للسماح للمكونات الأخرى بالتحكم في ظهور الدرج.
+3.  **Debug Data Fetching Logic:**
+    *   **Action:** Examine the data fetching functions in `app/lib/data-server.ts` and their usage in pages like `app/products/page.tsx` and `app/admin/products/page.tsx`.
+    *   **Reason:** The inability to fetch products and categories is likely a side effect of the authentication issue. If the user session cannot be verified, the backend queries to Firestore are probably failing or returning no data.
 
-3.  **دمج الدرج في الهيدر الرئيسي:**
-    *   **التنفيذ**: تحديد مكون الهيدر (Header) في المشروع، واستبدال الرابط الذي يؤدي إلى صفحة `/cart` بزر جديد. هذا الزر عند النقر عليه سيقوم باستدعاء دالة `toggleCart()` من الـ Context لإظهار الدرج المنزلق.
+4.  **Fix a Broken Logo Image Path:**
+    *   **Action:** Inspect `app/components/Header.tsx` to find how the logo is rendered. I will verify the image path and ensure the logo file exists in the `/public` directory.
+    *   **Reason:** The logo is a static asset. If it's not displaying, the path in the `<img>` tag is likely incorrect or the file is missing.
 
-4.  **إزالة صفحة السلة القديمة:**
-    *   **التنفيذ**: بعد التأكد من أن الدرج المنزلق يعمل بشكل كامل، سيتم حذف المجلد `app/cart` لتجنب وجود كود غير مستخدم والحفاظ على نظافة المشروع.
+5.  **Deploy and Verify:**
+    *   **Action:** After implementing and approving the fixes, a new deployment will be initiated.
+    *   **Reason:** To confirm that the fixes have resolved all the identified issues and the application is fully functional.
