@@ -1,20 +1,42 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import { initializeApp, getApps, getApp, type App, cert, type ServiceAccount } from 'firebase-admin/app';
+import { initializeApp, type App, cert, applicationDefault, type ServiceAccount } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import { getAuth as firebaseGetAuth, type Auth } from 'firebase-admin/auth';
 import { getStorage, type Storage } from 'firebase-admin/storage';
 
 function parseServiceAccountJson(raw: string): ServiceAccount {
-    const sanitizedRaw = raw.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
-    const serviceAccount = JSON.parse(sanitizedRaw.replace(/\\v/g, '\\\\v'));
-    if (!serviceAccount.project_id) {
-        throw new Error("The parsed service account object is missing the 'project_id' property.");
+    if (!raw || !raw.trim()) {
+        throw new Error('The provided service account JSON is empty.');
     }
+
+    const repairedRaw = raw
+        .trim()
+        .replace(/\\v/g, '\\\\n')
+        .replace(/\\V/g, '\\\\n')
+        .replace(/\\r/g, '\\\\r')
+        .replace(/\\t/g, '\\\\t');
+
+    let serviceAccount: any;
+    try {
+        serviceAccount = JSON.parse(repairedRaw);
+    } catch (firstError: any) {
+        const fallbackRaw = repairedRaw.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+        try {
+            serviceAccount = JSON.parse(fallbackRaw);
+        } catch (secondError: any) {
+            throw new Error(`Failed to parse service account JSON. Original error: ${secondError.message}`);
+        }
+    }
+
+    if (!serviceAccount.project_id || !serviceAccount.client_email || !serviceAccount.private_key) {
+        throw new Error("The parsed service account object is missing required fields.");
+    }
+
     return {
         projectId: serviceAccount.project_id,
         clientEmail: serviceAccount.client_email,
-        privateKey: serviceAccount.private_key.replace(/\\n/g, '\n'),
+        privateKey: String(serviceAccount.private_key).replace(/\\n/g, '\n'),
     } as ServiceAccount;
 }
 
@@ -84,6 +106,18 @@ function initializeAdminApp(): App {
         });
         return app;
     } catch (error) {
+        try {
+            if (!app) {
+                app = initializeApp({
+                    credential: applicationDefault(),
+                    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'dar-allughat-97483992-fc6c5.appspot.com'
+                });
+                return app;
+            }
+        } catch {
+            // fall through to the original error below
+        }
+
         initializationError = error instanceof Error ? error : new Error(String(error));
         throw initializationError;
     }
