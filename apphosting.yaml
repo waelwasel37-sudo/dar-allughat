@@ -16,19 +16,19 @@ run:
 
 # 🔐 متغيرات البيئة والأسرار: ربط آمن مع خدمات Firebase والمفاتيح
 env:
-  # 🎯 الربط الصحيح مع السر السحابي الذي يحمل مفتاح خدمة Firebase
+  # 🎯 الربط الصحيح والفعلي مع السر السحابي الموضح في قائمتك
   - variable: FIREBASE_SERVICE_ACCOUNT_JSON
-    secret: dar-allughat-97483992-fc6c5-0bf7cef38dad
+    secret: FIREBASE_SERVICE_ACCOUNT_JSON # <--- ✅ هذا هو التصحيح الحاسم بناءً على اكتشافك
 
-  # المتغيرات العامة مع القيم الصحيحة الكاملة
+  # المتغيرات العامة مع القيم الصحيحة الكاملة (بدون تخريب)
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     value: "AIzaSyCX0RCPBcg0_eL28snWBn0bNfDf8ACWzWM"
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "dar-allughat-97483992-fc6c5.firebaseapp.com"
+    value: "dar-allughat-97483992-fc6c5.firebaseapp.com" # <-- ✅ القيمة الكاملة
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: "dar-allughat-97483992-fc6c5"
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: "dar-allughat-97483992-fc6c5.appspot.com"
+    value: "dar-allughat-97483992-fc6c5.appspot.com" # <-- ✅ القيمة الكاملة
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     value: "118615668327"
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
