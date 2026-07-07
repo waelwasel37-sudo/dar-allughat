@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 // 🎯 تصحيح: استيراد دوال Firebase بشكل Named Exports سليم ومتوافق
-import { getDb, getAdminAuth, getBucket, admin } from '@/app/lib/firebase-admin';
+import { getDb, getAdminAuth, getBucket } from '@/app/lib/firebase-admin';
+import { firestore } from 'firebase-admin';
 import { Product } from '@/app/lib/types';
 import { generateSlug } from '@/app/lib/utils';
 
@@ -33,7 +34,7 @@ function getPathFromUrl(url: string): string {
 
 // --- GET: جلب منتج واحد ---
 export async function GET(req: NextRequest, { params }: RouteParams) {
-    const db = await getDb(); 
+    const db = getDb(); 
     try {
         const { slug } = await params; // 🎯 تصحيح:params في Next.js 15 أصبحت Promise وتحتاج لـ await
         if (!slug) {
@@ -51,10 +52,10 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
         const product: Product = {
             id: doc.id,
             ...productData,
-            createdAt: productData.createdAt instanceof admin.firestore.Timestamp 
+            createdAt: productData.createdAt instanceof firestore.Timestamp 
                 ? productData.createdAt.toDate().toISOString() 
                 : new Date(productData.createdAt || Date.now()).toISOString(),
-            updatedAt: productData.updatedAt instanceof admin.firestore.Timestamp 
+            updatedAt: productData.updatedAt instanceof firestore.Timestamp 
                 ? productData.updatedAt.toDate().toISOString() 
                 : new Date(productData.updatedAt || Date.now()).toISOString(),
         } as Product;
@@ -68,8 +69,8 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
 // --- PUT: تحديث منتج ---
 export async function PUT(req: NextRequest, { params }: RouteParams) {
-    const db = await getDb();     
-    const firebaseAuth = await getAdminAuth(); // 🎯 تصحيح أمان: اسم متغير آمن فريد لمنع التعارض
+    const db = getDb();     
+    const firebaseAuth = getAdminAuth(); // 🎯 تصحيح أمان: اسم متغير آمن فريد لمنع التعارض
 
     try {
         const { slug: originalSlug } = await params; // 🎯 تصحيح: إضافة await للـ params
@@ -103,7 +104,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
         const finalUpdateData = {
             ...productUpdateData,
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firestore.FieldValue.serverTimestamp(),
         };
         
         await productDocRef.update(finalUpdateData);
@@ -115,9 +116,9 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
 // --- DELETE: حذف المنتج من القاعدة وحذف صوره من السحاب ---
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
-    const db = await getDb();         
-    const firebaseAuth = await getAdminAuth(); // 🎯 تصحيح أمان: اسم متغير آمن فريد لمنع التعارض
-    const bucket = await getBucket(); 
+    const db = getDb();         
+    const firebaseAuth = getAdminAuth(); // 🎯 تصحيح أمان: اسم متغير آمن فريد لمنع التعارض
+    const bucket = getBucket(); 
 
     try {
         const { slug } = await params; // 🎯 تصحيح: إضافة await للـ params
@@ -152,7 +153,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
 // --- POST: تقييم المنتج وتخزينه عبر Transaction مؤمنة ---
 export async function POST(req: NextRequest, { params }: RouteParams) {
-    const db = await getDb(); 
+    const db = getDb(); 
     try {
         const { slug: productSlug } = await params; // 🎯 تصحيح: إضافة await للـ params
         const { rating, userId } = await req.json();
@@ -164,12 +165,12 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 
         const productDocRef = snapshot.docs[0].ref;
 
-        await db.runTransaction(async (transaction: admin.firestore.Transaction) => {
+        await db.runTransaction(async (transaction: firestore.Transaction) => {
             const ratingRef = productDocRef.collection('ratings').doc(userId);
             transaction.set(ratingRef, { 
                 rating, 
                 userId, 
-                updatedAt: admin.firestore.FieldValue.serverTimestamp() 
+                updatedAt: firestore.FieldValue.serverTimestamp() 
             }, { merge: true });
         });
 

@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers, cookies } from 'next/headers'; 
 // 🎯 استيراد الأدوات المحدثة وقاعدة البيانات السليمة
-import { getDb, getAdminAuth, admin } from '@/app/lib/firebase-admin';
+import { getDb, getAdminAuth } from '@/app/lib/firebase-admin';
+import { firestore } from 'firebase-admin';
 import { Order, OrderItem, ShippingAddress, PaymentDetails, InstallmentDetails } from '@/app/lib/types';
 import { sendPurchaseEvent } from '@/app/lib/meta-capi';
 
@@ -10,8 +11,8 @@ export const dynamic = 'force-dynamic';
 
 // --- GET: جلب جميع الطلبات بتفاصيلها البنكية والتقسيط (للأدمن فقط) ---
 export async function GET(req: NextRequest) {
-    const firebaseAuth = await getAdminAuth();
-    const db = await getDb();
+    const firebaseAuth = getAdminAuth();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies(); // 🎯 التوافق مع Next.js 15 الإجباري
@@ -36,10 +37,10 @@ export async function GET(req: NextRequest) {
             return {
                 id: doc.id,
                 ...data,
-                createdAt: data.createdAt instanceof admin.firestore.Timestamp 
+                createdAt: data.createdAt instanceof firestore.Timestamp 
                     ? data.createdAt.toDate().toISOString() 
                     : new Date(data.createdAt || Date.now()).toISOString(),
-                updatedAt: data.updatedAt instanceof admin.firestore.Timestamp 
+                updatedAt: data.updatedAt instanceof firestore.Timestamp 
                     ? data.updatedAt.toDate().toISOString() 
                     : new Date(data.updatedAt || Date.now()).toISOString(),
             };
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
 
 // --- POST: إنشاء طلبية شراء جديدة لجميع المنتجات متوافقة مع الـ Installment API ---
 export async function POST(req: NextRequest) {
-    const db = await getDb();
+    const db = getDb();
 
     try {
         const body = await req.json();
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing required order fields: items, totalAmount, or shipping details.' }, { status: 400 });
         }
 
-        const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+        const serverTimestamp = firestore.FieldValue.serverTimestamp();
 
         // 💳 بناء كائن الطلب المطابق تماماً للـ Schema المحترف والجاهز لبوابات التقسيط
         const orderData = {

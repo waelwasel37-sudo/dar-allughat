@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 // 🎯 الكود هنا بالفعل يستخدم الدوال المحدثة، لا حاجة لتغيير الاستيرادات
-import { getDb, getAdminAuth, admin } from '@/app/lib/firebase-admin';
+import { getDb, getAdminAuth } from '@/app/lib/firebase-admin';
+import { firestore } from 'firebase-admin';
 import { SchoolListRequest } from '@/app/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -16,8 +17,8 @@ const generateSlug = (name: string) => {
 // GET method - مخصص للأدمن لقراءة طلبات المدارس والعدد الجديد
 export async function GET(req: NextRequest) {
     try {
-        const firebaseAuth = await getAdminAuth();
-        const db = await getDb();     
+        const firebaseAuth = getAdminAuth();
+        const db = getDb();     
 
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value; 
@@ -52,12 +53,12 @@ export async function GET(req: NextRequest) {
             return NextResponse.json([]);
         }
 
-        const requests = snapshot.docs.map((doc: admin.firestore.QueryDocumentSnapshot) => {
+        const requests = snapshot.docs.map((doc: firestore.QueryDocumentSnapshot) => {
             const data = doc.data();
             return {
                 id: doc.id,
                 ...data,
-                createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+                createdAt: data.createdAt instanceof firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
             } as SchoolListRequest;
         });
 
@@ -72,14 +73,14 @@ export async function GET(req: NextRequest) {
 // POST method - مفتوح للعامة والجمهور لإرسال طلباتهم وإرسال الواتساب
 export async function POST(req: NextRequest) {
     try {
-        const db = await getDb(); 
+        const db = getDb(); 
         const data: Omit<SchoolListRequest, 'id' | 'createdAt' | 'status'> = await req.json();
 
         if (!data.fullName || !data.imageUrl) {
             return NextResponse.json({ error: "Full name and image URL are required" }, { status: 400 });
         }
 
-        const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+        const serverTimestamp = firestore.FieldValue.serverTimestamp();
         const slug = `${generateSlug(data.fullName)}-${Date.now()}`;
         
         const newRequest = {
@@ -112,8 +113,8 @@ export async function POST(req: NextRequest) {
 // PATCH method - تحديث حالة الطلبات للأدمن فقط
 export async function PATCH(req: NextRequest) {
     try {
-        const firebaseAuth = await getAdminAuth();
-        const db = await getDb();     
+        const firebaseAuth = getAdminAuth();
+        const db = getDb();     
 
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value; 

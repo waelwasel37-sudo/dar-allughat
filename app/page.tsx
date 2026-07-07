@@ -3,7 +3,6 @@ import styles from './page.module.css';
 import Hero from './components/Hero';
 import { getProducts, getCategories } from '@/app/lib/data-server'; 
 import { Product, Category } from '@/app/lib/types';
-import { initializeAdminApp } from '@/app/lib/firebase-admin'; 
 // 💡 الخطوة 2: استيراد مكون التحميل الجديد بدلاً من المكون الأصلي
 import HomeProductsLoader from './components/HomeProductsLoader';
 
@@ -13,7 +12,6 @@ export const revalidate = 0;
 async function loadData(): Promise<{ products: Product[], categories: Category[] }> {
   const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
   try {
-    await initializeAdminApp();
     const [products, rawCategories] = await Promise.all([
       getProducts(), 
       getCategories() 

@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-// 🎯 تصحيح: استيراد admin و getDb بشكل صحيح
-import { getDb, admin } from '@/app/lib/firebase-admin';
+// 🎯 تصحيح: استيراد getDb بشكل صحيح واستيراد firestore للأنواع
+import { getDb } from '@/app/lib/firebase-admin';
+import { firestore } from 'firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
 // 🎯 تحديث: تغيير نوع الطلب إلى NextRequest للاستفادة من الميزات الحديثة
 export async function POST(request: NextRequest) {
   // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
-  const db = await getDb();
+  const db = getDb();
 
   try {
     const { slug, phone } = await request.json();
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       productSlug: slug,
       phone: phone,
       // 🎯 تصحيح: التأكد من أن الطابع الزمني للسيرفر يعمل بشكل صحيح
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
       status: 'new',
     });
 

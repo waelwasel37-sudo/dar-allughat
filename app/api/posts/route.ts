@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 // 🎯 تصحيح: استيراد admin و getDb و getAdminAuth بشكل صحيح
-import { getDb, getAdminAuth, admin } from '@/app/lib/firebase-admin';
+import { getDb, getAdminAuth } from '@/app/lib/firebase-admin';
+import { firestore } from 'firebase-admin';
 import { Post } from '@/app/lib/types';
 import { cookies } from 'next/headers';
 
@@ -9,7 +10,7 @@ export const dynamic = 'force-dynamic';
 // GET all posts or a single post by slug
 export async function GET(req: NextRequest) {
     // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
-    const db = await getDb();
+    const db = getDb();
 
     try {
         const slug = req.nextUrl.searchParams.get('slug');
@@ -25,21 +26,21 @@ export async function GET(req: NextRequest) {
             const post = {
                 id: doc.id, 
                 ...data,
-                // 🎯 تصحيح: التأكد من وجود admin.firestore.Timestamp
-                createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
-                updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
+                // 🎯 تصحيح: التأكد من وجود firestore.Timestamp
+                createdAt: data.createdAt instanceof firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+                updatedAt: data.updatedAt instanceof firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
             };
             return NextResponse.json(post);
         } else {
             const snapshot = await postsRef.orderBy('createdAt', 'desc').get();
-            const posts = snapshot.docs.map((doc: admin.firestore.QueryDocumentSnapshot) => {
+            const posts = snapshot.docs.map((doc: firestore.QueryDocumentSnapshot) => {
                 const data = doc.data();
                 return {
                     id: doc.id,
                     ...data,
-                    // 🎯 تصحيح: التأكد من وجود admin.firestore.Timestamp
-                    createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
-                    updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
+                    // 🎯 تصحيح: التأكد من وجود firestore.Timestamp
+                    createdAt: data.createdAt instanceof firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+                    updatedAt: data.updatedAt instanceof firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
                 };
             });
             return NextResponse.json(posts);
@@ -54,9 +55,9 @@ export async function GET(req: NextRequest) {
 // POST a new post
 export async function POST(req: NextRequest) {
     // 🎯 تعديل أمان عبقري منك: استخدام اسم متغير محلي فريد فريد لمنع تكرار المعرف البرمجي
-    const firebaseAuth = await getAdminAuth();
+    const firebaseAuth = getAdminAuth();
     // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
-    const db = await getDb();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies();
@@ -74,8 +75,8 @@ export async function POST(req: NextRequest) {
         const newPost = {
             ...postData,
             // 🎯 تصحيح: استخدام الطريقة الصحيحة للحصول على الطابع الزمني للسيرفر
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            updatedAt: firestore.FieldValue.serverTimestamp(),
         };
         
         const docRef = await db.collection('posts').add(newPost);
@@ -90,9 +91,9 @@ export async function POST(req: NextRequest) {
 // PUT to update a post by SLUG
 export async function PUT(req: NextRequest) {
     // 🎯 تعديل أمان عبقري منك: استخدام اسم متغير محلي فريد فريد لمنع تكرار المعرف البرمجي
-    const firebaseAuth = await getAdminAuth();
+    const firebaseAuth = getAdminAuth();
     // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
-    const db = await getDb();
+    const db = getDb();
 
     try {
         const cookieStore = await cookies();
@@ -127,7 +128,7 @@ export async function PUT(req: NextRequest) {
         const finalUpdateData = {
             ...updateData,
             // 🎯 تصحيح: استخدام الطريقة الصحيحة للحصول على الطابع الزمني للسيرفر
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firestore.FieldValue.serverTimestamp(),
         };
 
         await postRef.update(finalUpdateData);
@@ -151,9 +152,9 @@ export async function PUT(req: NextRequest) {
 // DELETE a post by SLUG
 export async function DELETE(req: NextRequest) {
     // 🎯 تعديل أمان عبقري منك: استخدام اسم متغير محلي فريد فريد لمنع تكرار المعرف البرمجي
-    const firebaseAuth = await getAdminAuth();
+    const firebaseAuth = getAdminAuth();
     // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
-    const db = await getDb();
+    const db = getDb();
 
      try {
         const cookieStore = await cookies();

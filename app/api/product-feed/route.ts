@@ -1,26 +1,27 @@
 // app/api/product-feed/route.ts
 import { NextResponse } from 'next/server';
-// 🎯 تصحيح: استيراد admin و getDb بشكل صحيح
-import { getDb, admin } from '@/app/lib/firebase-admin';
+// 🎯 تصحيح: استيراد getDb بشكل صحيح واستيراد firestore للأنواع
+import { getDb } from '@/app/lib/firebase-admin';
+import { firestore } from 'firebase-admin';
 import { Product } from '@/app/lib/types'; // 🎯 تصحيح: مسار الاستيراد
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
-  const db = await getDb();
+  const db = getDb();
 
   try {
     const productsCollection = db.collection("products");
     const productsSnapshot = await productsCollection.orderBy("createdAt", "desc").get();
     
-    const products: Product[] = productsSnapshot.docs.map((doc: admin.firestore.QueryDocumentSnapshot) => {
+    const products: Product[] = productsSnapshot.docs.map((doc: firestore.QueryDocumentSnapshot) => {
       const data = doc.data();
       return {
         id: doc.id,
         ...data,
-        createdAt: data.createdAt instanceof admin.firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
-        updatedAt: data.updatedAt instanceof admin.firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
+        createdAt: data.createdAt instanceof firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
+        updatedAt: data.updatedAt instanceof firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
       } as Product;
     });
 
@@ -70,7 +71,7 @@ export async function GET() {
       status: 200,
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=1800', 
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=1800',
       },
     });
 

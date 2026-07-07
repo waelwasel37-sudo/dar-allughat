@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-// 🎯 تصحيح: استيراد admin و getDb بشكل صحيح
-import { getDb, admin } from '@/app/lib/firebase-admin'; 
+// 🎯 تصحيح: استيراد getDb بشكل صحيح واستيراد firestore للأنواع
+import { getDb } from '@/app/lib/firebase-admin'; 
+import { firestore } from 'firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,7 +10,7 @@ export async function GET(
   context: { params: Promise<{ slug: string }> }
 ) {
   // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
-  const db = await getDb();
+  const db = getDb();
 
   if (!db) {
     return NextResponse.json({ error: 'Database not initialized' }, { status: 500 });
@@ -35,11 +36,11 @@ export async function GET(
     const post = {
       id: doc.id,
       ...postData,
-      // 🎯 تصحيح: التأكد من وجود admin.firestore.Timestamp
-      createdAt: postData.createdAt instanceof admin.firestore.Timestamp 
+      // 🎯 تصحيح: التأكد من وجود firestore.Timestamp
+      createdAt: postData.createdAt instanceof firestore.Timestamp 
         ? postData.createdAt.toDate().toISOString() 
         : new Date(postData.createdAt || Date.now()).toISOString(),
-      updatedAt: postData.updatedAt instanceof admin.firestore.Timestamp 
+      updatedAt: postData.updatedAt instanceof firestore.Timestamp 
         ? postData.updatedAt.toDate().toISOString() 
         : new Date(postData.updatedAt || Date.now()).toISOString(),
     };
