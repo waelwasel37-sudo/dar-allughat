@@ -30,11 +30,10 @@ export default function ProductsView({ products, searchQuery }: ProductsViewProp
 
   return (
     <div className={styles.grid}>
-      {products.map((product, index) => (
+      {products.map((product) => (
         <ProductCard 
           key={product.id} 
           product={product} 
-          priority={index < 4} // Prioritize the first 4 images
         />
       ))}
     </div>

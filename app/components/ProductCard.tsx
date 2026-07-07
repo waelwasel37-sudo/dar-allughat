@@ -12,10 +12,9 @@ import { FaStar } from 'react-icons/fa';
 
 interface ProductCardProps {
   product?: Product;
-  priority?: boolean; 
 }
 
-const ProductCard = ({ product, priority = false }: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
   const [productUrl, setProductUrl] = useState<string>('');
 
   useEffect(() => {
@@ -59,7 +58,6 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
               height={300}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               className={styles.image}
-              priority={priority} 
             />
             {hasDiscount && (
               <div className={styles.discountBadge}>

@@ -68,7 +68,6 @@ const Header = ({ session }: HeaderProps) => {
             alt="شعار مكتبات دار اللغات" 
             width={256}
             height={64}
-            priority
             unoptimized
           />
         </Link>
