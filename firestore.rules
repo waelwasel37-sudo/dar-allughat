@@ -17,6 +17,12 @@ service cloud.firestore {
       allow write: if isAdmin(); 
     }
 
+    // الفئات: يجب أن تكون قابلة للقراءة من قبل الجميع
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // طلبات الشراء (Orders): الجمهور يرسل، والأدمن يدير
     match /orders/{orderId} {
       allow create: if true;

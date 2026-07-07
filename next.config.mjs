@@ -1,34 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 🎯 تم إصلاح حزم الخادم الخارجية لضمان عدم انهيار الـ Firebase Admin بالخلفية
+  // الحزم الخارجية لضمان استقرار Firebase Admin على الخادم
   serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library"],
   
-  eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
 
+  // الطريقة الصحيحة للـ ESLint في Next.js 15 لتخطي أخطاء التنسيق أثناء البناء
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  // 🎯 كائن تحسين وقبول صور المتجر السليم والمصحح بالكامل
   images: {
     unoptimized: false,
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '*.googleusercontent.com', 
-      },
-      {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com', 
-      },
-      {
-        protocol: 'https',
-        hostname: 'storage.googleapis.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.run.app', // ✅ السماح بنطاقات App Hosting
-      },
-      {
-        protocol: 'https',
-        hostname: '*.firebaseapp.com', // ✅ السماح بنطاقات Firebase
-      }
+      { protocol: 'https', hostname: '*.googleapis.com' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
+      { protocol: 'https', hostname: '*.googleusercontent.com' },
+      { protocol: 'https', hostname: 'storage.googleapis.com' },
+      { protocol: 'https', hostname: '*.run.app' },
+      { protocol: 'https', hostname: '*.firebaseapp.com' }
     ],
   },
 
@@ -39,7 +30,6 @@ const nextConfig = {
         headers: [
           {
             key: 'Cross-Origin-Opener-Policy',
-            // 🎯 تعديل عبقري منك لحل مشكلة تعليق واغلاق نافذة جوجل المنبثقة COOP
             value: 'same-origin-allow-popups', 
           },
           {
@@ -47,10 +37,6 @@ const nextConfig = {
             value: 'unsafe-none'
           }
         ],
-      },
-      {
-        source: '/_next/static/:path*',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
     ];
   },
