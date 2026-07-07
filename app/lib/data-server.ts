@@ -26,7 +26,7 @@ function serializeDocument<T>(doc: firestore.DocumentSnapshot): T {
 
 // 1. جلب جميع المنتجات
 export async function getProducts(): Promise<Product[]> {
-    const db = getDb(); // ✅ تم التصحيح: استدعاء مباشر بدون await
+    const db = getDb();
     try {
         const snapshot = await db.collection("products").orderBy("createdAt", "desc").get();
         if (snapshot.empty) return [];
@@ -39,7 +39,7 @@ export async function getProducts(): Promise<Product[]> {
 
 // 2. جلب جميع التصنيفات
 export async function getCategories(): Promise<Category[]> {
-    const db = getDb(); // ✅ تم التصحيح: استدعاء مباشر بدون await
+    const db = getDb();
     try {
         const snapshot = await db.collection("categories").get();
         if (snapshot.empty) return [];
@@ -50,22 +50,40 @@ export async function getCategories(): Promise<Category[]> {
     }
 }
 
-// 3. جلب منتج واحد بالـ Slug
+// 3. جلب منتج واحد بالـ Slug (مع إضافة منطق تصحيحي مؤقت)
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-    const db = getDb(); // ✅ تم التصحيح: استدعاء مباشر بدون await
+    const db = getDb();
     try {
+        console.log(`[DEBUG] Attempting to find product with requested slug: "${slug}"`);
+
         const snapshot = await db.collection("products").where("slug", "==", slug).limit(1).get();
-        if (snapshot.empty) return null;
+        
+        if (snapshot.empty) {
+            console.error(`[DEBUG] PRODUCT NOT FOUND for slug: "${slug}".`);
+            
+            // --- منطقة التصحيح ---
+            // جلب كل الـ slugs للمقارنة
+            const allProductsSnapshot = await db.collection("products").get();
+            const allSlugs = allProductsSnapshot.docs.map(doc => doc.data().slug);
+            console.log("[DEBUG] Available slugs in the database:", allSlugs);
+            // --- نهاية منطقة التصحيح ---
+
+            return null;
+        }
+        
+        console.log(`[DEBUG] Product found successfully for slug: "${slug}"`);
         return serializeDocument<Product>(snapshot.docs[0]);
+
     } catch (error) {
-        console.error("Error in getProductBySlug:", error);
+        console.error(`Error in getProductBySlug for slug "${slug}":`, error);
         return null;
     }
 }
 
+
 // 4. جلب المنتجات ذات الصلة
 export async function getRelatedProducts(category: string, currentSlug: string): Promise<Product[]> {
-    const db = getDb(); // ✅ تم التصحيح: استدعاء مباشر بدون await
+    const db = getDb();
     try {
         const snapshot = await db.collection("products").where("category", "==", category).limit(4).get();
         if (snapshot.empty) return [];
@@ -80,7 +98,7 @@ export async function getRelatedProducts(category: string, currentSlug: string):
 
 // 5. جلب المقالات مع معالجة آمنة
 export async function getPosts(): Promise<Post[]> {
-    const db = getDb(); // ✅ تم التصحيح: استدعاء مباشر بدون await
+    const db = getDb();
     try {
         const snapshot = await db.collection("posts").orderBy("createdAt", "desc").get();
         if (snapshot.empty) return [];

@@ -34,7 +34,7 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     value: "1:118615668327:web:394407c7f6ab1e801a06c2"
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-    value: "G-5B1BGCLTM8"
+    value: "G-7SQ2EK8VDC" # <-- ✅ تم التحديث إلى القيمة الصحيحة
   - variable: NEXT_PUBLIC_META_PIXEL_ID
     value: "2031832027677972"
   - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
