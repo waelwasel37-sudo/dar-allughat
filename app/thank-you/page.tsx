@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -11,9 +10,9 @@ export default function ThankYouPage() {
   const { clearCart } = useCart();
 
   useEffect(() => {
-    // Clear the cart as soon as the customer reaches the thank you page
+    // تفريغ السلة فور وصول العميل لصفحة شكراً لك
     clearCart();
-  }, [clearCart]);
+  }, []); // مصفوفة فارغة لمنع التكرار اللانهائي
 
   return (
     <div className={styles.container}>
@@ -28,7 +27,7 @@ export default function ThankYouPage() {
         </p>
         <div className={styles.buttonContainer}>
           <a 
-            href="https://wa.me/+201220396597" // Correct WhatsApp number
+            href="https://wa.me/201220396597" // رابط واتساب الدولي الصحيح
             target="_blank" 
             rel="noopener noreferrer" 
             className={`${styles.button} ${styles.whatsappButton}`}>
