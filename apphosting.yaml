@@ -14,20 +14,20 @@ run:
   maxInstances: 10
   concurrency: 80
 
-# 🔐 متغيرات البيئة والأسرار: ربط آمن مع خدمات Firebase والمفاتيح
+# 🔐 متغيرات البيئة والأسرار: ربط آمن ومجرد بأسماء الأسرار فقط
 env:
-  # 🎯 تم التصحيح الجذري: استخدام الرقم التعريفي للمشروع المعتمد في السجلات (118615668327)
+  # 🎯 تم التصحيح القاطع: كتابة اسم السر فقط دون أي روابط (الفايربيس يربطه تلقائياً)
   - variable: SECRET_COOKIE_PASSWORD
-    secret: projects/118615668327/secrets/SECRET_COOKIE_PASSWORD/versions/latest
+    secret: SECRET_COOKIE_PASSWORD
 
   - variable: FIREBASE_SERVICE_ACCOUNT_JSON
-    secret: projects/118615668327/secrets/FIREBASE_SERVICE_ACCOUNT_JSON/versions/latest
+    secret: FIREBASE_SERVICE_ACCOUNT_JSON
 
   # المتغيرات العامة للمتجر المحدثة والمطابقة 100% مع الـ firebaseConfig الحي
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     value: "AIzaSyCifHupsbt8tcIfzkBa1hpcH5j4vM4VihU"
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "dar-allughat-97483992-fc6c5.firebaseapp.com"
+    value: "://firebaseapp.com"
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: "dar-allughat-97483992-fc6c5"
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
@@ -38,11 +38,8 @@ env:
     value: "1:118615668327:web:f90af8e5d121f5a71a06c2"
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     value: "G-7SQ2EK8VDC"
-  
-  # المتغير المطلوب لتشغيل موجز المنتجات بشكل صحيح
   - variable: NEXT_PUBLIC_SITE_URL
-    value: "https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app"
-
+    value: "https://hosted.app"
   - variable: NEXT_PUBLIC_META_PIXEL_ID
     value: "2031832027677972"
   - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
