@@ -14,14 +14,13 @@ run:
   maxInstances: 10
   concurrency: 80
 
-# 🔐 متغيرات البيئة والأسرار: ربط آمن ومطابق للحسابات الرقمية المشفرة
+# 🔐 متغيرات البيئة والأسرار: أسماء الأسرار مجردة بدون روابط (الفايربيس يربطها تلقائياً)
 env:
-  # 🎯 تم التصحيح: ربط مباشر بالمعرف الرقمي الصارم المعتمد في خوادم جوجل لديك (118615668327)
   - variable: SECRET_COOKIE_PASSWORD
-    secret: projects/118615668327/secrets/SECRET_COOKIE_PASSWORD/versions/latest
+    secret: SECRET_COOKIE_PASSWORD
 
   - variable: FIREBASE_SERVICE_ACCOUNT_JSON
-    secret: projects/118615668327/secrets/FIREBASE_SERVICE_ACCOUNT_JSON/versions/latest
+    secret: FIREBASE_SERVICE_ACCOUNT_JSON
 
   # المتغيرات العامة للمتجر المحدثة والمطابقة 100% مع الـ firebaseConfig الحي
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
