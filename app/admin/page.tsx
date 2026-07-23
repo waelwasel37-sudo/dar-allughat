@@ -1,5 +1,7 @@
-
 'use client';
+
+// 🚀 تفعيل الرندر الديناميكي لمنع أخطاء بناء Next.js 15
+export const dynamic = 'force-dynamic';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
