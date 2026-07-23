@@ -16,31 +16,35 @@ run:
 
 # 🔐 متغيرات البيئة والأسرار: ربط آمن مع خدمات Firebase والمفاتيح
 env:
-  # 🎯 الربط الصحيح والفعلي مع السر السحابي الموضح في قائمتك
-  - variable: FIREBASE_SERVICE_ACCOUNT_JSON
-    secret: FIREBASE_SERVICE_ACCOUNT_JSON # <--- ✅ هذا هو التصحيح الحاسم بناءً على اكتشافك
+  # 🎯 تم الحقن: المتغير السري المسؤول عن تشفير الجلسات ومنع خطأ الـ 500
+  - variable: SECRET_COOKIE_PASSWORD
+    secret: projects/dar-allughat-97483992-fc6c5/secrets/SECRET_COOKIE_PASSWORD/versions/latest
 
-  # المتغيرات العامة مع القيم الصحيحة الكاملة (بدون تخريب)
+  # 🎯 تم التصحيح: المسار السحابي الكامل لقراءة صلاحيات الفايربيس
+  - variable: FIREBASE_SERVICE_ACCOUNT_JSON
+    secret: projects/dar-allughat-97483992-fc6c5/secrets/FIREBASE_SERVICE_ACCOUNT_JSON/versions/latest
+
+  # المتغيرات العامة للمتجر المحدثة والمطابقة 100% مع الـ firebaseConfig الحي
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    value: "AIzaSyCX0RCPBcg0_eL28snWBn0bNfDf8ACWzWM"
+    value: "AIzaSyCifHupsbt8tcIfzkBa1hpcH5j4vM4VihU"
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "dar-allughat-97483992-fc6c5.firebaseapp.com" # <-- ✅ القيمة الكاملة
+    value: "dar-allughat-97483992-fc6c5.firebaseapp.com"
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: "dar-allughat-97483992-fc6c5"
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: "dar-allughat-97483992-fc6c5.appspot.com" # <-- ✅ القيمة الكاملة
+    value: "dar-allughat-97483992-fc6c5.firebasestorage.app"
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     value: "118615668327"
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    value: "1:118615668327:web:394407c7f6ab1e801a06c2"
+    value: "1:118615668327:web:f90af8e5d121f5a71a06c2"
   - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
-    value: "G-7SQ2EK8VDC" # <-- ✅ تم التحديث إلى القيمة الصحيحة
+    value: "G-7SQ2EK8VDC"
   - variable: NEXT_PUBLIC_META_PIXEL_ID
     value: "2031832027677972"
   - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
     value: "AIzaSyBazLf9qCoXwrjx77SiH8Qs1MeGOLdtoGI"
 
-# 🌐 ترويسات الاستجابة: إضافة طبقات أمان إضافية للمتصفح
+# 🌐 ترويسات الاستجابة: إضافة طبقات أمان وتوافق تسجيل الدخول بجوجل
 headers:
   - path: "/**"
     headers:
@@ -55,4 +59,4 @@ headers:
       - key: "Referrer-Policy"
         value: "strict-origin-when-cross-origin"
       - key: "Cross-Origin-Opener-Policy"
-        value: "same-origin-allow-popups"
+        value: "same-origin-allow-popups" # تمنع المتصفح من حظر نافذة تسجيل الدخول المنبثقة
