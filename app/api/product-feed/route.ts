@@ -1,14 +1,12 @@
 // app/api/product-feed/route.ts
 import { NextResponse } from 'next/server';
-// 🎯 تصحيح: استيراد getDb بشكل صحيح واستيراد firestore للأنواع
 import { getDb } from '@/app/lib/firebase-admin';
 import { firestore } from 'firebase-admin';
-import { Product } from '@/app/lib/types'; // 🎯 تصحيح: مسار الاستيراد
+import { Product } from '@/app/lib/types';
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
   const db = getDb();
 
   try {
@@ -38,20 +36,24 @@ export async function GET() {
         : originalPrice;
 
       const description = (item.description || 'وصف غير متوفر حاليًا.').replace(/<[^>]*>/g, '');
-      const productLink = `${domain}/products/${item.slug || item.id}`;
+      
+      const productSlug = item.slug || item.id;
+      const productLink = `${domain}/products/${encodeURIComponent(productSlug)}`;
+
+      const availability = item.stock && item.stock > 0 ? 'in_stock' : 'out_of_stock';
 
       return `
         <item>
           <g:id>${item.id}</g:id>
-          <title><![CDATA[${item.name}]]></title>
-          <link>${productLink}</link>
+          <g:title><![CDATA[${item.name}]]></g:title>
+          <link><![CDATA[${productLink}]]></link>
           <g:price>${finalPrice.toFixed(2)} EGP</g:price>
           <description><![CDATA[${description}]]></description>
           <g:image_link><![CDATA[${item.imageUrl}]]></g:image_link>
-          <g:availability>in stock</g:availability>
+          <g:availability>${availability}</g:availability>
           <g:condition>new</g:condition>
           <g:brand><![CDATA[مكتبات دار اللغات]]></g:brand>
-          <g:google_product_category>Media > Books</g:google_product_category>
+          <g:google_product_category>Media &gt; Books</g:google_product_category>
         </item>
       `;
     }).join('');
@@ -77,7 +79,6 @@ export async function GET() {
 
   } catch (error: any) {
     console.error("Error generating product feed:", error);
-    // 🎯 تحديث: استخدام NextResponse.json لتوحيد أسلوب إرجاع الأخطاء
     return NextResponse.json(
       { message: "Internal Server Error", error: error.message },
       { status: 500 }

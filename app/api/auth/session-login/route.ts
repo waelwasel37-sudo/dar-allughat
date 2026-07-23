@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getAdminAuth } from "@/app/lib/firebase-admin"; // تأكد من مطابقة مسار ملف الإدمن لديك
-import { getSession } from "@/app/lib/session";
+import { getAdminAuth } from "@/app/lib/firebase-admin";
+import { getSession } from "@/app/lib/session"; // <-- المسار الصحيح مؤكد
 
 // إجبار المسار على العمل بشكل ديناميكي كامل لمنع أخطاء البناء السحابي بسبب الكوكيز
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
     }
 
-    // 🎯 تطبيق التعديلات الذكية المحدثة منك الآن
+    // تطبيق التعديلات الذكية المحدثة
     session.isLoggedIn = true;
     session.username = decodedToken.email ? decodedToken.email.split('@')[0] : "Admin";
     session.isAdmin = true; // تفعيل القيمة الحاسمة لحماية لوحة التحكم

@@ -5,12 +5,12 @@ import { cookies } from 'next/headers';
 export interface SessionData {
   isLoggedIn: boolean;
   username: string;
-  isAdmin?: boolean; // <-- تمت الإضافة للسماح بتخزين صلاحية المدير
+  isAdmin?: boolean;
 }
 
-// 2. إعدادات الجلسة والكوكيز مع كلمة السر البديلة الصارمة (يجب ألا تقل عن 32 حرفاً)
+// 2. إعدادات الجلسة مع الاعتماد الكامل والآمن على متغير البيئة السري
 export const sessionOptions = {
-  password: (process.env.SECRET_COOKIE_PASSWORD || "v1_secure_session_cookie_encryption_password_32_chars") as string,
+  password: process.env.SECRET_COOKIE_PASSWORD as string,
   cookieName: 'my-app-session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
@@ -18,12 +18,9 @@ export const sessionOptions = {
   },
 };
 
-// 3. الدالة المصححة والمتوافقة 100% مع Next.js 15 والـ Build السحابي
+// 3. دالة الحصول على الجلسة، متوافقة مع Next.js 15
 export async function getSession() {
-  // فك الـ Promise الخاص بالكوكيز إجبارياً في بيئة Next.js 15
   const cookieStore = await cookies();
-  
-  // تمرير الـ cookieStore المفكك والجاهز للمكتبة
   const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
   return session;
 }
