@@ -40,6 +40,16 @@ const nextConfig = {
       },
     ];
   },
+
+  // 🔴 إضافة قاعدة إعادة التوجيه لإصلاح مشكلة المصادقة مع Firebase
+  async rewrites() {
+    return [
+      {
+        source: '/__/auth/:path*',
+        destination: `https://dar-allughat-97483992-fc6c5.firebaseapp.com/__/auth/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
