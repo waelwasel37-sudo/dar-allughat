@@ -21,3 +21,12 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .vercel
+*.json
+firebase-service-account-key.json
+firebase-service-account.json
+service-account-key.json
+service-account.json
+serviceAccountKey.json
+temp_service_account.json
+firestore-debug.log
+.vscode/

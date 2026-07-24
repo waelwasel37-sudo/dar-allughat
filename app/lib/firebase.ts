@@ -1,21 +1,22 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
+// Your web app's Firebase configuration is now read from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyCX0RCPBcg0_eL28snWBn0bNfDf8ACWzWM",
-  authDomain: "dar-allughat-97483992-fc6c5.firebaseapp.com",
-  projectId: "dar-allughat-97483992-fc6c5",
-  storageBucket: "dar-allughat-97483992-fc6c5.firebasestorage.app",
-  messagingSenderId: "118615668327",
-  appId: "1:118615668327:web:394407c7f6ab1e801a06c2",
-  measurementId: "G-5B1BGCLTM8"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize the app (prevent re-initialization)
+// Initialize Firebase
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 // Initialize services
