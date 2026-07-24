@@ -33,67 +33,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const handleAuthFlow = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          console.log("Firebase redirect result processed for user:", result.user.uid);
+    // 1️⃣ معالجة إعادة التوجيه في سطر منفصل فوراً
+    getRedirectResult(auth).catch((error) => {
+      console.error("Error processing Firebase redirect result:", error);
+    });
+
+    // 2️⃣ تشغيل مستمع الهوية المباشر
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setLoading(true);
+      if (currentUser) {
+        setUser(currentUser);
+        try {
+          const idToken = await currentUser.getIdToken(true);
+          const response = await fetch('/api/auth/session-login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken }),
+          });
+
+          if (response.ok) {
+              const ADMIN_EMAIL = 'waelwasel37@gmail.com';
+              const userIsAdmin = currentUser.email?.toLowerCase() === ADMIN_EMAIL;
+              setIsAdmin(userIsAdmin);
+
+              if (userIsAdmin && pathname === '/login') {
+                  window.location.replace('/admin');
+              }
+          } else {
+              console.error('Server session login failed.');
+              await signOut(auth);
+          }
+        } catch (e) {
+          console.error('Error during session creation or token fetching:', e);
+          await signOut(auth);
         }
-      } catch (error) {
-        console.error("Error processing Firebase redirect result:", error);
+      } else {
+        const currentCachedUser = auth.currentUser;
+        if (currentCachedUser) {
+          await triggerServerLogout(currentCachedUser.uid);
+        }
+        setUser(null);
+        setIsAdmin(false);
+
+        if (pathname.startsWith('/admin')) {
+          window.location.href = '/login';
+        }
       }
+      setLoading(false);
+    });
 
-      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-        setLoading(true);
-        if (currentUser) {
-          setUser(currentUser);
-          try {
-            const idToken = await currentUser.getIdToken(true);
-            const response = await fetch('/api/auth/session-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idToken }),
-            });
-
-            if (response.ok) {
-                const ADMIN_EMAIL = 'waelwasel37@gmail.com';
-                const userIsAdmin = currentUser.email === ADMIN_EMAIL;
-                setIsAdmin(userIsAdmin);
-
-                if (userIsAdmin && pathname === '/login') {
-                    window.location.replace('/admin');
-                }
-            } else {
-                console.error('Server session login failed.');
-                await signOut(auth);
-            }
-          } catch (e) {
-            console.error('Error during session creation or token fetching:', e);
-            await signOut(auth);
-          }
-        } else {
-          const currentCachedUser = auth.currentUser;
-          if (currentCachedUser) {
-            await triggerServerLogout(currentCachedUser.uid);
-          }
-          setUser(null);
-          setIsAdmin(false);
-
-          if (pathname.startsWith('/admin')) {
-            window.location.href = '/login';
-          }
-        }
-        setLoading(false);
-      });
-      return unsubscribe;
-    };
-
-    const unsubscribePromise = handleAuthFlow();
-
-    return () => {
-      unsubscribePromise.then(unsubscribe => unsubscribe && unsubscribe());
-    };
-
+    // 🎯 تنظيف متزامن فوري وسليم للذاكرة
+    return () => unsubscribe();
   }, [pathname, triggerServerLogout]);
 
   const logout = useCallback(async () => {

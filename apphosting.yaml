@@ -1,6 +1,9 @@
 # إصدار مواصفات الاستضافة المستقر
 version: 1
 
+# تحديد بيئة التشغيل لإصلاح خطأ إصدار Node.js
+runtime: nodejs20
+
 # 🛠️ خطوة البناء: تثبيت الحزم وبناء النسخة النهائية من المتجر
 build:
   run: npm install && npm run build
@@ -16,19 +19,19 @@ run:
 
 # 🔐 متغيرات البيئة والأسرار: ربط آمن مع خدمات Firebase والمفاتيح
 env:
-  # 🎯 تم الحقن: المتغير السري المسؤول عن تشفير الجلسات ومنع خطأ الـ 500
+  # 🎯 تم الحقن: الصيغة المجردة المعتمدة رسمياً لمنع خطأ الـ 500
   - variable: SECRET_COOKIE_PASSWORD
-    secret: projects/dar-allughat-97483992-fc6c5/secrets/SECRET_COOKIE_PASSWORD/versions/latest
+    secret: SECRET_COOKIE_PASSWORD
 
-  # 🎯 تم التصحيح: المسار السحابي الكامل لقراءة صلاحيات الفايربيس
+  # 🎯 تم التصحيح: الصيغة المجردة لقراءة صلاحيات حساب الفايربيز
   - variable: FIREBASE_SERVICE_ACCOUNT_JSON
-    secret: projects/dar-allughat-97483992-fc6c5/secrets/FIREBASE_SERVICE_ACCOUNT_JSON/versions/latest
+    secret: FIREBASE_SERVICE_ACCOUNT_JSON
 
   # المتغيرات العامة للمتجر المحدثة والمطابقة 100% مع الـ firebaseConfig الحي
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     value: "AIzaSyCifHupsbt8tcIfzkBa1hpcH5j4vM4VihU"
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "dar-allughat-97483992-fc6c5.firebaseapp.com"
+    value: "dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app"
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: "dar-allughat-97483992-fc6c5"
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
