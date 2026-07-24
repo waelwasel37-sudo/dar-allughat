@@ -2,14 +2,14 @@
 # It specifies the tools and packages that should be available in your workspace.
 { pkgs, ... }: {
 
-  # Use the stable-23.11 Nixpkgs channel for reproducibility.
+  # Use the stable-23.11 Nixpkgs channel as requested by the developer.
   channel = "stable-23.11";
 
   # A list of packages to install.
   # Packages are separated by spaces, not commas.
   packages = [
-    # Provides Node.js, which is required to run your Next.js application.
-    pkgs.nodejs_22
+    # Changed to nodejs_20 because nodejs_22 is missing in this old 2023 channel.
+    pkgs.nodejs_20
 
     # Provides the Firebase CLI for deploying your project and running emulators.
     pkgs.firebase-tools
