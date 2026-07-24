@@ -23,16 +23,6 @@ const nextConfig = {
     ],
   },
 
-  // 🚀 الفلتر الذكي المضاف لمنع ظهور خطأ 404 عند تسجيل الدخول
-  async rewrites() {
-    return [
-      {
-        source: '/__/auth/:path*',
-        destination: 'https://dar-allughat-97483992-fc6c5.firebaseapp.com/__/auth/:path*',
-      },
-    ];
-  },
-
   async headers() {
     return [
       {

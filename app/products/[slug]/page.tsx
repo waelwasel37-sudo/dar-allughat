@@ -17,7 +17,8 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: encodedSlug } = await params;
+  const slug = decodeURIComponent(encodedSlug);
   const product = await getProductBySlug(slug);
 
   if (!product) {
@@ -60,7 +61,13 @@ export async function generateMetadata(
 }
 
 const ProductDetailsPage = async ({ params, searchParams }: PageProps) => {
-  const { slug } = await params;
+  const { slug: encodedSlug } = await params;
+  
+  // -- 👇 بداية التعديل --
+  // فك تشفير الـ slug يدويًا لضمان التعامل مع الأحرف العربية بشكل صحيح
+  const slug = decodeURIComponent(encodedSlug);
+  // -- 👆 نهاية التعديل --
+
   const product = await getProductBySlug(slug);
 
   if (!product) {
