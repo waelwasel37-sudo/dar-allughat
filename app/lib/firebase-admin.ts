@@ -12,16 +12,16 @@ function parseServiceAccountJson(raw: string): ServiceAccount {
 
     const repairedRaw = raw
         .trim()
-        .replace(/\\v/g, '\\\\n')
-        .replace(/\\V/g, '\\\\n')
-        .replace(/\\r/g, '\\\\r')
-        .replace(/\\t/g, '\\\\t');
+        .replace(/\v/g, '\\n')
+        .replace(/\V/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/\t/g, '\\t');
 
     let serviceAccount: any;
     try {
         serviceAccount = JSON.parse(repairedRaw);
     } catch (firstError: any) {
-        const fallbackRaw = repairedRaw.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+        const fallbackRaw = repairedRaw.replace(/\(?!["\\/bfnrtu])/g, '\\');
         try {
             serviceAccount = JSON.parse(fallbackRaw);
         } catch (secondError: any) {
@@ -36,7 +36,7 @@ function parseServiceAccountJson(raw: string): ServiceAccount {
     return {
         projectId: serviceAccount.project_id,
         clientEmail: serviceAccount.client_email,
-        privateKey: String(serviceAccount.private_key).replace(/\\n/g, '\n'),
+        privateKey: String(serviceAccount.private_key).replace(/\n/g, '\n'),
     } as ServiceAccount;
 }
 
@@ -57,7 +57,7 @@ export function getServiceAccountFromEnv(env: NodeJS.ProcessEnv = process.env): 
         try {
             return parseServiceAccountJson(env.FIREBASE_SERVICE_ACCOUNT_JSON);
         } catch (e: any) {
-            throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON. Ensure it's a valid, non-escaped JSON string. Original error: ${e.message}`);
+            throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON. Original error: ${e.message}`);
         }
     }
 
@@ -66,7 +66,7 @@ export function getServiceAccountFromEnv(env: NodeJS.ProcessEnv = process.env): 
             const decoded = Buffer.from(env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf8');
             return parseServiceAccountJson(decoded);
         } catch (e: any) {
-            throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_BASE64. Ensure it's a valid base64-encoded service account JSON string. Original error: ${e.message}`);
+            throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT_BASE64. Original error: ${e.message}`);
         }
     }
 
@@ -74,18 +74,17 @@ export function getServiceAccountFromEnv(env: NodeJS.ProcessEnv = process.env): 
         return {
             projectId: env.FIREBASE_PROJECT_ID,
             clientEmail: env.FIREBASE_CLIENT_EMAIL,
-            privateKey: env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            privateKey: env.FIREBASE_PRIVATE_KEY.replace(/\n/g, '\n'),
         } as ServiceAccount;
     }
 
-    throw new Error('Firebase Admin credentials are not configured. Please set either a service account file path via FIREBASE_SERVICE_ACCOUNT_FILE or GOOGLE_APPLICATION_CREDENTIALS, FIREBASE_SERVICE_ACCOUNT_JSON, FIREBASE_SERVICE_ACCOUNT_BASE64, or FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY.');
+    throw new Error('Firebase Admin credentials are not configured.');
 }
 
 function getServiceAccount(): ServiceAccount {
     return getServiceAccountFromEnv();
 }
 
-// 🔒 Initialize the app lazily so the build does not crash before routes need Firebase.
 let app: App | null = null;
 let initializationError: Error | null = null;
 
@@ -102,7 +101,7 @@ function initializeAdminApp(): App {
         const serviceAccount = getServiceAccount();
         app = initializeApp({
             credential: cert(serviceAccount),
-            storageBucket: process.env.FIREBASE_STORAGE_BUCKET || `${serviceAccount.projectId}.appspot.com`
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET || `${serviceAccount.projectId}.firebasestorage.app`
         });
         return app;
     } catch (error) {
@@ -110,12 +109,12 @@ function initializeAdminApp(): App {
             if (!app) {
                 app = initializeApp({
                     credential: applicationDefault(),
-                    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'dar-allughat-97483992-fc6c5.appspot.com'
+                    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'dar-allughat-97483992-fc6c5.firebasestorage.app'
                 });
                 return app;
             }
         } catch {
-            // fall through to the original error below
+            // fall through
         }
 
         initializationError = error instanceof Error ? error : new Error(String(error));
@@ -123,7 +122,6 @@ function initializeAdminApp(): App {
     }
 }
 
-// 🚀 Export clean, safe functions to access Firebase services throughout your app.
 export function getAdminApp(): App {
     return initializeAdminApp();
 }
