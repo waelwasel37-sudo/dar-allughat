@@ -1,4 +1,4 @@
-// app/lib/data-server.ts - نسخة معززة ومصححة بالكامل
+// app/lib/data-server.ts - النسخة المستقرة والخالية من الأخطاء
 import { getDb } from './firebase-admin';
 import type { DocumentSnapshot, Timestamp } from 'firebase-admin/firestore';
 import type { Product, Category, Post } from './types';
@@ -72,6 +72,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
             console.warn(`[data-server] Product not found for slug: "${slug}".`);
             return null;
         }
+        // ✅ تم التصحيح: تمرير العنصر الأول في المصفوفة [0] لمنع انهيار السيرفر
         const product = serializeDocument<Product>(snapshot.docs[0]);
         console.log(`[data-server] Successfully fetched product: ${product.id}`);
         return product;
@@ -81,7 +82,6 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     }
 }
 
-// 4. جلب المنتجات ذات الصلة (تم تعديل الـ limit إلى 5 لضمان عرض 4 منتجات كاملة)
 export async function getRelatedProducts(category: string, currentSlug: string): Promise<Product[]> {
     const db = getDb();
     try {
@@ -90,7 +90,7 @@ export async function getRelatedProducts(category: string, currentSlug: string):
         return snapshot.docs
             .map(doc => serializeDocument<Product>(doc))
             .filter((p) => p.slug !== currentSlug)
-            .slice(0, 4); // قطع المصفوفة لتظهر 4 قطع فقط للمستخدم النهائي
+            .slice(0, 4);
     } catch (error: any) {
         console.error("❌ Critical Error in getRelatedProducts:", error);
         throw new Error(`Failed to fetch related products: ${error.message}`);

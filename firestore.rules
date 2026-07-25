@@ -1,42 +1,53 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // وظيفة التحقق من الأدمن (تستخدم في كل القواعد)
+
+    // 🔑 دالة مساعدة للتحقق من صلاحيات المدير (Admin)
     function isAdmin() {
       return request.auth != null && request.auth.token.role == 'admin';
     }
 
-    // المنتجات والمقالات: البحث والوصول يتم عبر الـ Slug (id)
-    match /products/{slug} { 
-      allow read: if true; 
-      allow write: if isAdmin(); 
-    }
-    match /posts/{slug} { 
-      allow read: if true; 
-      allow write: if isAdmin(); 
-    }
-
-    // الفئات: يجب أن تكون قابلة للقراءة من قبل الجميع
-    match /categories/{categoryId} {
-      allow read: if true;
+    // 📦 مجموعة المنتجات (Products) - البحث يتم بالـ Slug
+    match /products/{slug} {
+      // السماح للجميع بقراءة وتصفح المنتجات
+      allow read, get, list: if true;
+      // منع الكتابة أو التعديل أو الحذف إلا للمدير فقط
       allow write: if isAdmin();
     }
 
-    // طلبات الشراء (Orders): الجمهور يرسل، والأدمن يدير
+    // 📝 مجموعة المقالات (Posts) - البحث يتم بالـ Slug
+    match /posts/{slug} {
+      // السماح للجميع بقراءة وتصفح المقالات والمدونة
+      allow read, get, list: if true;
+      // منع الكتابة أو التعديل أو الحذف إلا للمدير فقط
+      allow write: if isAdmin();
+    }
+
+    // 🏷️ مجموعة الفئات والتصنيفات (Categories)
+    match /categories/{categoryId} {
+      // السماح للجميع بقراءة التصنيفات لتظهر في القوائم
+      allow read, get, list: if true;
+      // منع تعديلها أو إضافتها إلا للمدير فقط
+      allow write: if isAdmin();
+    }
+
+    // 🛒 مجموعة طلبات الشراء (Orders)
     match /orders/{orderId} {
+      // مسموح لأي زائر أو زبون بإنشاء وإرسال طلب شراء جديد
       allow create: if true;
-      allow read, update, delete: if isAdmin();
+      // قراءة الطلبات أو تعديل حالتها أو حذفها محصور فقط بالمدير لحماية خصوصية المشترين
+      allow read, get, list, update, delete: if isAdmin();
     }
 
-    // ارفع قائمة مدرستك: (لا تستخدم slug - تستخدم معرف تلقائي)
-    // مسموح للجمهور بإرسال: (الصورة، العنوان، رقم التليفون)
+    // 🏫 مجموعة قوائم المدارس (School-lists)
     match /school-lists/{listId} {
+      // مسموح لأي مستخدم (الجمهور) برفع قائمة مدرسته (الاسم، الهاتف، الصورة)
       allow create: if true;
-      allow read, update, delete: if isAdmin();
+      // تصفح القوائم المرفوعة أو تحميلها أو إدارتها محصور فقط بالمدير
+      allow read, get, list, update, delete: if isAdmin();
     }
 
-    // أي مجموعات أخرى غير مذكورة
+    // 🔒 حظر شامل لأي مجلدات أو مستندات أخرى غير مذكورة أعلاه
     match /{document=**} {
       allow read, write: if isAdmin();
     }
