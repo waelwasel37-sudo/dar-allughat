@@ -5,11 +5,6 @@ const nextConfig = {
   
   typescript: { ignoreBuildErrors: true },
 
-  // الطريقة الصحيحة للـ ESLint في Next.js 15 لتخطي أخطاء التنسيق أثناء البناء
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   // 🎯 كائن تحسين وقبول صور المتجر السليم والمصحح بالكامل
   images: {
     unoptimized: false,
