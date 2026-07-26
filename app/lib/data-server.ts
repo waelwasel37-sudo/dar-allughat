@@ -1,6 +1,5 @@
-// app/lib/data-server.ts - النسخة المستقرة والخالية من الأخطاء
 import { getDb } from './firebase-admin';
-import type { DocumentSnapshot, Timestamp } from 'firebase-admin/firestore';
+import type { DocumentSnapshot } from 'firebase-admin/firestore';
 import type { Product, Category, Post } from './types';
 
 function serializeDocument<T>(doc: DocumentSnapshot): T {
@@ -11,20 +10,40 @@ function serializeDocument<T>(doc: DocumentSnapshot): T {
         return { id: doc.id } as T;
     }
 
-    const serializedData: { [key: string]: any } = { id: doc.id };
+    // Helper function for deep serialization to avoid JSON conversion errors.
+    const deepSerialize = (obj: any): any => {
+        if (obj === null || obj === undefined) return obj;
 
-    for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-            const value = data[key];
-
-            if (value && typeof (value as Timestamp).toDate === 'function') {
-                serializedData[key] = (value as Timestamp).toDate().toISOString();
-            } else {
-                serializedData[key] = value;
-            }
+        // If the object is a Firestore Timestamp, convert it to an ISO string.
+        if (obj && typeof obj.toDate === 'function') {
+            return obj.toDate().toISOString();
         }
-    }
-    return serializedData as T;
+
+        // If it's an array, serialize each item recursively.
+        if (Array.isArray(obj)) {
+            return obj.map(item => deepSerialize(item));
+        }
+
+        // If it's a plain object, serialize each value recursively.
+        if (typeof obj === 'object') {
+            const copy: { [key: string]: any } = {};
+            for (const key in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                    copy[key] = deepSerialize(obj[key]);
+                }
+            }
+            return copy;
+        }
+
+        // Return primitives as is.
+        return obj;
+    };
+
+    // Apply deep serialization to the document data and prepend the ID.
+    return {
+        id: doc.id,
+        ...deepSerialize(data)
+    } as T;
 }
 
 export async function getProducts(): Promise<Product[]> {
@@ -64,32 +83,36 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-    console.log(`[data-server] Attempting to fetch product with slug: "${slug}"`);
+    // Decode the slug to handle non-ASCII characters (like Arabic) correctly.
+    const decodedSlug = decodeURIComponent(slug);
+    console.log(`[data-server] Attempting to fetch product with decoded slug: "${decodedSlug}"`);
+    
     const db = getDb();
     try {
-        const snapshot = await db.collection("products").where("slug", "==", slug).limit(1).get();
+        const snapshot = await db.collection("products").where("slug", "==", decodedSlug).limit(1).get();
         if (snapshot.empty) {
-            console.warn(`[data-server] Product not found for slug: "${slug}".`);
+            console.warn(`[data-server] Product not found for slug: "${decodedSlug}".`);
             return null;
         }
-        // ✅ تم التصحيح: تمرير العنصر الأول في المصفوفة [0] لمنع انهيار السيرفر
+        // Serialize the document to prevent server/build crashes.
         const product = serializeDocument<Product>(snapshot.docs[0]);
         console.log(`[data-server] Successfully fetched product: ${product.id}`);
         return product;
     } catch (error: any) {
-        console.error(`❌ Critical Error in getProductBySlug for slug "${slug}":`, error);
+        console.error(`❌ Critical Error in getProductBySlug for slug "${decodedSlug}":`, error);
         throw new Error(`Failed to fetch product by slug: ${error.message}`);
     }
 }
 
 export async function getRelatedProducts(category: string, currentSlug: string): Promise<Product[]> {
+    const decodedCurrentSlug = decodeURIComponent(currentSlug);
     const db = getDb();
     try {
         const snapshot = await db.collection("products").where("category", "==", category).limit(5).get();
         if (snapshot.empty) return [];
         return snapshot.docs
             .map(doc => serializeDocument<Product>(doc))
-            .filter((p) => p.slug !== currentSlug)
+            .filter((p) => p.slug !== decodedCurrentSlug)
             .slice(0, 4);
     } catch (error: any) {
         console.error("❌ Critical Error in getRelatedProducts:", error);
