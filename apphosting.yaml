@@ -46,9 +46,9 @@ env:
       - BUILD
       - RUNTIME
 
-  # ✨ تم الحقن: ربط مفتاح Gemini بمساره الرقمي الحقيقي الكامل والآمن المعتمد في حسابك
+  # ✨ تم التصحيح الجذري: توجيه المسار إلى معرف مشروع الفايربيس الصحيح حيث يتواجد السر فعلياً وحل تعليق السيرفر
   - variable: GEMINI_API_KEY
-    secret: projects/118615668327/secrets/GEMINI_API_KEY/versions/latest
+    secret: projects/dar-allughat-97483992-fc6c5/secrets/GEMINI_API_KEY/versions/latest
     availability:
       - BUILD
       - RUNTIME
@@ -102,7 +102,7 @@ env:
       - BUILD
       - RUNTIME
   
-  # 🎯 تم التصحيح: إعادة رابط نطاق المتجر الرسمي لضمان سلامة الـ Sitemap وجوجل ميرشنت
+  # إعادة رابط نطاق المتجر الرسمي لضمان سلامة الـ Sitemap وجوجل ميرشنت
   - variable: NEXT_PUBLIC_SITE_URL
     value: "https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app"
     availability:
