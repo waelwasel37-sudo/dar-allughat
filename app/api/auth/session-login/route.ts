@@ -1,13 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getAdminAuth } from "@/app/lib/firebase-admin";
-import { getSession } from "@/app/lib/session"; // <-- المسار الصحيح مؤكد
 
-// إجبار المسار على العمل بشكل ديناميكي كامل لمنع أخطاء البناء السحابي بسبب الكوكيز
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getSession();
     const { idToken } = await request.json();
 
     if (!idToken) {
@@ -17,19 +14,31 @@ export async function POST(request: Request) {
     const adminAuth = getAdminAuth();
     const decodedToken = await adminAuth.verifyIdToken(idToken);
 
-    // التحقق الصارم من بريدك الإلكتروني كأدمن وحيد للمتجر
+    // Strict check for the sole admin email
     if (decodedToken.email !== "waelwasel37@gmail.com") {
       return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
     }
 
-    // تطبيق التعديلات الذكية المحدثة
-    session.isLoggedIn = true;
-    session.username = decodedToken.email ? decodedToken.email.split('@')[0] : "Admin";
-    session.isAdmin = true; // تفعيل القيمة الحاسمة لحماية لوحة التحكم
+    // Cookie expiration time (e.g., 14 days)
+    const expiresIn = 60 * 60 * 24 * 14 * 1000; 
     
-    await session.save();
+    // Create the session cookie using Firebase Admin SDK
+    const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
 
-    return NextResponse.json({ success: true, username: session.username, isAdmin: session.isAdmin });
+    // Set secure cookie options
+    const options = {
+      name: "__session",
+      value: sessionCookie,
+      maxAge: expiresIn,
+      httpOnly: true,
+      secure: true,
+    };
+
+    // Create a response and set the cookie in the header
+    const response = NextResponse.json({ success: true, isAdmin: true }, { status: 200 });
+    response.cookies.set(options);
+
+    return response;
 
   } catch (error: any) {
     console.error("Session login API error:", error);

@@ -1,3 +1,4 @@
+# apphosting.yaml
 # إصدار مواصفات الاستضافة المستقر لمتجر دار اللغات
 version: 1
 
@@ -41,6 +42,13 @@ env:
 
   - variable: FIREBASE_PRIVATE_KEY
     secret: projects/dar-allughat-97483992-fc6c5/secrets/FIREBASE_PRIVATE_KEY/versions/latest
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # ✨ تم الحقن: ربط مفتاح Gemini بمساره الرقمي الحقيقي الكامل والآمن المعتمد في حسابك
+  - variable: GEMINI_API_KEY
+    secret: projects/118615668327/secrets/GEMINI_API_KEY/versions/latest
     availability:
       - BUILD
       - RUNTIME
@@ -94,7 +102,7 @@ env:
       - BUILD
       - RUNTIME
   
-  # المتغير المطلوب لتشغيل موجز المنتجات بشكل صحيح
+  # 🎯 تم التصحيح: إعادة رابط نطاق المتجر الرسمي لضمان سلامة الـ Sitemap وجوجل ميرشنت
   - variable: NEXT_PUBLIC_SITE_URL
     value: "https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app"
     availability:

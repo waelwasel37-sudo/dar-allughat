@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 import styles from './page.module.css';
 import Hero from './components/Hero';
+import SearchAndFilter from './components/SearchAndFilter'; // Ensure the path to your component is correct
 import { getProducts, getCategories } from '@/app/lib/data-server'; 
 import { Product, Category } from '@/app/lib/types';
-// 💡 الخطوة 2: استيراد مكون التحميل الجديد بدلاً من المكون الأصلي
 import HomeProductsLoader from './components/HomeProductsLoader';
 
 export const dynamic = 'force-dynamic';
@@ -37,12 +37,13 @@ export default async function Home() {
     <main className={styles.main}>
       <Hero />
       
-      {/* <Suspense fallback={<div className={styles.loading}>جاري تحميل الفلاتر...</div>}> 
+      {/* 🌟 Activated: Re-enabling the search, filters, and school/supply buttons */}
+      <Suspense fallback={<div className={styles.loading}>Loading filters...</div>}> 
         <SearchAndFilter categories={categories || []} />
-      </Suspense> */}
+      </Suspense>
       
-      {/* 💡 الخطوة 3: استخدام مكون التحميل الجديد، والذي سيهتم بعرض المكون الأصلي في المتصفح فقط */}
-      <Suspense fallback={<div className={styles.loading}>جاري تحميل المنتجات...</div>}> 
+      {/* Smart and safe rendering of products on the client-side */}
+      <Suspense fallback={<div className={styles.loading}>Loading products...</div>}> 
         <HomeProductsLoader initialProducts={initialProducts || []} categories={categories || []} />
       </Suspense>
     </main>

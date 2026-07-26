@@ -1,11 +1,8 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// IMPORTANT: Add your Google AI API key to your environment variables
-// Create a .env.local file in the root of your project and add:
-// GOOGLE_API_KEY="YOUR_API_KEY"
-const apiKey = process.env.GOOGLE_API_KEY;
+// 🎯 تم التطابق: قراءة المفتاح من المتغير السري المعرف في ملف الإعدادات والـ Cloud
+const apiKey = process.env.GEMINI_API_KEY;
 let genAI: GoogleGenerativeAI | null = null;
 if (apiKey) {
     genAI = new GoogleGenerativeAI(apiKey);
@@ -17,7 +14,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
   if (!genAI) {
     console.error('Google AI API key is not configured.');
-    return NextResponse.json({ error: 'API key is not configured. Please set GOOGLE_API_KEY environment variable.' }, { status: 500 });
+    return NextResponse.json({ error: 'API key is not configured. Please set GEMINI_API_KEY environment variable.' }, { status: 500 });
   }
 
   try {
