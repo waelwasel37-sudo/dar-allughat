@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Prompt is required.' }, { status: 400 });
     }
 
-    // 2. Select the model
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+    // 2. Select the model (🎯 تم التحديث هنا للنموذج المستقر والمدعوم حالياً)
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // 3. Construct a detailed, SEO-focused prompt
     let fullPrompt = '';

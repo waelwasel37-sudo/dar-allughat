@@ -2,25 +2,25 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     
-    // 1. السماح للجميع بقراءة أي صورة في المتجر (شعار، منتجات، إلخ)
+    // 1. متوافق مع Firestore: السماح للجميع بقراءة أي صورة (منتجات، شعار)
     match /{allPaths=**} {
-      allow read;
+      allow read: if true;
     }
 
-    // 2. مجلد صور المنتجات: الكتابة والحذف للأدمن وائل فقط
+    // 2. متوافق مع Firestore (products): الرفع والتعديل والحذف للأدمن وائل فقط
     match /products/{allPaths=**} {
-      allow write: if request.auth != null && request.auth.token.email == "waelwasel37@gmail.com";
+      allow create, update, delete: if request.auth != null && request.auth.token.email == "waelwasel37@gmail.com";
     }
 
-    // 3. مجلد قوائم المدارس: مسموح للجمهور بالرفع (create)، والحذف للأدمن فقط
+    // 3. متوافق مع Firestore (school-lists): مسموح للجمهور بالرفع، والحذف للأدمن فقط
     match /school-lists/{allPaths=**} {
-      allow create: if true; // مسموح للجمهور برفع ملفاتهم وصورهم
+      allow create: if true; 
       allow update, delete: if request.auth != null && request.auth.token.email == "waelwasel37@gmail.com";
     }
 
-    // 4. مجلد طلبات التوريدات: مسموح للجمهور بالرفع، والحذف للأدمن فقط
+    // 4. متوافق مع Firestore (توريدات): مسموح للجمهور بالرفع، والحذف للأدمن فقط
     match /supplies/{allPaths=**} {
-      allow create: if true; // مسموح للجمهور برفع طلبات المصانع والمؤسسات
+      allow create: if true; 
       allow update, delete: if request.auth != null && request.auth.token.email == "waelwasel37@gmail.com";
     }
   }

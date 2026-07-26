@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-// 🎯 الكود هنا بالفعل يستخدم الدوال المحدثة، لا حاجة لتغيير الاستيرادات
-import { getDb, getAdminAuth } from '@/app/lib/firebase-admin';
+// 🎯 تم التعديل: استيراد دالة getSecondaryDb التي تضمن الاتصال بالقاعدة الصحيحة في أوروبا
+import { getSecondaryDb, getAdminAuth } from '@/app/lib/firebase-admin';
 import { firestore } from 'firebase-admin';
 import { SchoolListRequest } from '@/app/lib/types';
 
@@ -18,7 +18,8 @@ const generateSlug = (name: string) => {
 export async function GET(req: NextRequest) {
     try {
         const firebaseAuth = getAdminAuth();
-        const db = getDb();     
+        // 🎯 تم التعديل هنا لربط لوحة التحكم بالقاعدة الصحيحة والوحيدة
+        const db = getSecondaryDb();     
 
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value; 
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
         } else {
             const authHeader = req.headers.get('Authorization');
             if (authHeader && authHeader.startsWith('Bearer ')) {
-                const token = authHeader.substring(7); // 🎯 تحسين: استخدام substring بدلاً من split
+                const token = authHeader.substring(7); 
                 decodedToken = await firebaseAuth.verifyIdToken(token).catch(() => null);
             }
         }
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
 
         const { searchParams } = new URL(req.url);
         const status = searchParams.get('status');
-        const requestsRef = db.collection('schoolListRequests');
+        const requestsRef = db.collection('school-lists');
 
         if (status === 'new') {
             const snapshot = await requestsRef.where('status', '==', 'new').get();
@@ -73,7 +74,8 @@ export async function GET(req: NextRequest) {
 // POST method - مفتوح للعامة والجمهور لإرسال طلباتهم وإرسال الواتساب
 export async function POST(req: NextRequest) {
     try {
-        const db = getDb(); 
+        // 🎯 تم التعديل هنا ليتم كتابة طلبات الزبائن الجديدة في القاعدة الصحيحة مباشرة
+        const db = getSecondaryDb(); 
         const data: Omit<SchoolListRequest, 'id' | 'createdAt' | 'status'> = await req.json();
 
         if (!data.fullName || !data.imageUrl) {
@@ -84,15 +86,14 @@ export async function POST(req: NextRequest) {
         const slug = `${generateSlug(data.fullName)}-${Date.now()}`;
         
         const newRequest = {
-            ...data, // 🎯 تحسين: استخدام spread operator لمرونة أكبر
+            ...data, 
             slug: slug,
             status: 'new',
             createdAt: serverTimestamp,
         };
 
-        const docRef = await db.collection('schoolListRequests').add(newRequest);
+        const docRef = await db.collection('school-lists').add(newRequest);
         
-        // 🎯 تنبيه: الرقم hard-coded، في المستقبل يفضل نقله إلى متغيرات البيئة
         const myWhatsAppNumber = "201220396597"; 
         const messageText = `مرحباً دار اللغات، لقد قمت برفع قائمة مدرستي عبر الموقع:\n\n👤 *الاسم:* ${data.fullName}\n📞 *الهاتف:* ${data.phone || 'غير محدد'}\n📍 *العنوان:* ${data.address || 'غير محدد'}\n🖼️ *رابط القائمة:* ${data.imageUrl}`;
         const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(messageText)}`;
@@ -114,7 +115,8 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
     try {
         const firebaseAuth = getAdminAuth();
-        const db = getDb();     
+        // 🎯 تم التعديل هنا لتحديث حالة الطلب للأدمن في القاعدة الموحدة الصحيحة
+        const db = getSecondaryDb();     
 
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value; 
@@ -136,7 +138,7 @@ export async function PATCH(req: NextRequest) {
             return NextResponse.json({ error: 'Invalid status value' }, { status: 400 });
         }
 
-        const requestRef = db.collection('schoolListRequests').doc(id);
+        const requestRef = db.collection('school-lists').doc(id);
         await requestRef.update({ status });
 
         return NextResponse.json({ message: `Request ${id} status updated to ${status}` });

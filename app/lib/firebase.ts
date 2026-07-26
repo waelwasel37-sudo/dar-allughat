@@ -21,7 +21,8 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 // Initialize services
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db = getFirestore(app); // <-- This remains for the (default) database
+const db_secondary = getFirestore(app, "dar-allughat-97483992-fc6c5"); // <-- This is the new connection
 const storage = getStorage(app);
 
 // Initialize Analytics (only works in the browser)
@@ -35,4 +36,4 @@ if (typeof window !== "undefined") {
 }
 
 // Export the tools for use in the rest of the project
-export { app, auth, db, storage, analytics };
+export { app, auth, db, db_secondary, storage, analytics }; // <-- Exporting the new connection
