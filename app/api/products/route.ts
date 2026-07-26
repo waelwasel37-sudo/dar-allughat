@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from 'next/headers';
-import admin from 'firebase-admin'; // 🎯 1. تصحيح استيراد admin مباشرة من المكتبة الأم
-import { getDb } from "@/app/lib/firebase-admin";
-import { getSession } from "@/app/lib/session"; // 🎯 2. استيراد الجلسة الموحدة لـ iron-session
+import admin from 'firebase-admin'; 
+// 🎯 تم الاستيراد الصحيح: جلب getDb للتحقق من الصلاحيات، و getSecondaryDb لحفظ المنتجات
+import { getDb, getSecondaryDb } from "@/app/lib/firebase-admin";
+import { getSession } from "@/app/lib/session"; 
 import { Product } from "@/app/lib/types";
 import { generateSlug } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-// GET all products (الكود الذكي الكاشف للأخطاء)
+// GET all products - يجلب المنتجات من القاعدة المخصصة الموحدة في أوروبا
 export async function GET(req: NextRequest) {
     try {
-        const db = await getDb();
+        const db = await getSecondaryDb();
         const productsCollection = db.collection("products");
         const productsSnapshot = await productsCollection.orderBy("createdAt", "desc").get();
         
@@ -35,36 +36,28 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(products);
     } catch (error: any) {
         console.error("CRITICAL GET /api/products Error:", error);
-        return NextResponse.json(
-            { 
-              status: "server_error_unveiled", 
-              error_message: error.message || "Unknown error message", 
-              error_code: error.code || "no_code_provided",
-              error_stack: error.stack || "no_stack_provided",
-              hint: "Check if Firebase Service Account JSON match the correct Firestore database instance."
-            },
-            { status: 500 }
-        );
+        return NextResponse.json({ status: "server_error", error_message: error.message }, { status: 500 });
     }
 }
 
-// POST a new product (إضافة منتج جديد محمي وصارم)
+// POST a new product - يتحقق من الأمان في القاعدة الأم ويكتب في القاعدة الجديدة
 export async function POST(req: NextRequest) {
     try {
-        const db = await getDb();
+        // 1. 🎯 الأمان أولاً: الاتصال بالقاعدة الأم (default) لفحص جلسة تسجيل الدخول المشفرة
+        const db_auth = await getDb();
 
-        // 🎯 3. التصحيح الجذري: فحص هوية الأدمن عبر الجلسة الموحدة لـ Next.js 15 لحل خطأ الـ 401 والـ 403
         const session = await getSession();
         if (!session || !session.isLoggedIn || !session.username) {
             return NextResponse.json({ error: 'Unauthorized. No active session found.' }, { status: 401 });
         }
 
-        // 🎯 4. التأكيد الصارم على بريدك الحصري كمصدر الحقيقة للأدمن لمنع الحظر
         const ADMIN_EMAIL = 'waelwasel37@gmail.com';
         if (session.username !== ADMIN_EMAIL) {
             return NextResponse.json({ error: 'Forbidden. User is not authorized as admin.' }, { status: 403 });
         }
 
+        // 2. 🎯 البيانات ثانياً: الاتصال بالقاعدة المخصصة في أوروبا لحفظ المنتج الجديد والأقسام الموحدة
+        const db = await getSecondaryDb();
         const productData: Omit<Product, 'id'> = await req.json();
 
         if (!productData.name || !productData.price || !productData.imageUrl) {
