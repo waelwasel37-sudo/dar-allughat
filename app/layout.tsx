@@ -3,12 +3,15 @@ import { Providers } from './providers';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
-import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
+import { Noto_Kufi_Arabic, Cairo, Geist } from 'next/font/google';
 import { getIronSession } from 'iron-session';
 import { sessionOptions, SessionData } from '@/app/lib/session';
 import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const noto = Noto_Kufi_Arabic({
   subsets: ['arabic'],
@@ -48,7 +51,7 @@ async function SessionFetcher({ children }: { children: (session: SessionData) =
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" className={`${noto.variable} ${cairo.variable}`}>
+    <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", geist.variable)}>
       <head>
         <Script
           id="fb-pixel"
