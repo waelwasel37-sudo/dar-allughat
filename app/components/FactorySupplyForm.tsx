@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { trackFbqEvent } from '../lib/fpixel'; 
-
-// 🎯 1. مسارات الاستيراد الصحيحة والمعتمدة بعد تهيئة مكتبة "شارب"
+import { trackFbqEvent } from '../lib/fpixel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +19,7 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
     const [requiredItems, setRequiredItems] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); // To show API errors
 
     useEffect(() => {
         if (isOpen) {
@@ -29,11 +28,13 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
                 content_category: 'B2B Wholesale'
             });
         } else {
+            // Reset form state on close
             setCompanyName('');
             setContactPerson('');
             setPhone('');
             setRequiredItems('');
             setSuccess(null);
+            setError(null);
             setIsLoading(false);
         }
     }, [isOpen]);
@@ -43,23 +44,40 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
         if (!companyName || !contactPerson || !phone || !requiredItems) return;
 
         setIsLoading(true);
+        setError(null);
 
         try {
+            // 🎯 1. Save data to the database via our new API
+            const response = await fetch('/api/factory-supplies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ companyName, contactPerson, phone, requiredItems }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit the request. Please try again.');
+            }
+
+            // 2. Track successful lead
             trackFbqEvent('Lead', { content_name: 'Factory Supply Submission' });
+            
+            // 3. Set success message and trigger WhatsApp redirect
             setSuccess('تم تسجيل طلب التوريد بنجاح! جاري تحويلك لقسم مبيعات الجملة...');
 
             const whatsappNumber = '201220396597';
             const message = `*طلب توريد للمصانع والمؤسسات جديد* 🏢\n\n*اسم الشركة/المؤسسة:* ${companyName}\n*المسؤول:* ${contactPerson}\n*رقم التواصل:* ${phone}\n\n*الأدوات والمستلزمات المطلوبة:* \n${requiredItems}`;
-            // 🎯 إصلاح الخلل البرمجي في رابط الواتساب الذي اكتشفته
             const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
             setTimeout(() => {
                 window.open(whatsappUrl, '_blank');
                 onClose();
-            }, 2000);
+            }, 2000); // 2-second delay to allow user to read the message
 
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
+            setError(err.message || 'An unexpected error occurred.');
         } finally {
             setIsLoading(false);
         }
@@ -67,7 +85,6 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
 
     return (
         <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
-            {/* 🎯 تطبيق اقتراحك الذكي: w-[75vw] مع max-w-sm لتحسين الشكل على الموبايل */}
             <DialogContent className="w-[75vw] max-w-sm rounded-2xl p-6 bg-white direction-rtl text-right sm:rounded-2xl border-none shadow-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black text-center text-gray-900 flex items-center justify-center gap-2">
@@ -77,6 +94,7 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
 
                 <form onSubmit={handleSubmit} className="space-y-5 mt-2">
                     {success && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm font-semibold">{success}</div>}
+                    {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-semibold">{error}</div>}
 
                     {!success && (
                         <>
@@ -125,7 +143,7 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
                                 disabled={isLoading} 
                                 className="w-full h-14 text-lg font-black text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-lg shadow-green-600/20 transition-all"
                             >
-                                {isLoading ? 'جاري تجهيز الطلب...' : 'إرسال طلب التوريد الآن 🏢'}
+                                {isLoading ? 'جاري التسجيل والحفظ...' : 'إرسال طلب التوريد الآن 🏢'}
                             </Button>
                         </>
                     )}

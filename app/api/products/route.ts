@@ -7,7 +7,7 @@ import { generateSlug } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-// GET all products - جلب كافة المنتجات وعرضها (مستقر وسليم)
+// GET all products
 export async function GET(req: NextRequest) {
     try {
         const db = await getSecondaryDb();
@@ -38,29 +38,26 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// POST a new product - 🎯 إضافة منتج جديد بالتحقق الأمني الصريح والمباشر ببريدك
+// POST a new product
 export async function POST(req: NextRequest) {
     try {
         let isAuthorized = false;
         const ADMIN_EMAIL = 'waelwasel37@gmail.com';
 
-        // 1. التحقق الأول من الجلسة العادية (Iron Session)
+        // 1. Check for Iron Session
         const session = await getSession();
-        if (session && session.isLoggedIn && session.username === 'waelwasel37@gmail.com') {
+        if (session && session.isLoggedIn && session.username === ADMIN_EMAIL) {
             isAuthorized = true;
         }
 
-        // 2. 🎯 التحقق الثاني من التوكن (Firebase Auth Token) بالبريد الصريح والمباشر لمنع خطأ 403
+        // 2. Check for Firebase Auth Token
         if (!isAuthorized) {
             const authHeader = req.headers.get('Authorization');
             if (authHeader && authHeader.startsWith('Bearer ')) {
-                // تأمين استخراج التوكن بالكامل دون انقطاع عبر تخطي أول 7 أحرف
                 const token = authHeader.substring(7).trim(); 
                 try {
                     const decodedToken = await admin.auth().verifyIdToken(token);
-                    
-                    // فحص تطابق البريد الإلكتروني الصريح الممرر من حسابك
-                    if (decodedToken && (decodedToken.email === 'waelwasel37@gmail.com' || decodedToken.admin === true)) {
+                    if (decodedToken && (decodedToken.email === ADMIN_EMAIL || decodedToken.admin === true)) {
                         isAuthorized = true;
                     }
                 } catch (tokenError) {
@@ -69,12 +66,12 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // 3. إذا فشلت كل طرق التحقق، يتم رفض الطلب نهائياً وحماية السيرفر
+        // 3. Reject if not authorized
         if (!isAuthorized) {
             return NextResponse.json({ error: 'Forbidden. You are not authorized to perform this action.' }, { status: 403 });
         }
 
-        // 4. إذا نجح التحقق، يستمر منطق إضافة وحفظ المنتج بكفاءة تامة
+        // 4. Process product addition
         const db = await getSecondaryDb();
         const productData: Omit<Product, 'id'> = await req.json();
 
@@ -104,16 +101,23 @@ export async function POST(req: NextRequest) {
         }
 
         const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
-        const finalProduct: Omit<Product, 'id'> = {
+        
+        // 🎯 The Fix: Constructing the product data safely
+        const finalProduct: any = {
             ...productData,
             slug: newSlug,
             category: categoryName,
-            categoryEmoji: categoryEmoji, 
-            secondaryImageUrl: productData.secondaryImageUrl || undefined,
-            videoUrl: productData.videoUrl || undefined,
-            createdAt: serverTimestamp as any, 
-            updatedAt: serverTimestamp as any,
+            categoryEmoji: categoryEmoji,
+            createdAt: serverTimestamp,
+            updatedAt: serverTimestamp,
         };
+
+        // Remove undefined fields to prevent Firestore errors
+        Object.keys(finalProduct).forEach(key => {
+            if (finalProduct[key] === undefined) {
+                delete finalProduct[key];
+            }
+        });
 
         const docRef = await productsRef.add(finalProduct);
 

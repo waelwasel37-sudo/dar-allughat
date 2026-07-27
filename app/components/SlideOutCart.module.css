@@ -1,3 +1,4 @@
+/* خلفية التعتيم الشفافة المحيطة بالدرج لمنع التشتت */
 .backdrop {
   position: fixed;
   top: 0;
@@ -5,7 +6,7 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1040; /* Increased z-index */
+  z-index: 1040;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   pointer-events: none;
@@ -16,15 +17,17 @@
   pointer-events: auto;
 }
 
+/* 🎯 حاوية درج السلة: معدلة برؤيتك الذكية لتأخذ 75% وتترك مسافة تصفح حرة 25% */
 .cartDrawer {
   position: fixed;
   top: 0;
-  right: -450px; /* Start off-screen */
-  width: 420px;
+  right: -100vw; /* يبدأ متخفياً خارج الشاشة تماماً لتأمين حركة الانزلاق */
+  width: 75vw;   /* 🎯 العرض المثالي والرشيق لمتجر دار اللغات على شاشات الهاتف المحمول */
+  max-width: 360px; /* 🎯 أقصى عرض للشاشات الكبيرة واللاب توب حتى لا يفرش بشكل مزعج */
   height: 100%;
-  background-color: #fff;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-  z-index: 1050; /* Increased z-index */
+  background-color: #ffffff;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.15);
+  z-index: 1050;
   transition: right 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
@@ -32,6 +35,14 @@
 
 .cartDrawer.open {
   right: 0;
+}
+
+/* 🎯 تنسيق حركي ذكي متجاوب للشاشات الأكبر والمكتبية */
+@media (min-width: 480px) {
+  .cartDrawer {
+    width: 360px;
+    right: -390px; /* العودة للقيمة الثابتة الرشيقة المناسبة للاختصار الجديد */
+  }
 }
 
 .drawerHeader {
@@ -45,6 +56,8 @@
 .drawerHeader h2 {
   margin: 0;
   font-size: 1.25rem;
+  font-weight: 800;
+  color: #222;
 }
 
 .closeButton {
@@ -52,6 +65,12 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: #000;
 }
 
 .cartContent {
@@ -75,7 +94,6 @@
     font-weight: bold;
 }
 
-/* Re-using and adapting styles from Cart.module.css */
 .cartItem {
   display: flex;
   margin-bottom: 1rem;
@@ -85,12 +103,13 @@
 
 .cartItemImage {
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .cartItemDetails {
   flex-grow: 1;
   margin-right: 1rem;
+  text-align: right;
 }
 
 .cartItemName {
@@ -111,60 +130,73 @@
     margin-top: 0.5rem;
 }
 
+/* تكبير وتنسيق أزرار الكمية لسهولة الضغط واللمس بالأصابع على الموبايل */
 .cartItemQuantity {
   display: flex;
   align-items: center;
 }
 
 .cartItemQuantity button {
-  background-color: #f0f0f0;
+  background-color: #f8f9fa;
   border: 1px solid #ccc;
-  width: 30px;
-  height: 30px;
+  width: 35px; /* زيادة مسافة اللمس */
+  height: 35px;
   cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 
 .cartItemQuantity span {
-  padding: 0 10px;
+  padding: 0 12px;
   font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .removeItemButton {
   background: none;
   border: none;
-  color: #f00;
+  color: #dc3545;
   cursor: pointer;
   font-size: 1.2rem;
   margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
 }
 
 .cartSummary {
-  padding: 1rem;
+  padding: 1.2rem;
   border-top: 1px solid #e0e0e0;
-  background-color: #f9f9f9;
+  background-color: #fafafa;
 }
 
 .cartTotal {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.3rem;
+  font-weight: 800;
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  color: #111;
 }
 
+/* زر إرسال الطلبيات الكبير للواتساب بلون أخضر جذاب وضخم للمس */
 .whatsappButton {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background-color: #25D366;
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 1.1rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
   cursor: pointer;
   transition: background-color 0.2s;
+  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.25);
 }
 
 .whatsappButton:hover {
@@ -174,6 +206,7 @@
 .disabledButton {
   background-color: #ccc;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .validationMessage {
@@ -181,14 +214,22 @@
   text-align: center;
   margin-top: 10px;
   font-size: 0.9rem;
+  font-weight: bold;
 }
 
 .clearCartButton {
     width: 100%;
-    margin-top: 0.5rem;
-    padding: 8px;
+    margin-top: 0.6rem;
+    padding: 10px;
     background-color: transparent;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     cursor: pointer;
+    color: #666;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.clearCartButton:hover {
+  background-color: #f1f1f1;
 }
