@@ -12,21 +12,20 @@
 }
 
 .logo {
-    flex-shrink: 0; /* يمنع الشعار من الانكماش */
+    flex-shrink: 0;
     display: flex;
     align-items: center;
 }
 
-/* تعديل مهم لضمان استجابة الصورة داخل الرابط */
 .logo a {
-    display: inline-block; /* يجعل الرابط يتصرف ككتلة */
+    display: inline-block;
     max-width: 100%;
 }
 
 .logo img {
-    height: auto; /* يحافظ على نسبة العرض إلى الارتفاع */
-    max-height: 50px; /* يحدد أقصى ارتفاع للصورة */
-    width: auto; /* يسمح للصورة بالتوسع بناءً على الارتفاع */
+    height: auto;
+    max-height: 50px;
+    width: auto;
 }
 
 .nav {
@@ -47,8 +46,6 @@
 .nav a:hover {
     color: #007bff;
 }
-
-/* ... (باقي الأنماط كما هي) ... */
 
 .actionsContainer {
     display: flex;
@@ -82,7 +79,7 @@
 }
 
 .menuButton {
-    display: none; /* مخفي على الشاشات الكبيرة */
+    display: none;
     background: none;
     border: none;
     font-size: 2rem;
@@ -105,24 +102,40 @@
     font-size: 1.5rem;
 }
 
+/* 📱 التعديل الشامل والجوهري لتنسيق شاشات الموبايل والدرج المنزلق الجانبي */
 @media (max-width: 768px) {
     .nav {
         display: none;
         flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: #fff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        padding: 1rem;
+        position: fixed; /* تغييرها لتصبح ثابتة لإنشاء درج منزلق جانبي */
+        top: 0;
+        right: 0; /* يبدأ الظهور من جهة اليمين المتوافقة مع اللغة العربية */
+        width: 75vw; /* 🎯 تقليص العرض لترك مساحة 25% واضحة على الجانب للمتجر */
+        max-width: 320px; /* منع التمدد الضخم على الأجهزة اللوحية والتابلت */
+        height: 100vh; /* يغطي الارتفاع بالكامل */
+        background-color: #ffffff;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.15);
+        padding: 2rem 1.5rem;
+        z-index: 9999; /* رفعها فوق كل مكونات الموقع لمنع التداخل */
+        align-items: flex-start; /* تنسيق النصوص لتبدأ من اليمين بشكل منظم */
+        gap: 1.5rem;
     }
 
+    /* كلاس التفعيل للدرج الجانبي عند الضغط على القائمة */
     .nav.mobileMenu {
         display: flex;
     }
 
     .menuButton {
         display: block;
+        z-index: 10000; /* الحفاظ على زر القائمة مرئياً وقابلاً للضغط للإغلاق */
+    }
+
+    .topActions {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: auto; /* دفع أيقونات التواصل الاجتماعي لتصبح في أسفل القائمة بشكل أنيق */
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
     }
 }

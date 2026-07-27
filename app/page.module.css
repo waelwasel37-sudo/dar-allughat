@@ -10,7 +10,7 @@
 /* Hero Section */
 .hero {
   width: 100%;
-  padding: 4rem 2rem; /* Adjusted padding */
+  padding: 4rem 2rem;
   text-align: center;
   background: linear-gradient(145deg, var(--color-primary), var(--color-primary-dark));
   color: var(--color-white);
@@ -18,7 +18,7 @@
 }
 
 .title {
-  font-size: 3.5rem; /* Adjusted font size */
+  font-size: 3.5rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
   text-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
@@ -48,9 +48,17 @@
   z-index: 10;
 }
 
+/* 🎯 تحسين حاوية نموذج البحث لاحتضان عدسة البحث الفعالة */
+.searchForm {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .searchInput {
   width: 100%;
-  padding: 0.9rem 1.2rem;
+  padding: 0.9rem 3.5rem 0.9rem 1.2rem; /* 🎯 ترك مساحة على اليمين لظهور عدسة البحث بأناقة في التصميم العربي */
   font-size: 1.1rem;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border);
@@ -64,17 +72,38 @@
   box-shadow: 0 0 0 3px var(--color-primary-light-transparent);
 }
 
+/* 🎯 تنسيق وموقع زر عدسة البحث الجديد داخل المربع لسهولة اللمس */
+.searchSubmitButton {
+  position: absolute;
+  right: 12px; /* 🎯 وضع العدسة على اليمين متوافقة مع اتجاه الكتابة العربية */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.searchSubmitButton:hover {
+  color: var(--color-primary);
+}
+
 .categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem; /* Space between buttons */
+  gap: 0.75rem;
   justify-content: center;
 }
 
-.categoryButton {
+.categoryButton,
+.factorySupplyButton {
   display: flex;
   align-items: center;
-  gap: 0.6rem; /* Space between icon and text */
+  gap: 0.6rem;
   padding: 0.7rem 1.2rem;
   font-size: 1rem;
   font-weight: 600;
@@ -85,14 +114,17 @@
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   box-shadow: var(--shadow-sm);
+  text-decoration: none; /* حماية الروابط */
 }
 
-.categoryButton .icon {
+.categoryButton .icon,
+.factorySupplyButton .icon {
   font-size: 1.2rem;
   transition: transform 0.2s ease;
 }
 
-.categoryButton:hover {
+.categoryButton:hover,
+.factorySupplyButton:hover {
   transform: translateY(-2px);
   background-color: var(--color-primary-light);
   color: var(--color-primary-dark);
@@ -110,6 +142,26 @@
 
 .categoryButton.active .icon {
   transform: scale(1.1);
+}
+
+/* 🎒 🎯 تلوين زر ارفع قائمة مدرستك باللون الأصفر الجذاب للمدارس */
+.schoolListButton {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+  border-color: #ffc107 !important;
+}
+.schoolListButton:hover {
+  background-color: #e0a800 !important;
+}
+
+/* 🏢 🎯 تلوين زر توريدات مصانع ومؤسسات باللون الأخضر المميز المتوافق مع الواتساب */
+.factorySupplyButton {
+  background-color: #28a745 !important;
+  color: white !important;
+  border-color: #28a745 !important;
+}
+.factorySupplyButton:hover {
+  background-color: #218838 !important;
 }
 
 /* --- END NEW STYLES --- */
@@ -143,8 +195,14 @@
     margin: -1.5rem 1rem 1.5rem 1rem;
     padding: 1rem;
   }
-  .categoryButton {
+  .categoryButton,
+  .factorySupplyButton {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
+    width: 100%; /* 🎯 تملأ العرض بالكامل على الموبايل لسهولة الضغط بالأصابع */
+    justify-content: center;
+  }
+  .searchInput {
+    padding: 0.9rem 3rem 0.9rem 1.2rem; /* ضبط المسافات على الموبايل */
   }
 }

@@ -31,6 +31,7 @@ export const sessionOptions = {
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
+    sameSite: 'none', // 🎯 الإضافة الحاسمة لحل المشكلة
   },
 };
 
