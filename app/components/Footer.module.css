@@ -1,101 +1,13 @@
 .footer {
   background-color: #f8f9fa;
   color: #555;
-  padding-top: 3rem; /* زيادة المساحة العلوية */
+  padding-top: 3rem; 
   border-top: 1px solid #e9ecef;
-  font-family: var(--font-cairo), sans-serif; /* استخدام خط Cairo للفوتر */
+  font-family: var(--font-cairo), sans-serif;
 }
 
-/* === قسم الخريطة الجديد === */
-.mapSection {
-  text-align: center;
-  margin-bottom: 3rem;
-  padding: 0 1rem; /* هوامش على الشاشات الصغيرة */
-}
+/* === 🎯 تم حذف جميع التنسيقات الخاصة بالخريطة المدمجة القديمة من هنا === */
 
-.mapTitle {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: #333;
-}
-
-.mapOuterContainer {
-  display: flex;
-  flex-direction: column-reverse; /* عكس الترتيب على الموبايل: المعلومات أولاً ثم الخريطة */
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: center;
-}
-
-.mapInfo {
-  flex: 1;
-  max-width: 450px;
-  text-align: right; /* محاذاة النص لليمين */
-}
-
-.addressText {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-
-.addressText svg {
-  flex-shrink: 0;
-  margin-top: 5px;
-  color: #007bff;
-}
-
-.directionButton {
-  display: inline-block;
-  background-color: #007bff;
-  color: #fff;
-  padding: 12px 25px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1.1rem;
-  transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-}
-
-.directionButton:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-}
-
-.mapEmbedContainer {
-  flex: 2;
-  width: 100%;
-  min-height: 350px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border: 3px solid #fff;
-}
-
-.mapEmbed {
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-/* وسائط للشاشات الأكبر */
-@media (min-width: 768px) {
-  .mapOuterContainer {
-    flex-direction: row; /* إرجاع الترتيب الطبيعي على الشاشات الكبيرة */
-    text-align: left;
-  }
-  .mapInfo {
-    text-align: right; /* يبقى النص على اليمين */
-  }
-}
-
-/* === الأقسام الأصلية للفوتر === */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -139,23 +51,16 @@
   margin-bottom: 0.8rem;
 }
 
-.linkList a, .mapLink {
+.linkList a {
   color: #555;
   text-decoration: none;
   transition: color 0.3s, transform 0.2s;
   display: inline-block;
 }
 
-.linkList a:hover, .mapLink:hover {
+.linkList a:hover {
   color: #007bff;
   transform: translateX(-3px);
-}
-
-.mapLink {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    line-height: 1.6;
 }
 
 .socialLinks {
@@ -181,10 +86,11 @@
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
-/* تخصيص ألوان الأيقونات */
+/* 🎯 تم تخصيص ألوان الأيقونات بما في ذلك أيقونة الخريطة الجديدة */
 .facebookIcon { background-color: #3b5998; }
 .whatsappIcon { background-color: #25d366; }
 .telegramIcon { background-color: #0088cc; }
+.mapIcon { background-color: #DB4437; } /* لون خرائط جوجل الرسمي */
 
 .copyright {
   background-color: #e9ecef;

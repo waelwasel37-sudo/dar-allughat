@@ -5,7 +5,7 @@ export const SITE_LINKS = {
   facebook: "https://www.facebook.com/maktabat.dar.allughat/",
   whatsapp: "https://chat.whatsapp.com/LoAtW84xgZr51vQAbSEw0E",
   telegram: "https://t.me/+10C-njs5Xoo0ZDRk",
-  googleMaps: "https://www.google.com/maps/search/?api=1&query=%D9%85%D8%AF%D9%8A%D9%86%D8%A9+%D8%A7%D9%84%D8%B9%D8%A8%D9%88%D8%B1+%D8%A7%D9%84%D8%AD%D9%89+%D8%A7%D9%84%D8%B3%D8%A7%D8%AF%D8%B3+%D8%A7%D9%85%D8%A7%D9%85+%D8%B3%D9%86%D8%AA%D8%B1%D8%A7%D9%84+%D8%A7%D9%84%D8%B9%D8%A8%D9%88%D8%B1+2+-+%D9%85%D9%88%D9%84+%D8%B1%D9%88%D8%B6%D8%A9+%D8%A7%D9%84%D8%B9%D8%A8%D9%88%D8%B1+%D9%85%D8%AD%D9%84+47+%D8%A7%D9%84%D8%AF%D9%88%D8%B1+%D8%A7%D9%84%D8%A7%D9%88%D9%84",
+  googleMaps: "https://www.google.com/maps/place/%D9%85%D9%83%D8%AA%D8%A8%D8%A7%D8%AA+%D8%AF%D8%A7%D8%B1+%D8%A7%D9%84%D9%84%D8%BA%D8%A7%D8%AA+%D9%81%D8%B1%D8%B9+%D8%A7%D9%84%D8%B9%D8%A8%D9%88%D8%B1%E2%80%AD/@30.2005385,31.4687448,17z/data=!3m1!4b1!4m6!3m5!1s0x14581b00678ba35d:0x409f8c8e3314ed66!8m2!3d30.2005385!4d31.4665561!16s%2Fg%2F11yry7h42m?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D",
   phone: "01220396597"
 };
 

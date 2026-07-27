@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext'; // 🎯 1. استيراد hook المصادقة
 import { Product, Category } from '../../lib/types';
 import { FaUpload, FaTimesCircle, FaSpinner } from 'react-icons/fa';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -44,7 +44,8 @@ const uploadFile = (file: File, path: string, setProgress: (progress: number) =>
 
 export default function AddProductForm({ categories }: AddProductFormProps) {
     const router = useRouter();
-    const { isAdmin, loading: authLoading } = useAuth();
+    // 🎯 2. الحصول على كائن المستخدم الكامل من hook المصادقة
+    const { isAdmin, loading: authLoading, user } = useAuth();
 
     useEffect(() => {
         if (!authLoading && !isAdmin) {
@@ -176,6 +177,12 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
         setError(null);
 
         try {
+             // 🎯 3. الحصول على توكن المصادقة من المستخدم الحالي
+            const token = user ? await user.getIdToken() : null;
+            if (!token) {
+                throw new Error('لم يتم العثور على توكن المصادقة. الرجاء تسجيل الدخول مرة أخرى.');
+            }
+
             const slug = generateSlug(formData.name) || `product-${Date.now()}`;
             
             const mainExt = mainImageFile.name.split('.').pop();
@@ -207,9 +214,13 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                 updatedAt: new Date().toISOString(),
             };
 
+            // 🎯 4. إرسال الطلب مع ترويسة المصادقة التي تحتوي على التوكن
             const response = await fetch('/api/products', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
                 body: JSON.stringify(productData),
             });
 

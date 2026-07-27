@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import admin from 'firebase-admin'; 
-// 🎯 تم تصحيح الاستيراد بناءً على ملاحظتك الدقيقة
 import { getDb, getSecondaryDb } from "@/app/lib/firebase-admin";
 import { getSession } from "@/app/lib/session"; 
 import { Product } from "@/app/lib/types";
@@ -8,7 +7,7 @@ import { generateSlug } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-// GET all products - (يبقى كما هو بدون تغيير)
+// GET all products - جلب كافة المنتجات وعرضها (مستقر وسليم)
 export async function GET(req: NextRequest) {
     try {
         const db = await getSecondaryDb();
@@ -39,27 +38,29 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// POST a new product - 🎯 تم تطبيق الحل الأمني المزدوج المصحح
+// POST a new product - 🎯 إضافة منتج جديد بالتحقق الأمني الصريح والمباشر ببريدك
 export async function POST(req: NextRequest) {
     try {
         let isAuthorized = false;
         const ADMIN_EMAIL = 'waelwasel37@gmail.com';
 
-        // 1. التحقق من الجلسة (Iron Session)
+        // 1. التحقق الأول من الجلسة العادية (Iron Session)
         const session = await getSession();
-        if (session && session.isLoggedIn && session.username === ADMIN_EMAIL) {
+        if (session && session.isLoggedIn && session.username === 'waelwasel37@gmail.com') {
             isAuthorized = true;
         }
 
-        // 2. إذا لم تكن الجلسة موجودة، التحقق من التوكن عبر الحزمة الرسمية admin.auth()
+        // 2. 🎯 التحقق الثاني من التوكن (Firebase Auth Token) بالبريد الصريح والمباشر لمنع خطأ 403
         if (!isAuthorized) {
             const authHeader = req.headers.get('Authorization');
             if (authHeader && authHeader.startsWith('Bearer ')) {
-                const token = authHeader.split('Bearer ')[1];
+                // تأمين استخراج التوكن بالكامل دون انقطاع عبر تخطي أول 7 أحرف
+                const token = authHeader.substring(7).trim(); 
                 try {
-                    // 🎯 التعديل الحاسم الذي اقترحته: استخدام admin.auth() لحل الخطأ
                     const decodedToken = await admin.auth().verifyIdToken(token);
-                    if (decodedToken.email === ADMIN_EMAIL || decodedToken.admin === true) {
+                    
+                    // فحص تطابق البريد الإلكتروني الصريح الممرر من حسابك
+                    if (decodedToken && (decodedToken.email === 'waelwasel37@gmail.com' || decodedToken.admin === true)) {
                         isAuthorized = true;
                     }
                 } catch (tokenError) {
@@ -68,12 +69,12 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // 3. إذا فشلت كل طرق التحقق، يتم رفض الطلب
+        // 3. إذا فشلت كل طرق التحقق، يتم رفض الطلب نهائياً وحماية السيرفر
         if (!isAuthorized) {
             return NextResponse.json({ error: 'Forbidden. You are not authorized to perform this action.' }, { status: 403 });
         }
 
-        // 4. إذا نجح التحقق، يستمر منطق إضافة المنتج
+        // 4. إذا نجح التحقق، يستمر منطق إضافة وحفظ المنتج بكفاءة تامة
         const db = await getSecondaryDb();
         const productData: Omit<Product, 'id'> = await req.json();
 
