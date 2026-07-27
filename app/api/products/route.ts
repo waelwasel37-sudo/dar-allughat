@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from 'next/headers';
 import admin from 'firebase-admin'; 
-// 🎯 تم الاستيراد الصحيح: جلب getDb للتحقق من الصلاحيات، و getSecondaryDb لحفظ المنتجات
+// 🎯 تم تصحيح الاستيراد بناءً على ملاحظتك الدقيقة
 import { getDb, getSecondaryDb } from "@/app/lib/firebase-admin";
 import { getSession } from "@/app/lib/session"; 
 import { Product } from "@/app/lib/types";
@@ -9,7 +8,7 @@ import { generateSlug } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-// GET all products - يجلب المنتجات من القاعدة المخصصة الموحدة في أوروبا
+// GET all products - (يبقى كما هو بدون تغيير)
 export async function GET(req: NextRequest) {
     try {
         const db = await getSecondaryDb();
@@ -40,23 +39,41 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// POST a new product - يتحقق من الأمان في القاعدة الأم ويكتب في القاعدة الجديدة
+// POST a new product - 🎯 تم تطبيق الحل الأمني المزدوج المصحح
 export async function POST(req: NextRequest) {
     try {
-        // 1. 🎯 الأمان أولاً: الاتصال بالقاعدة الأم (default) لفحص جلسة تسجيل الدخول المشفرة
-        const db_auth = await getDb();
-
-        const session = await getSession();
-        if (!session || !session.isLoggedIn || !session.username) {
-            return NextResponse.json({ error: 'Unauthorized. No active session found.' }, { status: 401 });
-        }
-
+        let isAuthorized = false;
         const ADMIN_EMAIL = 'waelwasel37@gmail.com';
-        if (session.username !== ADMIN_EMAIL) {
-            return NextResponse.json({ error: 'Forbidden. User is not authorized as admin.' }, { status: 403 });
+
+        // 1. التحقق من الجلسة (Iron Session)
+        const session = await getSession();
+        if (session && session.isLoggedIn && session.username === ADMIN_EMAIL) {
+            isAuthorized = true;
         }
 
-        // 2. 🎯 البيانات ثانياً: الاتصال بالقاعدة المخصصة في أوروبا لحفظ المنتج الجديد والأقسام الموحدة
+        // 2. إذا لم تكن الجلسة موجودة، التحقق من التوكن عبر الحزمة الرسمية admin.auth()
+        if (!isAuthorized) {
+            const authHeader = req.headers.get('Authorization');
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.split('Bearer ')[1];
+                try {
+                    // 🎯 التعديل الحاسم الذي اقترحته: استخدام admin.auth() لحل الخطأ
+                    const decodedToken = await admin.auth().verifyIdToken(token);
+                    if (decodedToken.email === ADMIN_EMAIL || decodedToken.admin === true) {
+                        isAuthorized = true;
+                    }
+                } catch (tokenError) {
+                    console.error("API /products: Token verification failed:", tokenError);
+                }
+            }
+        }
+
+        // 3. إذا فشلت كل طرق التحقق، يتم رفض الطلب
+        if (!isAuthorized) {
+            return NextResponse.json({ error: 'Forbidden. You are not authorized to perform this action.' }, { status: 403 });
+        }
+
+        // 4. إذا نجح التحقق، يستمر منطق إضافة المنتج
         const db = await getSecondaryDb();
         const productData: Omit<Product, 'id'> = await req.json();
 
