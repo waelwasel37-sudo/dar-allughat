@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Select the model (🎯 تم التحديث هنا للنموذج المستقر والمدعوم حالياً)
-    const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
 
     // 3. Construct a detailed, SEO-focused prompt
     let fullPrompt = '';
