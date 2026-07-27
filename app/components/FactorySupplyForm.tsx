@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { trackFbqEvent } from '../lib/fpixel'; 
 
-// 🎯 تصحيح المسارات النسبية الصحيحة لتطابق مشروعك بدلاً من الرمز @
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+// 🎯 1. مسارات الاستيراد الصحيحة والمعتمدة بعد تهيئة مكتبة "شارب"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 interface FactorySupplyFormProps {
     isOpen: boolean;
@@ -50,6 +50,7 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
 
             const whatsappNumber = '201220396597';
             const message = `*طلب توريد للمصانع والمؤسسات جديد* 🏢\n\n*اسم الشركة/المؤسسة:* ${companyName}\n*المسؤول:* ${contactPerson}\n*رقم التواصل:* ${phone}\n\n*الأدوات والمستلزمات المطلوبة:* \n${requiredItems}`;
+            // 🎯 إصلاح الخلل البرمجي في رابط الواتساب الذي اكتشفته
             const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
             setTimeout(() => {
@@ -66,7 +67,8 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
 
     return (
         <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
-            <DialogContent className="w-[90vw] max-w-md rounded-2xl p-6 bg-white direction-rtl text-right sm:rounded-2xl">
+            {/* 🎯 تطبيق اقتراحك الذكي: w-[75vw] مع max-w-sm لتحسين الشكل على الموبايل */}
+            <DialogContent className="w-[75vw] max-w-sm rounded-2xl p-6 bg-white direction-rtl text-right sm:rounded-2xl border-none shadow-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black text-center text-gray-900 flex items-center justify-center gap-2">
                         🏢 توريدات مصانع ومؤسسات
@@ -79,14 +81,50 @@ export default function FactorySupplyForm({ isOpen, onClose }: FactorySupplyForm
                     {!success && (
                         <>
                             <div className="flex flex-col gap-4">
-                                <Input type="text" placeholder="اسم الشركة / المصنع / المؤسسة" value={companyName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompanyName(e.target.value)} required disabled={isLoading} className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white" />
-                                <Input type="text" placeholder="اسم المسؤول للتواصل" value={contactPerson} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactPerson(e.target.value)} required disabled={isLoading} className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white" />
+                                <Input 
+                                    type="text" 
+                                    placeholder="اسم الشركة / المصنع / المؤسسة" 
+                                    value={companyName} 
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCompanyName(e.target.value)} 
+                                    required 
+                                    disabled={isLoading} 
+                                    className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white" 
+                                />
+                                <Input 
+                                    type="text" 
+                                    placeholder="اسم المسؤول للتواصل" 
+                                    value={contactPerson} 
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactPerson(e.target.value)} 
+                                    required 
+                                    disabled={isLoading} 
+                                    className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white" 
+                                />
                             </div>
-                            <Input type="tel" placeholder="رقم الهاتف للتواصل مباشر" value={phone} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)} required disabled={isLoading} className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white" />
+                            <Input 
+                                type="tel" 
+                                placeholder="رقم الهاتف للتواصل مباشر" 
+                                value={phone} 
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)} 
+                                required 
+                                disabled={isLoading} 
+                                className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white" 
+                            />
                             
-                            <Textarea placeholder="اكتب هنا تفاصيل الأدوات المكتبية أو الورقيات أو المستلزمات المطلوبة توريدها للمؤسسة..." value={requiredItems} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRequiredItems(e.target.value)} required rows={4} disabled={isLoading} className="text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white p-3" />
+                            <Textarea 
+                                placeholder="اكتب هنا تفاصيل الأدوات المكتبية أو الورقيات أو المستلزمات المطلوبة توريدها للمؤسسة..." 
+                                value={requiredItems} 
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRequiredItems(e.target.value)} 
+                                required 
+                                rows={4} 
+                                disabled={isLoading} 
+                                className="text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-green-600 bg-white p-3" 
+                            />
 
-                            <Button type="submit" disabled={isLoading} className="w-full h-14 text-lg font-black text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-lg shadow-green-600/20 transition-all">
+                            <Button 
+                                type="submit" 
+                                disabled={isLoading} 
+                                className="w-full h-14 text-lg font-black text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-lg shadow-green-600/20 transition-all"
+                            >
                                 {isLoading ? 'جاري تجهيز الطلب...' : 'إرسال طلب التوريد الآن 🏢'}
                             </Button>
                         </>

@@ -6,11 +6,10 @@ import { storage } from '../lib/firebase-client';
 import { trackFbqEvent } from '../lib/fpixel'; 
 import { FaUpload, FaTimesCircle } from 'react-icons/fa';
 
-// 🎯 تصحيح المسارات النسبية الصحيحة لتطابق مشروعك بدلاً من الرمز @
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 interface SchoolListFormProps {
     isOpen: boolean;
@@ -119,9 +118,9 @@ export default function SchoolListForm({ isOpen, onClose }: SchoolListFormProps)
     };
 
     return (
-        /* 🎯 تحديد نوع boolean للمتغير الأمني open لتجاوز خطأ TypeScript */
         <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
-            <DialogContent className="w-[90vw] max-w-md rounded-2xl p-6 bg-white direction-rtl text-right sm:rounded-2xl">
+            {/* 🎯 توحيد التصميم: استخدام w-[75vw] مع max-w-sm لمطابقة النموذج الآخر */}
+            <DialogContent className="w-[75vw] max-w-sm rounded-2xl p-6 bg-white direction-rtl text-right sm:rounded-2xl border-none shadow-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black text-center text-gray-900 flex items-center justify-center gap-2">
                         🎒 ارفع قائمة مدرستك
@@ -135,7 +134,6 @@ export default function SchoolListForm({ isOpen, onClose }: SchoolListFormProps)
                     {!success && (
                         <>
                             <div className="flex flex-col gap-4">
-                                {/* 🎯 تحديد الأنواع الصريحة لـ الأحداث المتصفحية (e) للقضاء على أخطاء الـ any الصامتة */}
                                 <Input type="text" placeholder="الاسم الكامل" value={fullName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFullName(e.target.value)} required disabled={isLoading} className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-blue-600 bg-white" />
                                 <Input type="tel" placeholder="رقم الهاتف" value={phone} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)} required disabled={isLoading} className="h-12 text-[1.05rem] rounded-xl border-gray-300 focus-visible:ring-blue-600 bg-white" />
                             </div>

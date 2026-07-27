@@ -3,15 +3,16 @@ import { Providers } from './providers';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
-import { Noto_Kufi_Arabic, Cairo, Geist } from 'next/font/google';
+// 🎯 1. إزالة الخط الخاطئ من مكتبة جوجل
+import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
+// 🎯 2. استيراد الخط الصحيح مباشرة من الحزمة التي تم تثبيتها
+import { GeistSans } from 'geist/font/sans';
 import { getIronSession } from 'iron-session';
 import { sessionOptions, SessionData } from '@/app/lib/session';
 import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
 import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const noto = Noto_Kufi_Arabic({
   subsets: ['arabic'],
@@ -31,13 +32,11 @@ export const metadata: Metadata = {
     description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية.',
 };
 
-// 🎯 التصحيح الجذري: حماية الـ SessionFetcher وإعادة ربط الكوكيز الحية بالمتجر لظهور المنتجات
 async function SessionFetcher({ children }: { children: (session: SessionData) => React.ReactNode }) {
   let session: SessionData = { isLoggedIn: false, username: 'زائر' };
   
   try {
     const cookieStore = await cookies();
-    // جلب الجلسة الحية الحقيقية فوراً لفتح صلاحيات المنتجات والفئات
     const ironSession = await getIronSession<SessionData>(cookieStore, sessionOptions);
     if (ironSession) {
       session = ironSession;
@@ -51,7 +50,8 @@ async function SessionFetcher({ children }: { children: (session: SessionData) =
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", geist.variable)}>
+    // 🎯 3. استخدام متغير الخط الصحيح من الحزمة الجديدة
+    <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
         <Script
           id="fb-pixel"
@@ -77,7 +77,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SessionFetcher>
             {(session) => (
               <>
-                {/* إعادة تمرير الجلسة الحقيقية للـ Header لتنشيط أزرار الدخول والخروج */}
                 <Header session={session} />
                 <main>{children}</main>
                 <SlideOutCart />
