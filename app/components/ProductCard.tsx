@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { Product } from '../lib/types';
 import styles from './ProductCard.module.css';
 import AddToCartButton from './AddToCartButton';
-// import ShareButton from './ShareButton'; // Temporarily remove ShareButton
 import { FaStar } from 'react-icons/fa';
 
 interface ProductCardProps {
@@ -27,6 +26,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
     return <div className={styles.cardContainer} aria-hidden="true"></div>;
   }
 
+  // 1. التحقق من حالة المخزون
+  const isOutOfStock = product.stockStatus === 'OUT_OF_STOCK';
+
   const originalPrice = product.price || 0;
   const discountPercentage = product.discount || 0;
   const hasDiscount = discountPercentage > 0 && originalPrice > 0;
@@ -35,29 +37,57 @@ const ProductCard = ({ product }: ProductCardProps) => {
     ? originalPrice - (originalPrice * (discountPercentage / 100))
     : originalPrice;
 
-  const shareTitle = `${product.name} - مكتبات دار اللغات`;
+  // 2. بناء البيانات المنظمة (Schema) لجوجل ميرشنت ومحركات البحث
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name || 'اسم المنتج غير متوفر',
+    "image": product.imageUrl || `${typeof window !== 'undefined' ? window.location.origin : ''}/placeholder.jpg`,
+    "description": product.description || `اشتري ${product.name} بأفضل سعر من مكتبات دار اللغات.`,
+    "offers": {
+      "@type": "Offer",
+      "url": productUrl,
+      "priceCurrency": "EGP", // العملة الرسمية لمصر لجوجل ميرشنت
+      "price": discountedPrice.toFixed(2),
+      "priceValidUntil": "2027-12-31",
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": isOutOfStock 
+        ? "https://schema.org/OutOfStock" // كود نفاد المخزون المعتمد لجوجل
+        : "https://schema.org/InStock"    // كود توفر المخزون المعتمد لجوجل
+    },
+    ...(product.averageRating && product.averageRating > 0 ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": product.averageRating.toFixed(1),
+        "reviewCount": product.ratingCount || 1
+      }
+    } : {})
+  };
 
   return (
     <div className={styles.cardContainer}>
-      {/* <div className={styles.shareIconContainer}>
-        {productUrl && (
-          <ShareButton
-            title={shareTitle}
-            text={`شاهد هذا المنتج الرائع: ${product.name}`}
-            url={productUrl}
-          />
-        )}
-      </div> */}
+      {/* 3. حقن كود السكيما خفياً في الصفحة لتقرأه زواحف جوجل ميرشنت */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      />
+
       <Link href={`/products/${product.slug}`} className={styles.cardLink}>
         <div className={styles.card}>
           <div className={styles.imageContainer}>
+            {/* 4. طبقة معتمة ورسالة "نفذ المخزون" على الصورة */}
+            {isOutOfStock && (
+              <div className={styles.outOfStockOverlay}>
+                <span>نفذ المخزون</span>
+              </div>
+            )}
             <Image
               src={product.imageUrl || '/placeholder.jpg'}
               alt={product.name || 'Product image'}
               width={300}
               height={300}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              className={styles.image}
+              className={`${styles.image} ${isOutOfStock ? styles.outOfStockImage : ''}`}
             />
             {hasDiscount && (
               <div className={styles.discountBadge}>
@@ -93,7 +123,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
               )}
             </div>
             
-            <AddToCartButton product={product} />
+            {/* 5. عرض رسالة "نفذ المخزون" بدلاً من زر الإضافة للسلة */}
+            {isOutOfStock ? (
+              <div className={styles.outOfStockLabel}>نفذ المخزون</div>
+            ) : (
+              <AddToCartButton product={product} />
+            )}
           </div>
         </div>
       </Link>

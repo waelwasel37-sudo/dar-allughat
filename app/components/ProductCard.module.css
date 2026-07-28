@@ -44,7 +44,8 @@
     transition: transform 0.3s ease;
 }
 
-.cardContainer:hover .image {
+/* 🛠️ تعطيل تأثير الزوم فقط إذا كان المنتج نافداً من المخزن لحماية تجربة المستخدم */
+.cardContainer:hover .image:not(.outOfStockImage) {
     transform: scale(1.05);
 }
 
@@ -52,14 +53,14 @@
     position: absolute;
     top: 12px;
     left: 12px;
-    background: linear-gradient(45deg, #39FF14, #00b300); 
-    color: #1a252f; 
+    background: linear-gradient(45deg, #e63946, #c32f3a); /* متناسق مع لون السعر الجديد لراحة العين */
+    color: #fff; 
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: bold;
     z-index: 2;
-    box-shadow: 0 2px 8px rgba(57, 255, 20, 0.5); 
+    box-shadow: 0 2px 8px rgba(230, 57, 70, 0.4); 
     transform: rotate(-5deg);
     transition: all 0.3s ease;
 }
@@ -89,23 +90,19 @@
     background-color: #fff !important;
 }
 
-/* --- AGGRESSIVE OVERLAP FIX FOR SMALL SCREENS --- */
 @media (max-width: 420px) {
-    /* Make share button smaller */
     .shareIconContainer :global(.shareButton) {
         width: 34px;
         height: 34px;
     }
-
-    /* --- RADICAL REDESIGN OF THE DISCOUNT BADGE --- */
     .discountBadge {
-        top: auto;      /* Detach from the top */
-        bottom: 0;      /* Attach to the bottom of the image container */
+        top: auto;
+        bottom: 0;
         left: 0;
         width: 100%;
-        transform: rotate(0deg); /* Straighten the badge */
-        border-radius: 0;        /* Remove rounded corners */
-        text-align: center;      /* Center the text */
+        transform: rotate(0deg);
+        border-radius: 0;
+        text-align: center;
         font-size: 0.9rem;
         padding: 6px 0;
         box-shadow: none;
@@ -120,10 +117,9 @@
     flex-grow: 1;
 }
 
-/* Move discount badge details padding out of the way on mobile */
 @media (max-width: 420px) {
     .details {
-        padding-top: 24px; /* Add more space if badge was present */
+        padding-top: 24px;
     }
 }
 
@@ -136,7 +132,6 @@
     color: #34495e;
 }
 
-/* --- NEW: Rating Styles for Product Card --- */
 .ratingContainer {
     display: flex;
     align-items: center;
@@ -155,7 +150,6 @@
     font-size: 0.85rem;
     color: #718096;
 }
-/* ------------------------------------------- */
 
 .priceContainer {
     display: flex;
@@ -186,4 +180,48 @@
     text-decoration: line-through;
     text-decoration-thickness: 1.5px;
     order: 2;
+}
+
+/* --- ✅ NEW: Out of Stock Styles --- */
+.outOfStockOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+}
+
+.outOfStockOverlay span {
+  background-color: #e53e3e; /* red-600 */
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.outOfStockImage {
+  filter: grayscale(100%);
+  opacity: 0.6; /* جعلها أكثر عتامة لتبدو غير نشطة تماماً للعميل */
+}
+
+.outOfStockLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  background-color: #f1f2f6; /* خلفية رمادية ناعمة ومحايدة */
+  color: #a0aec0; /* لون نص باهت يعكس انتهاء المنتج */
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px; 
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box; 
 }
