@@ -3,9 +3,7 @@ import { Providers } from './providers';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
-// 🎯 1. إزالة الخط الخاطئ من مكتبة جوجل
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
-// 🎯 2. استيراد الخط الصحيح مباشرة من الحزمة التي تم تثبيتها
 import { GeistSans } from 'geist/font/sans';
 import { getIronSession } from 'iron-session';
 import { sessionOptions, SessionData } from '@/app/lib/session';
@@ -50,9 +48,9 @@ async function SessionFetcher({ children }: { children: (session: SessionData) =
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // 🎯 3. استخدام متغير الخط الصحيح من الحزمة الجديدة
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
+        {/* Facebook Pixel Script */}
         <Script
           id="fb-pixel"
           strategy="afterInteractive"
@@ -68,6 +66,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '930234381970984');
               fbq('track', 'PageView');
+            `,
+          }}
+        />
+        {/* Google tag (gtag.js) */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-7SQ2EK8VDC"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-7SQ2EK8VDC');
             `,
           }}
         />

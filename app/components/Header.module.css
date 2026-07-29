@@ -1,5 +1,5 @@
-/* 1. متغيرات الألوان والتصميم */
-:root {
+/* 1. حل مشكلة الـ Webpack وتعريف الألوان بشكل سليم للنظام */
+:global(:root) {
   --primary-purple: #4A148C; /* بنفسجي غامق وأنيق */
   --header-bg: #FFFFFF;
   --text-dark: #333;
@@ -111,7 +111,6 @@
 .whatsappIcon { background-color: #25D366; }
 .telegramIcon { background-color: #0088CC; }
 .mapIcon { background-color: #DB4437; }
-
 
 .actionsContainer, .userSection {
     display: flex;
