@@ -4,9 +4,8 @@
   padding-top: 3rem; 
   border-top: 1px solid #e9ecef;
   font-family: var(--font-cairo), sans-serif;
+  direction: rtl; /* يضمن توجيه التنسيق للغة العربية */
 }
-
-/* === 🎯 تم حذف جميع التنسيقات الخاصة بالخريطة المدمجة القديمة من هنا === */
 
 .container {
   max-width: 1200px;
@@ -60,7 +59,7 @@
 
 .linkList a:hover {
   color: #007bff;
-  transform: translateX(-3px);
+  transform: translateX(-3px); /* حركة مرنة لليسار تتناسب مع الـ RTL */
 }
 
 .socialLinks {
@@ -82,15 +81,14 @@
 }
 
 .socialLinks a:hover {
-    transform: scale(1.1) translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  transform: scale(1.1) translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
-/* 🎯 تم تخصيص ألوان الأيقونات بما في ذلك أيقونة الخريطة الجديدة */
 .facebookIcon { background-color: #3b5998; }
 .whatsappIcon { background-color: #25d366; }
 .telegramIcon { background-color: #0088cc; }
-.mapIcon { background-color: #DB4437; } /* لون خرائط جوجل الرسمي */
+.mapIcon { background-color: #DB4437; }
 
 .copyright {
   background-color: #e9ecef;
@@ -99,4 +97,11 @@
   font-size: 0.9rem;
   color: #6c757d;
   margin-top: 2rem;
+}
+
+.taxNumber {
+  margin-top: 8px;
+  font-size: 14px;
+  opacity: 0.85;
+  display: block;
 }

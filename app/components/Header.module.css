@@ -1,16 +1,51 @@
+/* 1. متغيرات الألوان والتصميم */
+:root {
+  --primary-purple: #4A148C; /* بنفسجي غامق وأنيق */
+  --header-bg: #FFFFFF;
+  --text-dark: #333;
+}
+
+/* 2. الغلاف الرئيسي للهيدر */
+.headerWrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  direction: rtl; /* ضمان الاتجاه من اليمين لليسار */
+}
+
+/* 3. الشريط العلوي الجديد */
+.topBar {
+  background-color: var(--primary-purple);
+  color: white;
+  padding: 0.5rem 2rem;
+}
+
+.topBarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px; /* لضمان التوسيط مع باقي المحتوى */
+  margin: 0 auto;
+}
+
+.taxNumber {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 4. الهيدر الرئيسي (الشعار، القائمة، الخ) */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    background-color: var(--header-bg); /* استخدام الخلفية البيضاء الثابتة */
     transition: background-color 0.3s ease;
 }
 
+/* --- باقي التنسيقات --- */
 .logo {
     flex-shrink: 0;
     display: flex;
@@ -37,45 +72,56 @@
 .nav a,
 .notificationLink {
     text-decoration: none;
-    color: #333;
+    color: var(--text-dark);
     font-weight: 500;
     position: relative;
     transition: color 0.3s ease;
 }
 
 .nav a:hover {
-    color: #007bff;
+    color: var(--primary-purple);
 }
 
-.actionsContainer {
+/* أيقونات التواصل الاجتماعي في الشريط العلوي */
+.socialLinks {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.socialLinks a {
+    color: #fff;
+    font-size: 1.1rem; /* تصغير طفيف لتناسب الشريط العلوي */
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.socialLinks a:hover {
+    transform: scale(1.15) translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* الألوان الرسمية للأيقونات */
+.facebookIcon { background-color: #1877F2; }
+.whatsappIcon { background-color: #25D366; }
+.telegramIcon { background-color: #0088CC; }
+.mapIcon { background-color: #DB4437; }
+
+
+.actionsContainer, .userSection {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.userSection {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.loginButton,
-.logoutButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.loginButton:hover,
-.logoutButton:hover {
-    background-color: #0056b3;
+/* --- التنسيقات الخاصة بالموبايل --- */
+.mobileOnlyActions {
+  display: none; /* يظهر فقط في قائمة الموبايل */
 }
 
 .menuButton {
@@ -86,55 +132,57 @@
     cursor: pointer;
 }
 
-.topActions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem; 
-}
-
-.socialLinks {
-    display: flex;
-    gap: 1rem;
-}
-
-.socialLinks a {
-    font-size: 1.5rem;
-}
-
-/* 📱 التعديل الشامل والجوهري لتنسيق شاشات الموبايل والدرج المنزلق الجانبي */
 @media (max-width: 768px) {
+    /* تعديل الشريط العلوي ليناسب الموبايل */
+    .topBar {
+      padding: 0.5rem 1rem;
+    }
+    .taxNumber {
+      font-size: 0.75rem;
+    }
+    .socialLinks a {
+      font-size: 1rem;
+      width: 28px;
+      height: 28px;
+    }
+
+    /* تعديل الهيدر الرئيسي */
+    .header {
+      padding: 0.75rem 1rem;
+    }
+
+    /* تعديل قائمة الموبايل المنزلقة */
     .nav {
         display: none;
         flex-direction: column;
-        position: fixed; /* تغييرها لتصبح ثابتة لإنشاء درج منزلق جانبي */
+        position: fixed;
         top: 0;
-        right: 0; /* يبدأ الظهور من جهة اليمين المتوافقة مع اللغة العربية */
-        width: 75vw; /* 🎯 تقليص العرض لترك مساحة 25% واضحة على الجانب للمتجر */
-        max-width: 320px; /* منع التمدد الضخم على الأجهزة اللوحية والتابلت */
-        height: 100vh; /* يغطي الارتفاع بالكامل */
+        right: 0;
+        width: 75vw;
+        max-width: 320px;
+        height: 100vh;
         background-color: #ffffff;
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.15);
         padding: 2rem 1.5rem;
-        z-index: 9999; /* رفعها فوق كل مكونات الموقع لمنع التداخل */
-        align-items: flex-start; /* تنسيق النصوص لتبدأ من اليمين بشكل منظم */
+        z-index: 9999;
+        align-items: flex-start;
         gap: 1.5rem;
     }
 
-    /* كلاس التفعيل للدرج الجانبي عند الضغط على القائمة */
     .nav.mobileMenu {
         display: flex;
     }
 
     .menuButton {
         display: block;
-        z-index: 10000; /* الحفاظ على زر القائمة مرئياً وقابلاً للضغط للإغلاق */
+        z-index: 10000;
     }
 
-    .topActions {
+    .mobileOnlyActions {
+        display: flex;
         width: 100%;
-        justify-content: space-between;
-        margin-top: auto; /* دفع أيقونات التواصل الاجتماعي لتصبح في أسفل القائمة بشكل أنيق */
+        justify-content: center;
+        margin-top: auto;
         padding-top: 1rem;
         border-top: 1px solid #eee;
     }

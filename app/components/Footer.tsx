@@ -1,16 +1,11 @@
 import Link from 'next/link';
 import styles from './Footer.module.css';
-// 🎯 1. التأكد من وجود أيقونة الخريطة مع باقي الأيقونات
 import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaPhoneAlt } from 'react-icons/fa';
 import { SITE_LINKS } from '@/app/lib/constants';
 
 const Footer = () => {
-  // 🎯 2. تم حذف متغيرات الخريطة المكررة التي كانت هنا
-
   return (
     <footer className={styles.footer}>
-      {/* 🎯 3. تم حذف قسم الخريطة المدمجة بالكامل لتجنب التكرار */}
-
       <div className={styles.container}>
         <div className={styles.column}>
           <h3 className={styles.columnTitle}>روابط سريعة</h3>
@@ -44,13 +39,15 @@ const Footer = () => {
             <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={styles.facebookIcon}><FaFacebook /></a>
             <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className={styles.whatsappIcon}><FaWhatsapp /></a>
             <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" aria-label="Telegram" className={styles.telegramIcon}><FaTelegram /></a>
-            {/* 🎯 4. تمت إضافة زر الخريطة الموحد هنا، باستخدام الرابط المركزي */}
             <a href={SITE_LINKS.googleMaps} target="_blank" rel="noopener noreferrer" aria-label="Location on Google Maps" className={styles.mapIcon}><FaMapMarkerAlt /></a>
           </div>
         </div>
       </div>
       <div className={styles.copyright}>
         <p>&copy; {new Date().getFullYear()} مكتبات دار اللغات. جميع الحقوق محفوظة.</p>
+        <p className={styles.taxNumber}>
+          الرقم الضريبي: 769499732
+        </p>
       </div>
     </footer>
   );

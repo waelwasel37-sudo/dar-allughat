@@ -13,10 +13,11 @@ interface CartRecommendationsProps {
 
 export default function CartRecommendations({ cartItems }: CartRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Product[]>([]);
+  // حالة لتتبع المنتجات المقترحة التي لم يرفضها العميل
+  const [visibleSlugs, setVisibleSlugs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
 
-  // Memoize categories and slugs to prevent unnecessary re-fetches
   const stableCategories = useMemo(() => {
     return [...new Set(cartItems.map(item => item.category))];
   }, [cartItems]);
@@ -46,6 +47,8 @@ export default function CartRecommendations({ cartItems }: CartRecommendationsPr
 
         const data = await response.json();
         setRecommendations(data.products);
+        // عند تحميل المنتجات، يتم تسجيل كل الـ slugs كمرئية في البداية
+        setVisibleSlugs(data.products.map((p: Product) => p.slug));
 
       } catch (error) {
         console.error(error);
@@ -61,21 +64,37 @@ export default function CartRecommendations({ cartItems }: CartRecommendationsPr
     addToCart(product);
   };
 
+  // دالة لرفض المنتج المقترح وإزالته فوراً من قائمة المرئيات
+  const handleDismiss = (slugToDismiss: string) => {
+    setVisibleSlugs(prevSlugs => prevSlugs.filter(slug => slug !== slugToDismiss));
+  };
+
+  // فلترة المنتجات لإظهار تلك التي لم يتم رفضها فقط لضمان تحديث الواجهة فوراً
+  const productsToShow = recommendations.filter(p => visibleSlugs.includes(p.slug));
+
   if (loading) {
     return <div className={styles.loading}>جاري تحميل منتجات مقترحة...</div>;
   }
 
-  // Do not render the component if there are no recommendations to show
-  if (recommendations.length === 0) {
-    return null;
+  if (productsToShow.length === 0) {
+    return null; // إخفاء المكون بالكامل إذا رفض العميل كافة المنتجات أو لم توجد مقترحات
   }
 
   return (
     <div className={styles.recommendationsContainer}>
       <h2 className={styles.title}>قد يعجبك أيضًا</h2>
       <div className={styles.carousel}>
-        {recommendations.map(product => (
-          <div key={product.slug} className={styles.productCard}> {/* Use slug for key */}
+        {productsToShow.map(product => (
+          <div key={product.slug} className={styles.productCard}>
+            {/* زر الإغلاق (X) طائر ومميز لرفض المقترح */}
+            <button 
+              onClick={() => handleDismiss(product.slug)} 
+              className={styles.dismissButton}
+              aria-label={`إزالة ${product.name} من المقترحات`}
+            >
+              &times;
+            </button>
+            
             <Link href={`/products/${product.slug}`} className={styles.productLink}>
               <Image 
                 src={product.imageUrl} 
@@ -86,7 +105,9 @@ export default function CartRecommendations({ cartItems }: CartRecommendationsPr
               />
               <h3 className={styles.productName}>{product.name}</h3>
             </Link>
+            
             <div className={styles.price}>{(product.price).toFixed(2)} جنيه</div>
+            
             <button onClick={() => handleAddToCart(product)} className={styles.addButton}>
               أضف إلى السلة
             </button>

@@ -2,12 +2,13 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 import { MetadataRoute } from 'next';
-import { getAdminAuth } from './lib/firebase-admin'; 
 import { getProducts, getPosts } from './lib/data-server'; 
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://dar-allughat.com'; 
+  // توحيد الرابط ليتطابق تماماً مع النطاق المرفوع عليه المشروع حالياً
+  const baseUrl = 'https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app'; 
 
+  // 1. المسارات الثابتة
   const staticRoutes = [
     '', '/about', '/contact', '/blog', '/privacy-policy'
   ].map((route) => ({
@@ -17,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1.0 : 0.7,
   }));
 
+  // 2. مسارات المنتجات
   let productRoutes: MetadataRoute.Sitemap = [];
   try {
     const products = await getProducts();
@@ -30,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Error fetching live products for sitemap:", error);
   }
 
+  // 3. مسارات المقالات
   let postRoutes: MetadataRoute.Sitemap = [];
   try {
     const posts = await getPosts();
