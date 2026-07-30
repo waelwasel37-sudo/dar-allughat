@@ -3,14 +3,14 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  direction: rtl; /* ضمان الاتجاه من اليمين لليسار */
+  box-shadow: var(--shadow-md); /* استخدام متغير الظل الموحد */
+  direction: rtl;
 }
 
 /* 3. الشريط العلوي الجديد */
 .topBar {
-  background-color: var(--primary-purple);
-  color: white;
+  background-color: var(--color-primary); /* استخدام اللون الأزرق الداكن الموحد */
+  color: var(--color-white);
   padding: 0.5rem 2rem;
 }
 
@@ -18,7 +18,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px; /* لضمان التوسيط مع باقي المحتوى */
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -34,7 +34,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: var(--header-bg); /* استخدام الخلفية البيضاء الثابتة */
+    background-color: var(--color-background); /* استخدام الخلفية البيضاء الموحدة */
     transition: background-color 0.3s ease;
 }
 
@@ -65,14 +65,14 @@
 .nav a,
 .notificationLink {
     text-decoration: none;
-    color: var(--text-dark);
+    color: var(--color-text-base); /* استخدام لون النص الأساسي */
     font-weight: 500;
     position: relative;
     transition: color 0.3s ease;
 }
 
 .nav a:hover {
-    color: var(--primary-purple);
+    color: var(--color-secondary); /* تغيير اللون إلى الذهبي عند المرور */
 }
 
 /* أيقونات التواصل الاجتماعي في الشريط العلوي */
@@ -84,7 +84,7 @@
 
 .socialLinks a {
     color: #fff;
-    font-size: 1.1rem; /* تصغير طفيف لتناسب الشريط العلوي */
+    font-size: 1.1rem;
     width: 32px;
     height: 32px;
     display: flex;
@@ -99,7 +99,7 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* الألوان الرسمية للأيقونات */
+/* الألوان الرسمية للأيقونات (تبقى كما هي لهويتها البصرية) */
 .facebookIcon { background-color: #1877F2; }
 .whatsappIcon { background-color: #25D366; }
 .telegramIcon { background-color: #0088CC; }
@@ -113,7 +113,7 @@
 
 /* --- التنسيقات الخاصة بالموبايل --- */
 .mobileOnlyActions {
-  display: none; /* يظهر فقط في قائمة الموبايل */
+  display: none;
 }
 
 .menuButton {
@@ -125,7 +125,6 @@
 }
 
 @media (max-width: 768px) {
-    /* تعديل الشريط العلوي ليناسب الموبايل */
     .topBar {
       padding: 0.5rem 1rem;
     }
@@ -137,13 +136,9 @@
       width: 28px;
       height: 28px;
     }
-
-    /* تعديل الهيدر الرئيسي */
     .header {
       padding: 0.75rem 1rem;
     }
-
-    /* تعديل قائمة الموبايل المنزلقة */
     .nav {
         display: none;
         flex-direction: column;
@@ -153,7 +148,7 @@
         width: 75vw;
         max-width: 320px;
         height: 100vh;
-        background-color: #ffffff;
+        background-color: var(--color-background);
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.15);
         padding: 2rem 1.5rem;
         z-index: 9999;
@@ -176,6 +171,6 @@
         justify-content: center;
         margin-top: auto;
         padding-top: 1rem;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--color-border);
     }
 }

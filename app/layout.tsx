@@ -1,3 +1,6 @@
+// 🎯 السطر السحري: إجبار الموقع كاملاً على الرندرة الديناميكية لحل تعارض الـ Cookies أثناء الـ Build
+export const dynamic = 'force-dynamic';
+
 import './globals.css';
 import { Providers } from './providers';
 import Header from '@/app/components/Header';

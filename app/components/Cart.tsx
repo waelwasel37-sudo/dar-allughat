@@ -11,7 +11,7 @@ const Cart = () => {
   const totalItems = cart.reduce((sum: number, item: CartItem) => sum + item.quantity, 0);
 
   return (
-    <button onClick={toggleCart} className={styles.cartIcon}>
+    <button onClick={toggleCart} className={styles.cartIcon} aria-label="افتح سلة التسوق">
       <FaShoppingCart size={24} />
       {totalItems > 0 && (
         <span className={styles.cartBadge}>{totalItems}</span>

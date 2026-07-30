@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { FaWhatsapp, FaTrash, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import styles from './SlideOutCart.module.css';
 import AddressForm from './AddressForm';
-import CartRecommendations from './CartRecommendations'; // <-- 1. Import the new component
+import CartRecommendations from './CartRecommendations';
 import { CartItem } from '../lib/types';
 import { addressSchema } from '../lib/schemas';
 
@@ -33,7 +33,6 @@ export default function SlideOutCart() {
     return addressSchema.safeParse({ name, phone, governorate, address });
   }, [name, phone, governorate, address]);
 
-  // تم تعديل هذا السطر ليتوافق مع Zod و TypeScript
   const isFormValid = validationResult.success;
   const firstError = !validationResult.success 
     ? (validationResult.error.format()._errors[0] || validationResult.error.issues[0]?.message) 
@@ -74,7 +73,7 @@ export default function SlideOutCart() {
     
     setTimeout(() => { 
       router.push('/thank-you'); 
-      toggleCart(); // Close the cart after order
+      toggleCart();
     }, 1000);
   };
 
@@ -84,7 +83,8 @@ export default function SlideOutCart() {
       <div className={`${styles.cartDrawer} ${isCartOpen ? styles.open : ''}`}>
         <div className={styles.drawerHeader}>
           <h2>سلة التسوق</h2>
-          <button onClick={toggleCart} className={styles.closeButton}><FaTimes /></button>
+          {/* 🎯 تم إضافة aria-label لتحسين الوصولية كما اقترحت */}
+          <button onClick={toggleCart} className={styles.closeButton} aria-label="إغلاق السلة"><FaTimes /></button>
         </div>
 
         {cart.length === 0 ? (
@@ -116,7 +116,6 @@ export default function SlideOutCart() {
               })}
             </div>
 
-            {/* <-- 2. Add the component here, passing the cart items */}
             <CartRecommendations cartItems={cart} />
 
             <div className={styles.cartSummary}>

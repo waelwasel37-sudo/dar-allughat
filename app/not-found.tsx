@@ -1,8 +1,8 @@
-'use client';
-
 import Link from 'next/link';
 
-// 🎯 التصدير الافتراضي الصريح والإجباري لمنع خطأ Prerender Object بنسبة 100%
+// تعريف الصفحة كصفحة ديناميكية على مستوى السيرفر لمنع خطأ الـ Prerender
+export const dynamic = 'force-dynamic';
+
 export default function NotFound() {
   return (
     <div style={{

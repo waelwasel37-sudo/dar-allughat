@@ -65,10 +65,11 @@ const Header = ({ session }: HeaderProps) => {
         <div className={styles.topBarContainer}>
           <p className={styles.taxNumber}>الرقم الضريبي: 769499732</p>
           <div className={styles.socialLinks}>
-            <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" className={styles.facebookIcon}><FaFacebook /></a>
-            <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className={styles.whatsappIcon}><FaWhatsapp /></a>
-            <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" className={styles.telegramIcon}><FaTelegram /></a>
-            <a href={SITE_LINKS.googleMaps} target="_blank" rel="noopener noreferrer" className={styles.mapIcon}><FaMapMarkerAlt /></a>
+            {/* 🎯 إضافة الـ aria-label لحل مشاكل التقرير وقارئ الشاشة */}
+            <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" className={styles.facebookIcon} aria-label="تابع صفحتنا على فيسبوك"><FaFacebook /></a>
+            <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className={styles.whatsappIcon} aria-label="تواصل معنا عبر واتساب"><FaWhatsapp /></a>
+            <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" className={styles.telegramIcon} aria-label="تابع قناتنا على تليجرام"><FaTelegram /></a>
+            <a href={SITE_LINKS.googleMaps} target="_blank" rel="noopener noreferrer" className={styles.mapIcon} aria-label="موقع مكتبتنا على خرائط جوجل"><FaMapMarkerAlt /></a>
           </div>
         </div>
       </div>
@@ -78,7 +79,7 @@ const Header = ({ session }: HeaderProps) => {
         <div className={styles.logo}>
           <Link href="/" onClick={closeMobileMenu}>
             <Image
-              src="/logo.png"
+              src="/images/logo-horizontal.png" 
               alt="شعار مكتبات دار اللغات"
               width={256}
               height={64}
@@ -99,13 +100,12 @@ const Header = ({ session }: HeaderProps) => {
                 {newRequestsCount > 0 && <span className={styles.notificationBadge}>{newRequestsCount}</span>}
               </Link>
               <Link href="/admin/factory-supplies" onClick={closeMobileMenu} className={styles.notificationLink}>
-                طلبات الشركات
+                طلبات Companies
                 {newFactoryRequestsCount > 0 && <span className={styles.notificationBadge} style={{backgroundColor: '#dc2626'}}>{newFactoryRequestsCount}</span>}
               </Link>
             </>
           )}
-          
-          {/* زر المشاركة سيظهر فقط في قائمة الموبايل */}
+
           <div className={styles.mobileOnlyActions}>
              <ShareButton />
           </div>
@@ -122,7 +122,8 @@ const Header = ({ session }: HeaderProps) => {
               <FaUserCircle /> دخول
             </Link>
           )}
-          <button className={styles.menuButton} onClick={toggleMobileMenu}>☰</button>
+          {/* 🎯 إضافة aria-label لزر القائمة الجانبية للموبايل */}
+          <button className={styles.menuButton} onClick={toggleMobileMenu} aria-label="افتح قائمة التصفح">☰</button>
         </div>
       </div>
     </header>

@@ -2,100 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🎯 1. تعريف الألوان الأساسية ومتغيرات التصميم لمكتبة shadcn/ui */
+/* 🎯 1. نظام ألوان وتصميم موحد واحترافي */
 @layer base {
   :root {
-    /* 🎨 ألوان من لوحة ألوان متجرك الأصلية */
-    --background: 240 10% 98.5%; 
-    --foreground: 222 47% 11%;    
+    /* 🎨 لوحة الألوان الأساسية الموحدة */
+    --color-primary: #0A2E54;       /* أزرق داكن (الهوية الرئيسية) */
+    --color-primary-dark: #07223F;   /* نسخة أغمق للتأثيرات */
+    --color-secondary: #FFC107;     /* ذهبي (للتأكيد ولفت الانتباه) */
+    --color-secondary-light: #FFD54F; /* نسخة أفتح للتأثيرات */
+    --color-accent: #F4EFEA;         /* بيج فاتح (للخلفيات الثانوية) */
+    --color-background: #FFFFFF;     /* أبيض نقي (الخلفية الرئيسية) */
+    --color-text-base: #212529;      /* رمادي داكن (للنصوص الأساسية) */
+    --color-text-muted: #6c757d;    /* رمادي باهت (للنصوص الفرعية) */
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+    --color-success: #198754;
+    --color-danger: #dc3545;
+    --color-border: #dee2e6;
 
+    /* ✒️ متغيرات الطباعة */
+    --font-body: var(--font-noto-kufi-arabic), 'Cairo', sans-serif;
+    --font-headings: 'Cairo', 'Helvetica Neue', sans-serif;
+
+    /* ✨ متغيرات الظل */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-glow-secondary: 0 0 20px 3px rgba(255, 193, 7, 0.5);
+
+    /* 📐 متغيرات الأحجام والحدود */
+    --border-radius-sm: 0.25rem;
+    --border-radius-md: 0.5rem;
+    --border-radius-lg: 1rem;
+    --border-radius-full: 9999px;
+
+    /* 🧩 متغيرات Shadcn/UI (موحدة مع اللوحة الأساسية) */
+    --background: 0 0% 100%;             /* --color-background */
+    --foreground: 215 14% 15%;           /* --color-text-base */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
- 
+    --card-foreground: 215 14% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
- 
-    /* 🎨 لون أساسي مستوحى من هوية المتجر */
-    --primary: 217 71% 23%; 
-    --primary-foreground: 0 0% 100%;
- 
-    /* 🎨 لون ثانوي مستوحى من هوية المتجر */
-    --secondary: 45 100% 51%; 
-    --secondary-foreground: 217 71% 23%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 38 72% 95%; 
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
-    --destructive: 0 84.2% 60.2%;
+    --popover-foreground: 215 14% 15%;
+    --primary: 217 71% 18%;              /* --color-primary */
+    --primary-foreground: 0 0% 100%;     /* --color-white */
+    --secondary: 45 100% 51%;            /* --color-secondary */
+    --secondary-foreground: 217 71% 18%; /* --color-primary */
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 30 29% 95%;                /* --color-accent */
+    --accent-foreground: 215 14% 13%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217 71% 23%;
- 
-    --radius: 0.5rem; 
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 71% 18%;
+    --radius: 0.5rem;
   }
- 
+
+  /* الوضع المظلم (يمكن تحسينه لاحقًا) */
   .dark {
-    /* تم وضع لون الخلفية هنا لتجنب خطأ emptyRules في VS Code */
-    --background: 222.2 84% 4.9%;
+    --background: 222 84% 5%;
     --foreground: 210 40% 98%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
+    /* تطبيق الخلفية البيضاء النقية والنص الأساسي */
     @apply bg-background text-foreground;
   }
 }
 
-/* A. Refined & Professional Color Palette */
-:root {
-  --primary-purple: #4A148C;      
-  --header-bg: #FFFFFF;           
-  --text-dark: #333;              
-
-  --color-primary: #0A2E54;       
-  --color-primary-dark: #07223F;   
-  --color-secondary: #FFC107;     
-  --color-secondary-light: #FFD54F; 
-  --color-accent: #F4EFEA;         
-  --color-background: #FCFCFA;     
-  --color-text-base: #212529;      
-  --color-text-muted: #6c757d;    
-  --color-white: #FFFFFF;
-  --color-black: #000000;
-  --color-success: #198754;      
-  --color-danger: #dc3545;       
-  --color-border: #dee2e6;       
-
-  /* B. Expressive & Readable Typography */
-  --font-body: var(--font-noto-kufi-arabic), 'Cairo', sans-serif;
-  --font-headings: 'Cairo', 'Helvetica Neue', sans-serif; 
-
-  /* C. Advanced Multi-layered Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-glow-secondary: 0 0 20px 3px rgba(255, 193, 7, 0.5);
-
-  /* D. Consistent Sizing & Radius */
-  --border-radius-sm: 0.25rem; 
-  --border-radius-md: 0.5rem;  
-  --border-radius-lg: 1rem;    
-  --border-radius-full: 9999px;
-}
-
+/* 2. الأنماط العامة للعناصر */
 body {
-  background-color: var(--color-background);
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiGAAAAA3NCSVQICAjb4U/gAAAAMFBMVEX////////////////////////////////////////////////////////////////p2a45AAAAD3RSTlMAEREiI3mIiJmqqs3d3d3d8hMdAAAAZklEQVRIx+3MyQEAIAwDMCv//+T5cQQZgRtA2eY8FzXw2d5g4g8g8YcQ+YN/+IM/+IM/+IM/+IM/+IM/+IM/+IM/+IM/+IM/+IM/+IM/+IN/9x/8wT/8QZ/8gZ/8gT/4g//4h3/4Bf/wD/4A/wEAp3oAAReWk4sAAAAASUVORK5CYII=');
+  background-color: var(--color-background); /* استخدام الأبيض النقي */
   color: var(--color-text-base);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -105,7 +89,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-headings);
   font-weight: 900; 
-  color: var(--color-primary);
+  color: var(--color-primary); /* استخدام الأزرق الداكن للعناوين */
   line-height: 1.3;
 }
 
@@ -117,12 +101,12 @@ h4 { font-size: 1.25rem; }
 p {
   line-height: 1.8;
   font-weight: 500; 
-  color: var(--color-text-muted);
+  color: var(--color-text-muted); /* استخدام الرمادي الباهت للفقرات */
   margin-bottom: 1.25rem;
 }
 
 a {
-  color: var(--color-secondary);
+  color: var(--color-secondary); /* استخدام الذهبي للروابط */
   text-decoration: none;
   font-weight: 700; 
   transition: all 0.2s ease-in-out;
@@ -132,6 +116,7 @@ a:hover {
   text-decoration: underline;
 }
 
+/* 3. مكونات مخصصة */
 @layer components {
   .btn {
     @apply inline-block font-bold text-center uppercase tracking-wider
@@ -142,7 +127,7 @@ a:hover {
   }
 
   .btn-primary {
-    @apply bg-secondary text-primary;
+    @apply bg-secondary text-primary; /* زر ذهبي بنص أزرق داكن */
     box-shadow: var(--shadow-md);
   }
   .btn-primary:hover {

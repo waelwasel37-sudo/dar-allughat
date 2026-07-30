@@ -1,8 +1,5 @@
 'use client';
 
-// 🚀 تفعيل الرندر الديناميكي لمنع أخطاء بناء Next.js 15
-export const dynamic = 'force-dynamic';
-
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
@@ -10,17 +7,15 @@ import Link from 'next/link';
 import styles from './Admin.module.css';
 
 const AdminPage = () => {
-  const { isAdmin, user, loading, logout } = useAuth(); // Use modern auth state
+  const { isAdmin, user, loading, logout } = useAuth(); 
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect if not loading and not an admin
     if (!loading && !isAdmin) {
       router.push('/login');
     }
   }, [isAdmin, loading, router]);
 
-  // Render a loading state while checking for admin status
   if (loading || !isAdmin) {
     return (
       <div className={styles.loadingContainer}>
@@ -29,13 +24,11 @@ const AdminPage = () => {
     );
   }
 
-  // If authenticated as an admin, show the admin panel.
   return (
     <div className={styles.container}>
         <div className={styles.header}>
             <h1 className={styles.title}>لوحة التحكم</h1>
             <div className={styles.authControls}>
-                {/* Display user's email if available */}
                 <span className={styles.welcomeMessage}>مرحباً, {user?.email || 'Admin'}</span>
                 <button onClick={logout} className={styles.logoutButton}>تسجيل الخروج</button>
             </div>

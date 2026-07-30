@@ -2,6 +2,8 @@
 import PostEditor from '../PostEditor';
 import styles from '../BlogAdmin.module.css'; // Reusing some styles
 
+export const dynamic = 'force-dynamic';
+
 const NewPostPage = () => {
   const initialPost = {
     title: '',

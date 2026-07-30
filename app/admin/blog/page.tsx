@@ -58,7 +58,7 @@ const BlogAdminPage = () => {
             } catch (err: any) {
                 setError(err.message);
             }
-        }
+        }    
     };
 
     if (loading) {
@@ -103,10 +103,9 @@ const BlogAdminPage = () => {
                                         className={`${styles.actionButton} ${styles.deleteButton}`}>
                                         حذف
                                     </button>
-                                    <Link href={`/blog/${post.slug}`} className={`${styles.actionButton} ${styles.viewButton}`} target="_blank" rel="noopener noreferrer">
+                                    <Link href={`/blog/${post.slug}`} className={`${styles.actionButton} ${styles.viewButton}`} target="_blank" rel="noopener noreferrer">
                                         عرض
                                     </Link>
-
                                 </td>
                             </tr>
                         ))}
