@@ -3,13 +3,13 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: var(--shadow-md); /* استخدام متغير الظل الموحد */
+  box-shadow: var(--shadow-md); 
   direction: rtl;
 }
 
 /* 3. الشريط العلوي الجديد */
 .topBar {
-  background-color: var(--color-primary); /* استخدام اللون الأزرق الداكن الموحد */
+  background-color: var(--color-primary); 
   color: var(--color-white);
   padding: 0.5rem 2rem;
 }
@@ -24,7 +24,7 @@
 
 .taxNumber {
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 700; /* 🎯 تم زيادة وزن الخط لتحسين الوضوح */
   margin: 0;
 }
 
@@ -34,7 +34,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: var(--color-background); /* استخدام الخلفية البيضاء الموحدة */
+    background-color: var(--color-background); 
     transition: background-color 0.3s ease;
 }
 
@@ -65,14 +65,14 @@
 .nav a,
 .notificationLink {
     text-decoration: none;
-    color: var(--color-text-base); /* استخدام لون النص الأساسي */
+    color: var(--color-text-base); 
     font-weight: 500;
     position: relative;
     transition: color 0.3s ease;
 }
 
 .nav a:hover {
-    color: var(--color-secondary); /* تغيير اللون إلى الذهبي عند المرور */
+    color: var(--color-secondary); 
 }
 
 /* أيقونات التواصل الاجتماعي في الشريط العلوي */
@@ -99,7 +99,6 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* الألوان الرسمية للأيقونات (تبقى كما هي لهويتها البصرية) */
 .facebookIcon { background-color: #1877F2; }
 .whatsappIcon { background-color: #25D366; }
 .telegramIcon { background-color: #0088CC; }
@@ -109,6 +108,27 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+/* 🎯 تم إضافة تنسيق خاص لزر الدخول لتحسين التباين */
+.loginButton {
+  background-color: var(--color-primary);
+  color: var(--color-white) !important; /* استخدام !important لتجاوز لون الرابط العام */
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  font-weight: 700;
+  text-decoration: none !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.loginButton:hover {
+  background-color: var(--color-primary-dark);
+  color: var(--color-white) !important;
+  transform: translateY(-2px);
+  text-decoration: none !important;
 }
 
 /* --- التنسيقات الخاصة بالموبايل --- */

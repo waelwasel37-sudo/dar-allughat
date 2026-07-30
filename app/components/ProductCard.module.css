@@ -44,7 +44,6 @@
     transition: transform 0.3s ease;
 }
 
-/* 🛠️ تعطيل تأثير الزوم فقط إذا كان المنتج نافداً من المخزن لحماية تجربة المستخدم */
 .cardContainer:hover .image:not(.outOfStockImage) {
     transform: scale(1.05);
 }
@@ -53,7 +52,7 @@
     position: absolute;
     top: 12px;
     left: 12px;
-    background: linear-gradient(45deg, #e63946, #c32f3a); /* متناسق مع لون السعر الجديد لراحة العين */
+    background: linear-gradient(45deg, #e63946, #c32f3a);
     color: #fff; 
     padding: 5px 12px;
     border-radius: 20px;
@@ -176,13 +175,12 @@
 
 .oldPrice {
     font-size: 1.1rem;
-    color: #7f8c8d;
+    color: #95a5a6; /* 🎯 تم تغميق اللون لتحسين التباين */
     text-decoration: line-through;
     text-decoration-thickness: 1.5px;
     order: 2;
 }
 
-/* --- ✅ NEW: Out of Stock Styles --- */
 .outOfStockOverlay {
   position: absolute;
   top: 0;
@@ -197,7 +195,7 @@
 }
 
 .outOfStockOverlay span {
-  background-color: #e53e3e; /* red-600 */
+  background-color: #e53e3e;
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -208,7 +206,7 @@
 
 .outOfStockImage {
   filter: grayscale(100%);
-  opacity: 0.6; /* جعلها أكثر عتامة لتبدو غير نشطة تماماً للعميل */
+  opacity: 0.6;
 }
 
 .outOfStockLabel {
@@ -216,8 +214,8 @@
   justify-content: center;
   align-items: center;
   padding: 12px;
-  background-color: #f1f2f6; /* خلفية رمادية ناعمة ومحايدة */
-  color: #a0aec0; /* لون نص باهت يعكس انتهاء المنتج */
+  background-color: #f1f2f6;
+  color: #a0aec0;
   font-weight: bold;
   font-size: 1rem;
   border-radius: 8px; 

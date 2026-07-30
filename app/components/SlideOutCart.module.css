@@ -1,4 +1,3 @@
-/* خلفية التعتيم الشفافة المحيطة بالدرج لمنع التشتت */
 .backdrop {
   position: fixed;
   top: 0;
@@ -17,28 +16,26 @@
   pointer-events: auto;
 }
 
-/* 🎯 حاوية درج السلة: معدلة بتصميم عصري وأنيق */
 .cartDrawer {
   position: fixed;
-  top: 12.5vh; /* 🎯 تم التعديل لتوسيط السلة عمودياً في الشاشة */
-  right: -100vw; /* يبدأ متخفياً خارج الشاشة تماماً لتأمين حركة الانزلاق */
-  width: 75vw;   /* العرض المثالي والرشيق لمتجر دار اللغات على شاشات الهاتف المحمول */
-  max-width: 360px; /* أقصى عرض للشاشات الكبيرة واللاب توب */
-  height: 75vh; /* 🎯 تم تقليل الطول إلى 75% من الشاشة كما طلبت */
+  top: 12.5vh; 
+  right: -100vw; 
+  width: 75vw;   
+  max-width: 360px; 
+  height: 75vh; 
   background-color: var(--color-background);
   box-shadow: var(--shadow-xl);
   z-index: 1050;
   transition: right 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
-  border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg); /* إضافة حواف دائرية للتصميم العصري */
+  border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg); 
 }
 
 .cartDrawer.open {
   right: 0;
 }
 
-/* 🎯 تنسيق حركي ذكي متجاوب للشاشات الأكبر والمكتبية */
 @media (min-width: 480px) {
   .cartDrawer {
     width: 360px;
@@ -52,6 +49,7 @@
   align-items: center;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0; /* منع الهيدر من التقلص */
 }
 
 .drawerHeader h2 {
@@ -75,9 +73,8 @@
 }
 
 .cartContent {
-  flex-grow: 1;
-  overflow-y: auto;
   padding: 1rem;
+  overflow-y: auto; /* السماح بالتمرير هنا إذا لزم الأمر */
 }
 
 .emptyCart {
@@ -90,7 +87,7 @@
     align-items: center;
     gap: 8px;
     margin-top: 1rem;
-    color: var(--color-secondary); /* استخدام اللون الذهبي */
+    color: var(--color-secondary); 
     text-decoration: none;
     font-weight: bold;
 }
@@ -166,11 +163,15 @@
   padding: 6px;
 }
 
+/* 🎯 تم تعديل هذا القسم ليحتوي على التمرير ويحتل المساحة المتبقية */
 .cartSummary {
   padding: 1.2rem;
   border-top: 1px solid var(--color-border);
   background-color: var(--color-accent);
+  overflow-y: auto; /* ✅ الأهم: السماح بالتمرير العمودي عند الحاجة */
+  flex-grow: 1; /* ✅ السماح لهذا القسم بالتمدد ليملأ المساحة المتاحة */
 }
+
 
 .cartTotal {
   font-size: 1.3rem;

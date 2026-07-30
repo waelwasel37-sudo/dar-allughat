@@ -1,59 +1,51 @@
-.formContainer {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 24px;
-    margin-top: 20px;
-    border: 1px solid #e0e0e0;
-    transition: box-shadow 0.3s ease-in-out;
-}
+/* 🎯 تم إعادة تصميم النموذج ليتكامل بسلاسة داخل السلة المنزلقة */
 
-.formContainer:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+.formContainer {
+    /* تمت إزالة الخلفية والحدود والهوامش لتندمج مع حاوية الملخص */
+    padding: 16px 0 0 0; /* تقليل الحشو العلوي وإلغاء الباقي */
 }
 
 .formHeader {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 700;
+    /* هذا لم يعد مستخدماً، يمكن حذفه لاحقاً */
+    display: none;
 }
 
 .inputGroup {
-    margin-bottom: 18px;
+    margin-bottom: 14px; /* تقليل المسافة بين الحقول */
 }
 
 .inputGroup label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #555;
-    font-size: 0.95rem;
+    margin-bottom: 6px; /* تقليل المسافة بين العنوان والحقل */
+    font-weight: 600; /* وزن أثقل للوضوح */
+    color: var(--color-text-base);
+    font-size: 0.9rem; /* تصغير حجم الخط قليلاً */
 }
 
 .input {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
+    padding: 10px 12px; /* تقليل الحشو الداخلي للحقول */
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: 0.95rem;
     transition: border-color 0.2s, box-shadow 0.2s;
-    background-color: #fff;
+    background-color: var(--color-background);
 }
 
 .input:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(10, 46, 84, 0.15);
 }
 
 .note {
     display: block;
-    margin-top: 8px;
-    font-size: 0.85rem;
-    color: #777;
+    margin-top: 6px;
+    font-size: 0.8rem; /* تصغير خط الملاحظات */
+    color: var(--color-text-muted);
 }
 
+/* تم الإبقاء على هذه الفئات كما هي في حال الحاجة إليها */
 .loading {
     text-align: center;
     padding: 20px;

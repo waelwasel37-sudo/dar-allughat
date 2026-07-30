@@ -53,10 +53,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Facebook Pixel Script */}
+        {/* Facebook Pixel Script - 🚀 تم تحديث الرقم وتفعيل التحميل الذكي لتسريع المتجر */}
         <Script
           id="fb-pixel"
-          strategy="afterInteractive"
+          strategy="lazyOnload" 
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -67,19 +67,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '930234381970984');
+              fbq('init', '2031832027677972'); // ✅ تم تصحيح رقم الميتا بكسل
               fbq('track', 'PageView');
             `,
           }}
         />
-        {/* Google tag (gtag.js) */}
+        {/* Google tag (gtag.js) - 🚀 تم تفعيل التحميل الذكي */}
         <Script
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           src="https://www.googletagmanager.com/gtag/js?id=G-7SQ2EK8VDC"
         />
         <Script
           id="gtag-init"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
