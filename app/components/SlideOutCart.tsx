@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { FaWhatsapp, FaTrash, FaTimes, FaArrowLeft } from 'react-icons/fa';
 import styles from './SlideOutCart.module.css';
 import AddressForm from './AddressForm';
-import CartRecommendations from './CartRecommendations';
 import { CartItem } from '../lib/types';
 import { addressSchema } from '../lib/schemas';
 
@@ -18,11 +17,11 @@ export default function SlideOutCart() {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [governorate, setGovernorate] = useState(''); 
+  const [governorate, setGovernorate] = useState('');
   const [address, setAddress] = useState('');
 
   if (!cartContext) {
-    return null; 
+    return null;
   }
 
   const { cart, updateQuantity, removeFromCart, clearCart, getCartTotal, getItemSubtotal, isCartOpen, toggleCart } = cartContext;
@@ -34,8 +33,8 @@ export default function SlideOutCart() {
   }, [name, phone, governorate, address]);
 
   const isFormValid = validationResult.success;
-  const firstError = !validationResult.success 
-    ? (validationResult.error.format()._errors[0] || validationResult.error.issues[0]?.message) 
+  const firstError = !validationResult.success
+    ? (validationResult.error.format()._errors[0] || validationResult.error.issues[0]?.message)
     : null;
 
   const handleWhatsAppOrder = () => {
@@ -64,15 +63,15 @@ export default function SlideOutCart() {
                    `🖼️ *الصورة:* ${item.imageUrl}\n` +
                    `🔗 *الرابط:* ${window.location.origin}/products/${item.slug}\n`;
     });
-    
+
     message += "------------------------\n\n" +
                `💰 *الإجمالي النهائي: ${total.toFixed(2)} جنيه*\n\n`;
 
     const whatsappUrl = `https://wa.me/${storePhoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
-    
-    setTimeout(() => { 
-      router.push('/thank-you'); 
+
+    setTimeout(() => {
+      router.push('/thank-you');
       toggleCart();
     }, 1000);
   };
@@ -83,7 +82,6 @@ export default function SlideOutCart() {
       <div className={`${styles.cartDrawer} ${isCartOpen ? styles.open : ''}`}>
         <div className={styles.drawerHeader}>
           <h2>سلة التسوق</h2>
-          {/* 🎯 تم إضافة aria-label لتحسين الوصولية كما اقترحت */}
           <button onClick={toggleCart} className={styles.closeButton} aria-label="إغلاق السلة"><FaTimes /></button>
         </div>
 
@@ -116,19 +114,17 @@ export default function SlideOutCart() {
               })}
             </div>
 
-            <CartRecommendations cartItems={cart} />
-
             <div className={styles.cartSummary}>
               <div className={styles.cartTotal}>الإجمالي: {total.toFixed(2)} ج.م</div>
-              <AddressForm 
+              <AddressForm
                 onNameChange={setName}
                 onPhoneChange={setPhone}
                 onGovernorateChange={setGovernorate}
                 onAddressChange={setAddress}
               />
               <div className={styles.cartActions}>
-                <button 
-                  onClick={handleWhatsAppOrder} 
+                <button
+                  onClick={handleWhatsAppOrder}
                   className={`${styles.whatsappButton} ${!isFormValid ? styles.disabledButton : ''}`}
                   disabled={!isFormValid}
                 >

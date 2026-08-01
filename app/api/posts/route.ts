@@ -13,11 +13,13 @@ export async function GET(req: NextRequest) {
     const db = getDb();
 
     try {
-        const slug = req.nextUrl.searchParams.get('slug');
-        const postsRef = db.collection('posts');
+        const rawSlug = req.nextUrl.searchParams.get('slug');
 
-        if (slug) {
-            const snapshot = await postsRef.where('slug', '==', slug).limit(1).get();
+        if (rawSlug) {
+            // 🎯 الأمان الكامل: فك تشفير السلوج هنا أيضاً لضمان مطابقة الـ Firestore حتى لو أرسله المتصفح مشفراً
+            const cleanSlug = decodeURIComponent(rawSlug);
+
+            const snapshot = await db.collection('posts').where('slug', '==', cleanSlug).limit(1).get();
             if (snapshot.empty) {
                 return NextResponse.json({ message: 'Post not found' }, { status: 404 });
             }
@@ -32,7 +34,7 @@ export async function GET(req: NextRequest) {
             };
             return NextResponse.json(post);
         } else {
-            const snapshot = await postsRef.orderBy('createdAt', 'desc').get();
+            const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
             const posts = snapshot.docs.map((doc: firestore.QueryDocumentSnapshot) => {
                 const data = doc.data();
                 return {

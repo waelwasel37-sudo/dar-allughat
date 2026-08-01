@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // الحزم الخارجية لضمان استقرار Firebase Admin على الخادم
-  serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library"],
+  // 🎯 تم إضافة "sharp" لضمان استقرار معالجة الصور المحلية (مثل اللوجو) على الخادم وحل خطأ 400
+  serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library", "sharp"],
   
   typescript: { ignoreBuildErrors: true },
 
-  // 🎯 كائن تحسين وقبول صور المتجر السليم والمصحح بالكامل
+  // كائن تحسين وقبول صور المتجر السليم والمصحح بالكامل
   images: {
     unoptimized: false,
     remotePatterns: [
@@ -14,7 +14,8 @@ const nextConfig = {
       { protocol: 'https', hostname: '*.googleusercontent.com' },
       { protocol: 'https', hostname: 'storage.googleapis.com' },
       { protocol: 'https', hostname: '*.run.app' },
-      { protocol: 'https', hostname: '*.firebaseapp.com' }
+      { protocol: 'https', hostname: '*.firebaseapp.com' },
+      { protocol: 'https', hostname: '*.hosted.app' } // تم تأمين نطاق الاستضافة الحديث لفايربيز
     ],
   },
 
@@ -36,7 +37,7 @@ const nextConfig = {
     ];
   },
 
-  // 🔴 إضافة قاعدة إعادة التوجيه لإصلاح مشكلة المصادقة مع Firebase
+  // قاعدة إعادة التوجيه لإصلاح مشكلة المصادقة مع Firebase
   async rewrites() {
     return [
       {

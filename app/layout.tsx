@@ -6,6 +6,7 @@ import { Providers } from './providers';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
 import SlideOutCart from './components/SlideOutCart';
+import RelatedProductsBar from './components/RelatedProductsBar'; // ✅ مستورد بنجاح ويفصل التوصيات عن السلة تلقائياً
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { getIronSession } from 'iron-session';
@@ -27,8 +28,9 @@ const cairo = Cairo({
   display: 'swap',
 });
 
+// 🎯 أرشفة المتجر الرسمية برابط النطاق الفعلي لدار اللغات بالعبور المعتمد على استضافة فايربيز
 export const metadata: Metadata = {
-    metadataBase: new URL('https://dar-allughat.com'),
+    metadataBase: new URL('https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app'),
     title: 'دار اللغات: كتب ومستلزمات مدرسية في مدينة العبور',
     description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية.',
 };
@@ -37,7 +39,8 @@ async function SessionFetcher({ children }: { children: (session: SessionData) =
   let session: SessionData = { isLoggedIn: false, username: 'زائر' };
   
   try {
-    const cookieStore = await cookies();
+    // 🎯 متوافق مع Next.js 14 كـ synchronous call يمنع توقف البناء سحابياً
+    const cookieStore = cookies(); 
     const ironSession = await getIronSession<SessionData>(cookieStore, sessionOptions);
     if (ironSession) {
       session = ironSession;
@@ -53,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Facebook Pixel Script - 🚀 تم تحديث الرقم وتفعيل التحميل الذكي لتسريع المتجر */}
+        {/* Facebook Pixel Script - 🚀 مطابق ومعتمد بالرقم الفعلي للبيكسل الخاص بك */}
         <Script
           id="fb-pixel"
           strategy="lazyOnload" 
@@ -67,15 +70,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '2031832027677972'); // ✅ تم تصحيح رقم الميتا بكسل
+              fbq('init', '2031832027677972'); 
               fbq('track', 'PageView');
             `,
           }}
         />
-        {/* Google tag (gtag.js) - 🚀 تم تفعيل التحميل الذكي */}
+        {/* Google tag (gtag.js) - 🚀 معرّف التتبع الصحيح والرابط الكامل لمتجرك */}
         <Script
           strategy="lazyOnload"
-          src="https://www.googletagmanager.com/gtag/js?id=G-7SQ2EK8VDC"
+          src="https://www.googletagmanager.com/gtag/js?id=G-5B1BGCLTM8"
         />
         <Script
           id="gtag-init"
@@ -85,7 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-7SQ2EK8VDC');
+              gtag('config', 'G-5B1BGCLTM8');
             `,
           }}
         />
@@ -98,6 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Header session={session} />
                 <main>{children}</main>
                 <SlideOutCart />
+                <RelatedProductsBar /> {/* ✅ سيقوم الشريط تلقائياً بالاختفاء بمجرد تعبئة بيانات الشحن لعدم تغطية السلة */}
                 <Footer />
               </>
             )}
