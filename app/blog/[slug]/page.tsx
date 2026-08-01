@@ -2,6 +2,7 @@
 import { notFound } from 'next/navigation';
 import styles from './Post.module.css';
 import VideoPlayer from '../VideoPlayer';
+import Image from 'next/image'; // 🎯 استيراد مكون الصورة الذكي
 
 interface Post {
     id: string;
@@ -31,13 +32,12 @@ async function getPost(slug: string): Promise<Post | null> {
     }
 }
 
-// Define PageProps for clarity, following the new Next.js 15 pattern
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
 export default async function PostPage({ params }: PageProps) {
-    const { slug } = await params; // Await the promise to get the slug
+    const { slug } = await params;
     const post = await getPost(slug);
 
     if (!post) {
@@ -48,7 +48,15 @@ export default async function PostPage({ params }: PageProps) {
         <article className={styles.container}>
             {post.imageUrl && (
                 <div className={styles.imageContainer}>
-                    <img src={post.imageUrl} alt={post.title} className={styles.mainImage} />
+                    {/* 🎯 الحل النهائي: استخدام مكون Image مع unoptimized لمنع خطأ 400 */}
+                    <Image 
+                        src={post.imageUrl} 
+                        alt={post.title} 
+                        className={styles.mainImage} 
+                        width={800} // قيمة مبدئية للعرض
+                        height={400} // قيمة مبدئية للطول
+                        unoptimized={true} // تعطيل التحسين لحل المشكلة
+                    />
                 </div>
             )}
 
