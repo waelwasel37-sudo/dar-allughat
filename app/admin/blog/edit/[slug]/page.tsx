@@ -23,7 +23,8 @@ type PageProps = {
 
 // Fetch a single post by its slug from the API on the server
 async function getPost(slug: string): Promise<Post | null> {
-    const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${slug}`;
+    // 🎯 الإصلاح النهائي: استخدام متغير البيئة الصحيح
+    const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts/${slug}`;
     try {
         const res = await fetch(apiUrl, { cache: 'no-store' });
         if (!res.ok) {
