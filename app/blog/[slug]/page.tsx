@@ -2,7 +2,7 @@
 import { notFound } from 'next/navigation';
 import styles from './Post.module.css';
 import VideoPlayer from '../VideoPlayer';
-import Image from 'next/image'; // 🎯 استيراد مكون الصورة الذكي
+import Image from 'next/image';
 
 interface Post {
     id: string;
@@ -15,7 +15,8 @@ interface Post {
 }
 
 async function getPost(slug: string): Promise<Post | null> {
-    const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts?slug=${slug}`;
+    // 🎯 الحل النهائي والحاسم: استخدام متغير البيئة الصحيح لبناء رابط الـ API
+    const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts?slug=${slug}`;
     try {
         const res = await fetch(apiUrl, { cache: 'no-store' });
         if (res.status === 404) {
@@ -48,14 +49,13 @@ export default async function PostPage({ params }: PageProps) {
         <article className={styles.container}>
             {post.imageUrl && (
                 <div className={styles.imageContainer}>
-                    {/* 🎯 الحل النهائي: استخدام مكون Image مع unoptimized لمنع خطأ 400 */}
                     <Image 
                         src={post.imageUrl} 
                         alt={post.title} 
                         className={styles.mainImage} 
-                        width={800} // قيمة مبدئية للعرض
-                        height={400} // قيمة مبدئية للطول
-                        unoptimized={true} // تعطيل التحسين لحل المشكلة
+                        width={800}
+                        height={400}
+                        unoptimized={true}
                     />
                 </div>
             )}
