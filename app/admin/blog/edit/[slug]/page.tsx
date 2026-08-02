@@ -1,11 +1,10 @@
-
 import PostEditor from '../../PostEditor';
 import styles from '../../BlogAdmin.module.css';
 
-// FINAL FIX: V15 PROMISE COMPLIANCE
-// The type for PageProps MUST treat `params` as a Promise to satisfy the
-// Next.js 15 build system for server components.
+// 🎯 التصحيح الذهبي: إجبار الصفحة على العمل بشكل ديناميكي كامل لمنع فشل الـ Build وتخطي قفل الـ Secret Manager
+export const dynamic = 'force-dynamic';
 
+// FINAL FIX: V15 PROMISE COMPLIANCE
 interface Post {
     id: string;
     title: string;
@@ -15,7 +14,6 @@ interface Post {
     videoUrl?: string;
 }
 
-// Define props where `params` is explicitly a Promise.
 type PageProps = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -23,7 +21,6 @@ type PageProps = {
 
 // Fetch a single post by its slug from the API on the server
 async function getPost(slug: string): Promise<Post | null> {
-    // 🎯 الإصلاح النهائي: استخدام متغير البيئة الصحيح
     const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts/${slug}`;
     try {
         const res = await fetch(apiUrl, { cache: 'no-store' });
@@ -38,7 +35,6 @@ async function getPost(slug: string): Promise<Post | null> {
 }
 
 export default async function EditPostPage(props: PageProps) {
-    // Await the params promise to get the actual slug value
     const params = await props.params;
     const post = await getPost(params.slug);
 

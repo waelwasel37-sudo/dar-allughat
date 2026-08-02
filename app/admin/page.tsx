@@ -1,5 +1,8 @@
 'use client';
 
+// 🎯 التصحيح الجذري والنهائي: إجبار جذر لوحة التحكم على العمل ديناميكياً لتخطي قفل الـ Build للـ Secret Manager وفتح بوابة التحديث
+export const dynamic = 'force-dynamic';
+
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
@@ -25,7 +28,7 @@ const AdminPage = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} dir="rtl">
         <div className={styles.header}>
             <h1 className={styles.title}>لوحة التحكم</h1>
             <div className={styles.authControls}>

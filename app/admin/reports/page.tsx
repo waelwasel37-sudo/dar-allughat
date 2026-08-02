@@ -1,5 +1,8 @@
 'use client';
 
+// 🎯 التصحيح الجذري لإنهاء خطأ الـ Build: إجبار صفحة التقارير على العمل بنظام ديناميكي لمنع توقف السيرفر وقت فحص الـ Secret Manager
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import styles from './ReportsPage.module.css';
 

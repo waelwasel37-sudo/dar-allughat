@@ -1,11 +1,13 @@
 'use client';
 
+// 🎯 التصحيح الجذري النهائي: إجبار الصفحة على العمل بنظام ديناميكي كامل لتجاوز قفل الـ SECRET_COOKIE_PASSWORD ومنع فشل البناء والـ Build
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import styles from './OrdersPage.module.css';
 import { FaWhatsapp } from 'react-icons/fa';
 
-// 🎯 تصحيح: إضافة حالة 'new' المتوافقة مع السيرفر الافتراضي لفايربيس
 type OrderStatus = 'new' | 'processing' | 'delivered' | 'cancelled';
 
 interface OrderItem {
@@ -17,7 +19,6 @@ interface OrderItem {
     slug?: string;
 }
 
-// 🎯 تصحيح: مطابقة واجهة البيانات الدقيقة المرسلة من السيرفر /api/orders
 interface Order {
     id: string;
     userId: string;
@@ -30,7 +31,7 @@ interface Order {
         phone: string;
     };
     items: OrderItem[];
-    totalAmount: number; // مطابقة للـ totalAmount في السيرفر
+    totalAmount: number;
     shippingFee: number;
     status: OrderStatus;
     createdAt: string;
@@ -41,7 +42,6 @@ interface Order {
     };
 }
 
-// 🎯 تصحيح: إضافة الحالة 'new' وتلوينها بالتنسيق المناسب
 const getStatusDetails = (status: OrderStatus) => {
     switch (status) {
         case 'new':
@@ -66,16 +66,13 @@ const OrdersPage = () => {
         const fetchOrders = async () => {
             try {
                 setLoading(true);
-                // تفعيل إرسال كوكيز الأمان credentials لضمان موافقة الأدمن بالسيرفر
                 const response = await fetch('/api/orders', { credentials: 'include' });
-
                 const data = await response.json();
 
                 if (!response.ok) {
                     throw new Error(data.error || 'Failed to fetch orders');
                 }
 
-                // التأكد من أن القادم مصفوفة
                 setOrders(Array.isArray(data) ? data : []);
             } catch (err: any) {
                 setError(err.message);
@@ -109,7 +106,6 @@ const OrdersPage = () => {
         }
     };
 
-    // 🎯 تصحيح: تعديل خريطة التصدير لتقرأ من مسميات الفايربيس الصحيحة بالتفصيل
     const exportToExcel = () => {
         const dataToExport = orders.map(order => {
             const address = order.shippingAddress || {};
@@ -136,7 +132,6 @@ const OrdersPage = () => {
         XLSX.writeFile(workbook, 'طلبات_دار_اللغات.xlsx');
     };
 
-    // 🎯 تصحيح: استخراج رقم الهاتف والاسم بشكل سليم من كائن الشحن للواتساب
     const getWhatsAppLink = (order: Order) => {
         const phone = order.shippingAddress?.phone || '';
         const name = order.shippingAddress?.recipientName || '';
@@ -191,7 +186,7 @@ const OrdersPage = () => {
                                             <li key={index} className={styles.item}>
                                                 {item.imageUrl && <img src={item.imageUrl} alt={item.name} className={styles.itemImage} style={{width: '40px', height: '40px', objectFit: 'cover'}} />}
                                                 <div className={styles.itemDetails}>
-                                                    <span>{item.name} (x{item.quantity}) - {item.price} EGP</span>
+                                                    <span>{item.name} (x${item.quantity}) - ${item.price} EGP</span>
                                                 </div>
                                             </li>
                                         ))}

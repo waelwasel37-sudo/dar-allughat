@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './BlogAdmin.module.css';
 
+// 🎯 التصحيح الذهبي: إجبار المسار الإداري على العمل بشكل ديناميكي كامل لمنع توقف الـ Build وتخطي حماية السيرفر
+export const dynamic = 'force-dynamic';
+
 interface Post {
     id: string;
     title: string;
@@ -25,7 +28,7 @@ const BlogAdminPage = () => {
             const response = await fetch('/api/posts');
             if (!response.ok) throw new Error('Failed to fetch posts');
             const data = await response.json();
-            setPosts(data);
+            setPosts(Array.isArray(data) ? data : []);
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -56,7 +59,7 @@ const BlogAdminPage = () => {
                 await fetchPosts(); 
 
             } catch (err: any) {
-                setError(err.message);
+                alert(`حدث خطأ أثناء الحذف: ${err.message}`);
             }
         }    
     };
@@ -70,7 +73,7 @@ const BlogAdminPage = () => {
     }
 
     return (
-        <div className={styles.container}>
+        <div className={styles.container} dir="rtl">
             <div className={styles.header}>
                 <h1>إدارة المدونة</h1>
                 <Link href="/admin/blog/new" className={styles.newPostButton}>
@@ -93,9 +96,10 @@ const BlogAdminPage = () => {
                         {posts.map((post) => (
                             <tr key={post.id}>
                                 <td>{post.title}</td>
-                                <td>{new Date(post.createdAt).toLocaleDateString('ar-EG')}</td>
+                                <td>{post.createdAt ? new Date(post.createdAt).toLocaleDateString('ar-EG') : 'غير محدد'}</td>
                                 <td>
-                                    <Link href={`/admin/blog/edit/${post.id}`} className={`${styles.actionButton} ${styles.editButton}`}>
+                                    {/* 🎯 تصحيح التوجيه: إرسال الـ slug العربي المشفر بدلاً من الـ id لتتوافق مع صفحة التعديل والسيرفر */}
+                                    <Link href={`/admin/blog/edit/${encodeURIComponent(post.slug)}`} className={`${styles.actionButton} ${styles.editButton}`}>
                                         تعديل
                                     </Link>
                                     <button 
