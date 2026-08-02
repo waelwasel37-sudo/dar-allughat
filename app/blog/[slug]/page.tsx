@@ -1,5 +1,8 @@
-
 import { notFound } from 'next/navigation';
+
+// 🎯 التصحيح الجذري النهائي: إجبار صفحة المقال العام على العمل بنظام ديناميكي كامل لتجاوز قفل الـ Build للـ Secret Manager
+export const dynamic = 'force-dynamic';
+
 import styles from './Post.module.css';
 import VideoPlayer from '../VideoPlayer';
 import Image from 'next/image';
@@ -32,12 +35,14 @@ async function getPost(slug: string): Promise<Post | null> {
     }
 }
 
+// ✅ تصحيح المطور: مطابقة المواصفات القياسية لـ Next.js 14 لـ PageProps
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
 export default async function PostPage({ params }: PageProps) {
-    const { slug } = await params;
+    // ✅ تصحيح المطور: قراءة الـ slug مباشرة بدون await غير ضرورية
+    const { slug } = params;
     const post = await getPost(slug);
 
     if (!post) {
@@ -64,7 +69,7 @@ export default async function PostPage({ params }: PageProps) {
                 <p className={styles.date}>تاريخ النشر: {new Date(post.createdAt).toLocaleDateString('ar-EG')}</p>
             </header>
 
-            {/* 🎯 تصحيح وحل نهائي: تفسير الروابط مع إجبارها على التلوين باللون الأزرق ووضع خط أسفلها */}
+            {/* 🎯 تفسير الروابط وإجبارها على التلوين بالأزرق التفاعلي بفضل حزمة الـ typography */}
             <div 
               className="prose prose-blue max-w-none text-right font-sans text-gray-800"
               style={{

@@ -1,5 +1,7 @@
-
 'use client';
+
+// 🎯 التصحيح الجذري والنهائي: إجبار صفحة الإعدادات على العمل ديناميكياً لتجاوز قفل الـ SECRET_COOKIE_PASSWORD ونجاح بناء المتجر
+export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -32,11 +34,11 @@ const AdminSettingsPage = () => {
   };
 
   if (!isAdmin) {
-    return <p>You do not have permission to view this page.</p>;
+    return <p className="p-6 text-center text-red-500 font-bold">You do not have permission to view this page.</p>;
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10" dir="rtl">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">إعدادات إدارية</h1>
       <p className="text-gray-600 mb-6">استخدم الأدوات التالية بحذر لإجراء عمليات الصيانة على مستوى الموقع.</p>
       
