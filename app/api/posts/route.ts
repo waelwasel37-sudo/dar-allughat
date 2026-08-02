@@ -153,12 +153,10 @@ export async function PUT(req: NextRequest) {
 
 // DELETE a post by SLUG
 export async function DELETE(req: NextRequest) {
-    // 🎯 تعديل أمان عبقري منك: استخدام اسم متغير محلي فريد فريد لمنع تكرار المعرف البرمجي
     const firebaseAuth = getAdminAuth();
-    // 🎯 تصحيح: استدعاء getDb للحصول على كائن قاعدة البيانات
     const db = getDb();
 
-     try {
+    try {
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value;
 
@@ -170,19 +168,24 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
+        // 🎯 قراءة الـ slug من الرابط
         const slug = req.nextUrl.searchParams.get('slug');
         if (!slug) {
             return NextResponse.json({ message: 'Post slug is required' }, { status: 400 });
         }
         
-        const snapshot = await db.collection('posts').where('slug', '==', slug).limit(1).get();
+        // فك التشفير لضمان مطابقة الحروف العربية بالشكل الصحيح
+        const cleanSlug = decodeURIComponent(slug);
+
+        const snapshot = await db.collection('posts').where('slug', '==', cleanSlug).limit(1).get();
         if (snapshot.empty) {
             return NextResponse.json({ message: 'Post not found' }, { status: 404 });
         }
 
+        // 🎯 حذف الوثيقة الأولى المستهدفة
         await snapshot.docs[0].ref.delete();
 
-        return NextResponse.json({ message: `Post with slug '${slug}' deleted successfully` });
+        return NextResponse.json({ message: `Post with slug '${cleanSlug}' deleted successfully` });
     } catch (error) {
         console.error('[DELETE /api/posts] Error:', error);
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

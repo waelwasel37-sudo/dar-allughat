@@ -15,7 +15,6 @@ interface Post {
 }
 
 async function getPost(slug: string): Promise<Post | null> {
-    // 🎯 الحل النهائي والحاسم: استخدام متغير البيئة الصحيح لبناء رابط الـ API
     const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts?slug=${slug}`;
     try {
         const res = await fetch(apiUrl, { cache: 'no-store' });
@@ -65,9 +64,15 @@ export default async function PostPage({ params }: PageProps) {
                 <p className={styles.date}>تاريخ النشر: {new Date(post.createdAt).toLocaleDateString('ar-EG')}</p>
             </header>
 
-            <div className={styles.content}>
-                <p>{post.content}</p>
-            </div>
+            {/* 🎯 تصحيح وحل نهائي: تفسير الروابط مع إجبارها على التلوين باللون الأزرق ووضع خط أسفلها */}
+            <div 
+              className="prose prose-blue max-w-none text-right font-sans text-gray-800"
+              style={{
+                  lineHeight: '1.8',
+                  fontSize: '1.1rem'
+              }}
+              dangerouslySetInnerHTML={{ __html: post.content }} 
+            />
 
             {post.videoUrl && (
                 <div className={styles.videoSection}>

@@ -61,3 +61,13 @@
     margin-bottom: 1.5rem;
     color: #1a202c;
 }
+
+/* تنسيق إجباري للروابط داخل المقال لتبدو زرقاء ونشطة */
+.container a {
+    color: #0066cc !important;
+    text-decoration: underline !important;
+    font-weight: bold;
+}
+.container a:hover {
+    color: #004499 !important;
+}

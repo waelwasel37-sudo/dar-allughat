@@ -5,8 +5,8 @@ import * as XLSX from 'xlsx';
 import styles from './OrdersPage.module.css';
 import { FaWhatsapp } from 'react-icons/fa';
 
-// Define types for order status
-type OrderStatus = 'processing' | 'delivered' | 'cancelled';
+// 🎯 تصحيح: إضافة حالة 'new' المتوافقة مع السيرفر الافتراضي لفايربيس
+type OrderStatus = 'new' | 'processing' | 'delivered' | 'cancelled';
 
 interface OrderItem {
     productId: string;
@@ -14,22 +14,38 @@ interface OrderItem {
     price: number;
     quantity: number;
     imageUrl: string;
+    slug?: string;
 }
 
+// 🎯 تصحيح: مطابقة واجهة البيانات الدقيقة المرسلة من السيرفر /api/orders
 interface Order {
     id: string;
-    customerName: string;
-    customerPhone: string;
-    customerAddress: string;
+    userId: string;
+    shippingAddress: {
+        recipientName: string;
+        streetAddress: string;
+        city: string;
+        governorate: string;
+        postalCode: string | null;
+        phone: string;
+    };
     items: OrderItem[];
-    total: number;
+    totalAmount: number; // مطابقة للـ totalAmount في السيرفر
+    shippingFee: number;
     status: OrderStatus;
     createdAt: string;
+    payment: {
+        method: string;
+        status: string;
+        amount: number;
+    };
 }
 
-// Helper to get a readable status in Arabic and a corresponding CSS class
+// 🎯 تصحيح: إضافة الحالة 'new' وتلوينها بالتنسيق المناسب
 const getStatusDetails = (status: OrderStatus) => {
     switch (status) {
+        case 'new':
+            return { text: 'طلب جديد', className: styles.statusNew || styles.statusProcessing };
         case 'processing':
             return { text: 'جاري التجهيز', className: styles.statusProcessing };
         case 'delivered':
@@ -41,7 +57,6 @@ const getStatusDetails = (status: OrderStatus) => {
     }
 };
 
-
 const OrdersPage = () => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
@@ -51,15 +66,17 @@ const OrdersPage = () => {
         const fetchOrders = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('/api/orders');
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to fetch orders');
-                }
+                // تفعيل إرسال كوكيز الأمان credentials لضمان موافقة الأدمن بالسيرفر
+                const response = await fetch('/api/orders', { credentials: 'include' });
 
                 const data = await response.json();
-                setOrders(data);
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to fetch orders');
+                }
+
+                // التأكد من أن القادم مصفوفة
+                setOrders(Array.isArray(data) ? data : []);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -71,7 +88,6 @@ const OrdersPage = () => {
     }, []);
 
     const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
-        // Optimistically update the UI
         const originalOrders = [...orders];
         setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
 
@@ -83,7 +99,6 @@ const OrdersPage = () => {
             });
 
             if (!response.ok) {
-                // Revert the UI on failure
                 setOrders(originalOrders);
                 const errorData = await response.json();
                 alert(`فشل تحديث حالة الطلب: ${errorData.error}`);
@@ -94,18 +109,26 @@ const OrdersPage = () => {
         }
     };
 
+    // 🎯 تصحيح: تعديل خريطة التصدير لتقرأ من مسميات الفايربيس الصحيحة بالتفصيل
     const exportToExcel = () => {
-        const dataToExport = orders.map(order => ({
-            'رقم الطلب': order.id,
-            'تاريخ الطلب': new Date(order.createdAt).toLocaleString('ar-EG'),
-            'اسم العميل': order.customerName,
-            'رقم الجوال': order.customerPhone,
-            'العنوان التفصيلي': order.customerAddress,
-            'المنتجات المطلوبة': order.items.map(item => `${item.name} (x${item.quantity})`).join(', '),
-            'إجمالي المبلغ': order.total,
-            'حالة الدفع': 'كاش عند الاستلام',
-            'حالة الطلب': getStatusDetails(order.status).text,
-        }));
+        const dataToExport = orders.map(order => {
+            const address = order.shippingAddress || {};
+            const fullAddress = `${address.governorate || ''}، ${address.city || ''}، ${address.streetAddress || ''}`;
+            
+            return {
+                'رقم الطلب': order.id,
+                'تاريخ الطلب': order.createdAt ? new Date(order.createdAt).toLocaleString('ar-EG') : 'غير محدد',
+                'اسم العميل': address.recipientName || 'غير مسجل',
+                'رقم الجوال': address.phone || 'غير مسجل',
+                'العنوان التفصيلي': fullAddress,
+                'المنتجات المطلوبة': order.items ? order.items.map(item => `${item.name} (x${item.quantity})`).join(' - ') : '',
+                'إجمالي المنتجات': order.totalAmount || 0,
+                'مصاريف الشحن': order.shippingFee || 0,
+                'الإجمالي الكلي': (order.totalAmount || 0) + (order.shippingFee || 0),
+                'طريقة الدفع': order.payment?.method === 'cash_on_delivery' ? 'كاش عند الاستلام' : order.payment?.method || 'كاش',
+                'حالة الطلب': getStatusDetails(order.status).text,
+            };
+        });
 
         const worksheet = XLSX.utils.json_to_sheet(dataToExport);
         const workbook = XLSX.utils.book_new();
@@ -113,9 +136,13 @@ const OrdersPage = () => {
         XLSX.writeFile(workbook, 'طلبات_دار_اللغات.xlsx');
     };
 
+    // 🎯 تصحيح: استخراج رقم الهاتف والاسم بشكل سليم من كائن الشحن للواتساب
     const getWhatsAppLink = (order: Order) => {
-        const cleanPhone = order.customerPhone.replace(/[^0-9]/g, '');
-        const message = `أهلاً بك ${order.customerName} في مكتبات دار اللغات، بخصوص طلبك رقم ${order.id}. طلب حضرتك مع المندوب الآن وسيتم التسليم اليوم من الساعه السادسة مساء الى 11 مساء`;
+        const phone = order.shippingAddress?.phone || '';
+        const name = order.shippingAddress?.recipientName || '';
+        const cleanPhone = phone.replace(/[^0-9]/g, '');
+        
+        const message = `أهلاً بك ${name} في مكتبات دار اللغات، بخصوص طلبك رقم ${order.id}. طلب حضرتك مع المندوب الآن وسيتم التسليم اليوم من الساعه السادسة مساء الى 11 مساء`;
         return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     };
 
@@ -128,11 +155,11 @@ const OrdersPage = () => {
     }
 
     return (
-        <div className={styles.ordersContainer}>
+        <div className={styles.ordersContainer} dir="rtl">
             <div className={styles.headerContainer}>
                 <h1 className={styles.title}>سجل الطلبات الواردة</h1>
                 <button onClick={exportToExcel} className={styles.exportButton} disabled={orders.length === 0}>
-                    تصدير كشف إلى Excel
+                    📊 تصدير كشف إلى Excel
                 </button>
             </div>
             
@@ -140,49 +167,54 @@ const OrdersPage = () => {
                 <p className={styles.noOrders}>لا توجد طلبات مسجلة حتى الآن.</p>
             ) : (
                 <div className={styles.ordersList}>
-                    {orders.map((order) => (
-                        <div key={order.id} className={styles.orderCard}>
-                            <div className={styles.cardHeader}>
-                                <div>
-                                    <h2>طلب من: {order.customerName}</h2>
-                                    <p className={styles.date}>بتاريخ: {new Date(order.createdAt).toLocaleString('ar-EG')}</p>
+                    {orders.map((order) => {
+                        const address = order.shippingAddress || {};
+                        return (
+                            <div key={order.id} className={styles.orderCard}>
+                                <div className={styles.cardHeader}>
+                                    <div>
+                                        <h2>طلب من: {address.recipientName || 'عميل مجهول'}</h2>
+                                        <p className={styles.date}>بتاريخ: {order.createdAt ? new Date(order.createdAt).toLocaleString('ar-EG') : 'غير محدد'}</p>
+                                    </div>
+                                     <span className={`${styles.statusBadge} ${getStatusDetails(order.status).className}`}>
+                                        {getStatusDetails(order.status).text}
+                                    </span>
                                 </div>
-                                 <span className={`${styles.statusBadge} ${getStatusDetails(order.status).className}`}>
-                                    {getStatusDetails(order.status).text}
-                                </span>
+                                <div className={styles.cardBody}>
+                                    <p><strong>الهاتف:</strong> {address.phone || 'لا يوجد'}</p>
+                                    <p><strong>العنوان:</strong> {`${address.governorate || ''}، ${address.city || ''}، ${address.streetAddress || ''}`}</p>
+                                    <p><strong>إجمالي الحساب:</strong> <span className="font-bold text-green-600">{(order.totalAmount || 0) + (order.shippingFee || 0)} EGP</span></p>
+                                    
+                                    <h3 className={styles.itemsTitle}>المنتجات:</h3>
+                                    <ul className={styles.itemsList}>
+                                        {order.items && order.items.map((item, index) => (
+                                            <li key={index} className={styles.item}>
+                                                {item.imageUrl && <img src={item.imageUrl} alt={item.name} className={styles.itemImage} style={{width: '40px', height: '40px', objectFit: 'cover'}} />}
+                                                <div className={styles.itemDetails}>
+                                                    <span>{item.name} (x{item.quantity}) - {item.price} EGP</span>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                 <div className={styles.cardActions}>
+                                    <select 
+                                        value={order.status}
+                                        onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
+                                        className={styles.statusSelect}
+                                    >
+                                        <option value="new">طلب جديد</option>
+                                        <option value="processing">جاري التجهيز</option>
+                                        <option value="delivered">تم التسليم</option>
+                                        <option value="cancelled">ملغي</option>
+                                    </select>
+                                    <a href={getWhatsAppLink(order)} target="_blank" rel="noopener noreferrer" className={styles.whatsappButton}>
+                                        <FaWhatsapp /> إرسال تحديث
+                                    </a>
+                                </div>
                             </div>
-                            <div className={styles.cardBody}>
-                                <p><strong>الهاتف:</strong> {order.customerPhone}</p>
-                                <p><strong>العنوان:</strong> {order.customerAddress}</p>
-                                
-                                <h3 className={styles.itemsTitle}>المنتجات:</h3>
-                                <ul className={styles.itemsList}>
-                                    {order.items.map((item, index) => (
-                                        <li key={index} className={styles.item}>
-                                            <img src={item.imageUrl} alt={item.name} className={styles.itemImage} />
-                                            <div className={styles.itemDetails}>
-                                                <span>{item.name} (x{item.quantity})</span>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                             <div className={styles.cardActions}>
-                                <select 
-                                    value={order.status}
-                                    onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
-                                    className={styles.statusSelect}
-                                >
-                                    <option value="processing">جاري التجهيز</option>
-                                    <option value="delivered">تم التسليم</option>
-                                    <option value="cancelled">ملغي</option>
-                                </select>
-                                <a href={getWhatsAppLink(order)} target="_blank" rel="noopener noreferrer" className={styles.whatsappButton}>
-                                    <FaWhatsapp /> إرسال تحديث
-                                </a>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

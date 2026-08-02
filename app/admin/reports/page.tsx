@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import styles from './ReportsPage.module.css';
 
-// A combined type for simplified data handling
 interface ProductReport {
     productId: string;
     name: string;
@@ -11,7 +10,6 @@ interface ProductReport {
     salesCount: number;
 }
 
-// Keep the Order types for fetching
 interface OrderItem {
     productId: string;
     name: string;
@@ -32,38 +30,43 @@ const ReportsPage = () => {
         const generateReport = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('/api/orders');
+                const response = await fetch('/api/orders', { credentials: 'include' });
+                const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error('فشل في تحميل بيانات الطلبات للتقرير');
+                    throw new Error(data.error || 'فشل في تحميل بيانات الطلبات للتقرير');
                 }
 
-                const orders: Order[] = await response.json();
+                // 🎯 منع الانهيار: التأكد التام من أن السيرفر أعاد مصفوفة وليس كائن خطأ
+                const orders: Order[] = Array.isArray(data) ? data : [];
 
-                // Aggregate product sales
+                if (orders.length === 0) {
+                    setReportData([]);
+                    return;
+                }
+
                 const productSales: { [key: string]: ProductReport } = {};
 
                 orders.forEach(order => {
-                    order.items.forEach(item => {
-                        // Only process items that have a valid productId
-                        if (item.productId) { 
-                            if (productSales[item.productId]) {
-                                productSales[item.productId].salesCount += item.quantity;
-                            } else {
-                                productSales[item.productId] = {
-                                    productId: item.productId,
-                                    name: item.name,
-                                    imageUrl: item.imageUrl,
-                                    salesCount: item.quantity,
-                                };
+                    if (order && order.items && Array.isArray(order.items)) {
+                        order.items.forEach(item => {
+                            if (item && item.productId) { 
+                                if (productSales[item.productId]) {
+                                    productSales[item.productId].salesCount += Number(item.quantity || 0);
+                                } else {
+                                    productSales[item.productId] = {
+                                        productId: item.productId,
+                                        name: item.name || 'منتج غير معروف',
+                                        imageUrl: item.imageUrl || '/placeholder.png',
+                                        salesCount: Number(item.quantity || 0),
+                                    };
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 });
 
-                // Convert to array and sort by salesCount descending
                 const sortedReport = Object.values(productSales).sort((a, b) => b.salesCount - a.salesCount);
-
                 setReportData(sortedReport);
 
             } catch (err: any) {
@@ -81,16 +84,16 @@ const ReportsPage = () => {
     }
 
     if (error) {
-        return <div className={styles.error}>خطأ: {error}</div>;
+        return <div className={styles.error}>خطأ في التقرير: {error}</div>;
     }
 
     return (
-        <div className={styles.reportsContainer}>
+        <div className={styles.reportsContainer} dir="rtl">
             <h1 className={styles.title}>تقرير المنتجات الأكثر طلباً</h1>
-            <p className={styles.subtitle}>تحليل للمنتجات الأكثر مبيعاً بناءً على سجل الطلبات</p>
+            <p className={styles.subtitle}>تحليل للمنتجات الأكثر مبيعاً بناءً على سجل الطلبات الواردة</p>
 
             {reportData.length === 0 ? (
-                <p className={styles.noData}>لا توجد بيانات كافية لإنشاء التقرير.</p>
+                <p className={styles.noData}>لا توجد بيانات كافية لإنشاء التقرير حالياً.</p>
             ) : (
                 <div className={styles.reportList}>
                     <div className={styles.listHeader}>
@@ -101,7 +104,7 @@ const ReportsPage = () => {
                         <div key={`${product.productId}-${index}`} className={styles.reportItem}>
                             <div className={styles.productInfo}>
                                 <span className={styles.rank}>{index + 1}</span>
-                                <img src={product.imageUrl} alt={product.name} className={styles.productImage} />
+                                <img src={product.imageUrl} alt={product.name} className={styles.productImage} style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px'}} />
                                 <span>{product.name}</span>
                             </div>
                             <div className={styles.salesCount}>

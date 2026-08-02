@@ -4,25 +4,26 @@ import { useRouter } from 'next/navigation';
 import styles from './BlogAdmin.module.css';
 
 interface DeleteButtonProps {
-    postId: string;
+    postSlug: string; // 🎯 استلام الـ slug وليس الـ ID
 }
 
-export default function DeleteButton({ postId }: DeleteButtonProps) {
+export default function DeleteButton({ postSlug }: DeleteButtonProps) {
     const router = useRouter();
 
     const handleDelete = async () => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذا المقال؟ لا يمكن التراجع عن هذا الإجراء.')) {
             try {
-                const response = await fetch(`/api/posts/${postId}`, {
+                // 🎯 تمرير الـ slug في الرابط متوافقاً مع السيرفر أعلاه
+                const response = await fetch(`/api/posts?slug=${encodeURIComponent(postSlug)}`, {
                     method: 'DELETE',
                 });
 
                 if (!response.ok) {
                     const data = await response.json();
-                    throw new Error(data.error || 'Failed to delete post');
+                    throw new Error(data.message || 'Failed to delete post');
                 }
 
-                // Refresh the server component to show the updated list
+                // تحديث قائمة المقالات فوراً في المتصفح
                 router.refresh();
 
             } catch (err: any) {
