@@ -9,8 +9,8 @@ import { useAuth } from '../context/AuthContext';
 import styles from './Login.module.css';
 import { FaGoogle } from 'react-icons/fa';
 
-// 🎯 جديد: استيراد دوال Firebase المباشرة لتشغيل نظام الـ Redirect
-import { getAuth, signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
+// 🎯 تصحيح: استيراد signInWithPopup بدلاً من signInWithRedirect المسبب للانهيار
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 const LoginPage = () => {
   const { user, isAdmin, loading } = useAuth();
@@ -23,7 +23,7 @@ const LoginPage = () => {
     }
   }, [user, isAdmin, loading, router]);
 
-  // 🎯 تعديل: تشغيل الـ Redirect بدلاً من الـ Popup الميت لمنع حظر المتصفح
+  // 🎯 تصحيح ذهبي: تشغيل الـ Popup لإنهاء أخطاء الـ 431 والـ Socket Hang Up نهائياً ومجاناً
   const handleLogin = async () => {
     try {
       const auth = getAuth();
@@ -32,9 +32,11 @@ const LoginPage = () => {
       // إجبار جوجل على إظهار قائمة اختيار الحسابات لضمان الدخول بحسابك الصحيح
       provider.setCustomParameters({ prompt: 'select_account' });
       
-      await signInWithRedirect(auth, provider);
+      // فتح نافذة منبثقة آمنة ومستقرة تماماً بداخل المتصفح
+      await signInWithPopup(auth, provider);
+      
     } catch (error) {
-      console.error("خطأ أثناء تحويل تسجيل الدخول بجوجل:", error);
+      console.error("خطأ أثناء تسجيل الدخول بنظام الـ Popup الخاص بجوجل:", error);
     }
   };
 
@@ -53,7 +55,6 @@ const LoginPage = () => {
           <p className={styles.subtitle}>
             يرجى تسجيل الدخول بالحساب المصرح له.
           </p>
-          {/* 🎯 إضافة زر لإتاحة إعادة المحاولة بالحساب الصحيح دون تعليق */}
           <button onClick={handleLogin} className={styles.googleButton} style={{ marginTop: '20px' }}>
             <FaGoogle className={styles.googleIcon} />
             تبديل الحساب والدخول كمشرف
@@ -72,7 +73,7 @@ const LoginPage = () => {
           <FaGoogle className={styles.googleIcon} />
           تسجيل الدخول باستخدام Google
         </button>
-        <p className={styles.privacyNote}>الدخول آمن ومباشر عبر إعادة توجيه Google الرسمية.</p>
+        <p className={styles.privacyNote}>الدخول آمن ومباشر عبر نافذة Google الرسمية المستقرة.</p>
       </div>
     </div>
   );
