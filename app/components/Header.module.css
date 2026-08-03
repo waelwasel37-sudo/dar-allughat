@@ -169,25 +169,31 @@
         flex-direction: column;
         position: fixed;
         top: 0;
-        right: 0;
+        left: 0; /* التزام جهة اليسار بدقة */
+        right: auto;
         width: 75vw;
         max-width: 320px;
         height: 100vh;
         background-color: var(--color-background);
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.15);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.15); 
         padding: 2rem 1.5rem;
         z-index: 9999;
         align-items: flex-start;
         gap: 1.5rem;
-        /* 🎯 أداء معزز وخفيف جداً: استخدام الـ transform السريع للأنيميشن على الموبايل */
-        transform: translateX(100%);
-        transition: transform 0.3s ease-in-out;
         display: flex; 
+        
+        /* ==========================================================================
+           🎯 الحل السحري المشترك: نسف الهامش والغطاء الشفاف من اليمين واليسار معاً
+           ========================================================================== */
+        transform: translateX(-100%); /* طرد القائمة خارج الشاشة تماماً جهة اليسار */
+        visibility: hidden; /* إخفاء الطبقة الشفافة كلياً لمنع ظهورها فوق الكلمات والمنتجات يميناً ويساراً */
+        transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
     }
 
-    /* 🎯 معالجة ذكية ومستقرة لفتح القائمة الجانبية يميناً */
     .nav.mobileMenu {
+        /* إظهار القائمة بشكل سليم فقط عند فتحها يدوياً */
         transform: translateX(0);
+        visibility: visible; 
     }
 
     .menuButton {
