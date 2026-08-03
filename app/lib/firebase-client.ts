@@ -8,8 +8,10 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  // 🎯 إصلاح حاسم: إضافة رابط قاعدة البيانات لحل تحذير Firebase الأخير
+  
+  // 🎯 التصحيح السحري: كتبنا الرابط الأصلي مباشرة لتخطي خطأ الـ 500 والنافذة البيضاء للأبد ومجاناً
+  authDomain: "dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app",
+  
   databaseURL: "https://dar-allughat-97483992-fc6c5-default-rtdb.firebaseio.com/",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
