@@ -2,14 +2,14 @@
 .hero {
   position: relative;
   width: 100%;
-  height: 25vh; 
+  height: 140px; /* 🎯 تعديل ذهبي: حجم ثابت، قصير، ونحيف جداً على شاشات الكمبيوتر ليكون المظهر أنيقاً */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: white;
-  background-color: var(--color-primary); /* يظل الكحلي الفخم لكي يبرز الشعار */
-  padding: 0 15px; 
+  background-color: var(--color-primary); 
+  padding: 0 15px;
 }
 
 .overlay {
@@ -26,32 +26,42 @@
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .title {
-  font-size: 2.2rem; 
+  font-size: 2rem; /* تصغير طفيف ليناسب النحافة الجديدة للصندوق */
   font-weight: 900;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
-  color: #ffffff; /* العنوان الرئيسي أبيض ناصع وقوي */
+  color: #ffffff; 
+  line-height: 1.2;
 }
 
 .subtitle {
-  font-size: 1.2rem; 
+  font-size: 1.1rem; 
   font-weight: 600;
   text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
-  color: #ff8c00; /* 🎯 تعديل ذكي: تلوين النص الفرعي بالبرتقالي الدافئ المتناسق تماماً مع كلمة دار اللغات */
+  color: #ff8c00; /* البرتقالي المتناسق مع الشعار */
+  line-height: 1.3;
 }
 
-/* 📱 شاشات الموبايل */
+/* ==========================================================================
+   📱 شاشات الموبايل: إلغاء الارتفاع الثابت والتحول لمساحة مرنة تمنع الهوامش السيئة
+   ========================================================================== */
 @media (max-width: 768px) {
   .hero {
-    height: 20vh; 
+    height: auto; /* 🎯 إلغاء الحجم الثابت هنا ليتحكم الـ padding في الارتفاع تلقائياً ويمنع اختناق النص */
+    padding: 1.5rem 1rem; /* مسافة عمودية قصيرة، متناسقة وصغيرة جداً تناسب شاشة الهاتف */
   }
+
   .title {
-    font-size: 1.6rem;
+    font-size: 1.4rem; /* حجم خط مثالي لعرض شاشات الموبايل يمنع تداخل السطور */
+    margin-bottom: 0.3rem;
   }
+
   .subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 }
