@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0",
+    "dev": "node --max-http-header-size=32768 ./node_modules/.bin/next dev -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "// 🎯 تصحيح ذهبي": "توسيع حجم قراءة الهيدرز مجاناً على السيرفر السحابي لمنع خطأ 431 و 500 عند تسجيل الدخول",
+    "start": "node --max-http-header-size=32768 ./node_modules/.bin/next start",
     "lint": "next lint",
     "seed:categories": "npx ts-node -r dotenv/config --project tsconfig.scripts.json scripts/seed-categories.ts",
     "test": "jest"
