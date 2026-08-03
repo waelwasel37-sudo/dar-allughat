@@ -25,8 +25,12 @@ const nextConfig = {
   },
 
   async headers() {
-    // ✅ هذا الجزء صحيح
     return [
+      // 🎯 Added cache control for static images
+      {
+        source: '/images/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
       {
         source: '/:path*',
         headers: [

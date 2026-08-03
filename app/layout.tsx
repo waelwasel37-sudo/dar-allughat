@@ -5,7 +5,6 @@ import './globals.css';
 import { Providers } from './providers';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
-import SlideOutCart from './components/SlideOutCart';
 import RelatedProductsBar from './components/RelatedProductsBar'; // ✅ مستورد بنجاح ويفصل التوصيات عن السلة تلقائياً
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
@@ -15,6 +14,12 @@ import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
 import { cn } from "@/lib/utils";
+
+// 🎯 حل التعارض: قمنا باستيراد ميزة التحميل الديناميكي باسم فريد لمنع تضارب الكلمات والانهيار أثناء الـ Build
+import nextDynamic from 'next/dynamic';
+
+// 🎯 التصحيح الذهبي للأداء: تحميل السلة بشكل ديناميكي (Lazy Loading) للتخلص من ثقل ملفات الـ JS غير المستخدمة وتسريع المتجر
+const SlideOutCart = nextDynamic(() => import('./components/SlideOutCart'), { ssr: false });
 
 const noto = Noto_Kufi_Arabic({
   subsets: ['arabic'],

@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FaWhatsapp, FaTrash, FaTimes, FaArrowLeft } from 'react-icons/fa';
+import { FaWhatsapp, FaTrash, FaTimes, FaArrowLeft, FaSpinner } from 'react-icons/fa';
 import styles from './SlideOutCart.module.css';
 import AddressForm from './AddressForm';
 import { CartItem } from '../lib/types';
@@ -19,6 +19,8 @@ export default function SlideOutCart() {
   const [phone, setPhone] = useState('');
   const [governorate, setGovernorate] = useState('');
   const [address, setAddress] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!cartContext) {
     return null;
@@ -37,43 +39,96 @@ export default function SlideOutCart() {
     ? (validationResult.error.format()._errors[0] || validationResult.error.issues[0]?.message)
     : null;
 
-  const handleWhatsAppOrder = () => {
+  const handleCreateOrder = async () => {
     if (!isFormValid) {
-        alert(firstError || 'الرجاء إدخال البيانات بشكل صحيح.');
-        return;
+      alert(firstError || 'الرجاء إدخال البيانات بشكل صحيح.');
+      return;
     }
 
-    const storePhoneNumber = '+201220396597';
-    let message = "أهلاً، أود تأكيد الطلب التالي:\n\n" +
-                  "--- معلومات العميل ---\n" +
-                  `👤 *الاسم:* ${name}\n` +
-                  `📞 *رقم الهاتف:* ${phone}\n` +
-                  `🌍 *المحافظة:* ${governorate}\n` +
-                  `📍 *العنوان:* ${address}\n\n` +
-                  "--- تفاصيل الطلب ---\n";
+    setIsLoading(true);
+    setError(null);
 
-    cart.forEach((item: CartItem) => {
-        const originalPrice = item.price || 0;
-        const finalPrice = item.discount ? originalPrice * (1 - item.discount / 100) : originalPrice;
-        message += "------------------------\n" +
-                   `📖 *المنتج:* ${item.name}\n` +
-                   `🔢 *الكود:* ${item.slug}\n` +
-                   `📦 *الكمية:* ${item.quantity}\n` +
-                   `💲 *السعر:* ${finalPrice.toFixed(2)} جنيه\n` +
-                   `🖼️ *الصورة:* ${item.imageUrl}\n` +
-                   `🔗 *الرابط:* ${window.location.origin}/products/${item.slug}\n`;
-    });
+    // 🎯 Build the payload with the EXACT structure the Admin Panel expects
+    const orderPayload = {
+      items: cart.map((item: CartItem) => ({
+        productId: item.id,
+        name: item.name,
+        slug: item.slug,
+        price: item.discount ? item.price * (1 - item.discount / 100) : item.price,
+        quantity: item.quantity,
+        imageUrl: item.imageUrl
+      })),
+      totalAmount: total, // Correct key: totalAmount
+      shippingAddress: { // Correct nested structure
+        recipientName: name,
+        streetAddress: address,
+        city: governorate, // Using governorate as city as it's the closest available field
+        governorate: governorate,
+        phone: phone,
+      },
+      status: 'new',
+      payment: { // Default payment object for Cash on Delivery
+        method: 'cash_on_delivery',
+        status: 'pending',
+        amount: total,
+        currency: 'EGP',
+      },
+      notes: 'تم إنشاء الطلب عبر سلة التسوق في الموقع.' // Optional: a helpful note
+    };
 
-    message += "------------------------\n\n" +
-               `💰 *الإجمالي النهائي: ${total.toFixed(2)} جنيه*\n\n`;
+    try {
+      // Step 1: Save the correctly structured order to the database
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderPayload),
+      });
 
-    const whatsappUrl = `https://wa.me/${storePhoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'فشل في تسجيل الطلب. الرجاء المحاولة مرة أخرى.');
+      }
 
-    setTimeout(() => {
-      router.push('/thank-you');
-      toggleCart();
-    }, 1000);
+      // Step 2: If order is saved, proceed to WhatsApp
+      const storePhoneNumber = '+201220396597';
+        let message = "أهلاً، أود تأكيد الطلب التالي:\n\n" +
+                      "--- معلومات العميل ---\n" +
+                      `👤 *الاسم:* ${name}\n` +
+                      `📞 *رقم الهاتف:* ${phone}\n` +
+                      `🌍 *المحافظة:* ${governorate}\n` +
+                      `📍 *العنوان:* ${address}\n\n` +
+                      "--- تفاصيل الطلب ---\n";
+
+        cart.forEach((item: CartItem) => {
+            const finalPrice = item.discount ? item.price * (1 - item.discount / 100) : item.price;
+            message += "------------------------\n" +
+                       `📖 *المنتج:* ${item.name}\n` +
+                       `🔢 *الكود:* ${item.slug}\n` +
+                       `📦 *الكمية:* ${item.quantity}\n` +
+                       `💲 *السعر:* ${finalPrice.toFixed(2)} جنيه\n`;
+        });
+
+        message += "------------------------\n\n" +
+                   `💰 *الإجمالي النهائي: ${total.toFixed(2)} جنيه*\n\n`;
+
+      const whatsappUrl = `https://wa.me/${storePhoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+
+      // Step 3: Clear cart and redirect
+      setTimeout(() => {
+        clearCart();
+        router.push('/thank-you');
+        toggleCart();
+      }, 1000);
+
+    } catch (err: any) {
+      setError(err.message || 'حدث خطأ غير متوقع.');
+      alert(err.message || 'حدث خطأ غير متوقع.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -94,23 +149,23 @@ export default function SlideOutCart() {
           <>
             <div className={styles.cartContent}>
               {cart.map((item: CartItem) => {
-                  const finalPrice = item.discount ? item.price * (1 - item.discount / 100) : item.price;
-                  return (
-                    <div key={item.slug} className={styles.cartItem}>
-                      <Image src={item.imageUrl || ''} alt={item.name} width={60} height={90} className={styles.cartItemImage} />
-                      <div className={styles.cartItemDetails}>
-                        <Link href={`/products/${item.slug}`} onClick={toggleCart} className={styles.cartItemName}>{item.name}</Link>
-                        <span className={styles.finalPrice}>{finalPrice.toFixed(2)} جنيه</span>
-                        <div className={styles.cartItemQuantity}>
-                          <button onClick={() => updateQuantity(item.slug, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
-                          <span>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.slug, item.quantity + 1)}>+</button>
-                        </div>
-                        <div className={styles.subtotal}>الإجمالي: {getItemSubtotal(item).toFixed(2)} ج.م</div>
+                const finalPrice = item.discount ? item.price * (1 - item.discount / 100) : item.price;
+                return (
+                  <div key={item.slug} className={styles.cartItem}>
+                    <Image src={item.imageUrl || ''} alt={item.name} width={60} height={90} className={styles.cartItemImage} />
+                    <div className={styles.cartItemDetails}>
+                      <Link href={`/products/${item.slug}`} onClick={toggleCart} className={styles.cartItemName}>{item.name}</Link>
+                      <span className={styles.finalPrice}>{finalPrice.toFixed(2)} جنيه</span>
+                      <div className={styles.cartItemQuantity}>
+                        <button onClick={() => updateQuantity(item.slug, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
+                        <span>{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.slug, item.quantity + 1)}>+</button>
                       </div>
-                      <button onClick={() => removeFromCart(item.slug)} className={styles.removeItemButton}><FaTrash /></button>
+                      <div className={styles.subtotal}>الإجمالي: {getItemSubtotal(item).toFixed(2)} ج.م</div>
                     </div>
-                  );
+                    <button onClick={() => removeFromCart(item.slug)} className={styles.removeItemButton}><FaTrash /></button>
+                  </div>
+                );
               })}
             </div>
 
@@ -122,20 +177,22 @@ export default function SlideOutCart() {
                 onGovernorateChange={setGovernorate}
                 onAddressChange={setAddress}
               />
+              {error && <p className={styles.errorMessage}>{error}</p>}
               <div className={styles.cartActions}>
                 <button
-                  onClick={handleWhatsAppOrder}
-                  className={`${styles.whatsappButton} ${!isFormValid ? styles.disabledButton : ''}`}
-                  disabled={!isFormValid}
+                  onClick={handleCreateOrder}
+                  className={`${styles.whatsappButton} ${!isFormValid || isLoading ? styles.disabledButton : ''}`}
+                  disabled={!isFormValid || isLoading}
                 >
-                  <FaWhatsapp /> إرسال الطلب عبر واتساب
+                  {isLoading ? <FaSpinner className={styles.spinner} /> : <FaWhatsapp />}
+                  {isLoading ? 'جاري تسجيل الطلب...' : 'إتمام الطلب وإرساله واتساب'}
                 </button>
                 <button onClick={clearCart} className={styles.clearCartButton}>تفريغ السلة</button>
               </div>
               {!isFormValid && (
-                  <p className={styles.validationMessage}>
-                      {name || phone || governorate || address ? `📌 ${firstError}` : "📌 يرجى استكمال البيانات لتفعيل الطلب."}
-                  </p>
+                <p className={styles.validationMessage}>
+                  {name || phone || governorate || address ? `📌 ${firstError}` : "📌 يرجى استكمال البيانات لتفعيل الطلب."}
+                </p>
               )}
             </div>
           </>

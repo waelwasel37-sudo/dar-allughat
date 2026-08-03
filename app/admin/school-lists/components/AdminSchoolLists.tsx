@@ -1,141 +1,182 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/app/lib/firebase-client';
-import { FaTrash } from 'react-icons/fa';
+import { useState, useEffect, useCallback } from 'react';
+import type { SchoolListRequest } from '@/app/lib/types';
+import { trackFbqEvent } from '@/app/lib/fpixel'; // Import the tracking helper
+import { FaExternalLinkAlt, FaSync, FaFileExcel } from 'react-icons/fa';
+import * as XLSX from 'xlsx';
 
-// 🎯 1. تحديث واجهة البيانات لتعكس حقول طلبات أولياء الأمور الفعلية
-interface SchoolListRequest {
-    id: string;
-    fullName?: string; // اسم ولي الأمر
-    name?: string; // حقل احتياطي للاسم
-    phone: string; // رقم هاتف ولي الأمر
-    address?: string; // عنوان ولي الأمر
-    imageUrl?: string; // رابط صورة القائمة المرفوعة
-    image?: string; // حقل احتياطي لرابط الصورة
-    status: 'new' | 'approved' | 'rejected';
-    createdAt: any; 
-}
-
-// 2. تحديث ترجمة الحالات
-const statusTranslations = {
-    new: { text: 'جديد', color: 'bg-amber-100 text-amber-800' },
-    approved: { text: 'مقبول', color: 'bg-green-100 text-green-800' },
-    rejected: { text: 'مرفوض', color: 'bg-red-100 text-red-800' }
+const statusTranslations: { [key in SchoolListRequest['status']]: string } = {
+    new: 'جديد',
+    'in-progress': 'قيد التنفيذ',
+    completed: 'مكتمل',
 };
 
-export default function AdminSchoolLists() {
-    const [requests, setRequests] = useState<SchoolListRequest[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+const AdminSchoolLists = () => {
+  const [requests, setRequests] = useState<SchoolListRequest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const requestsCollection = collection(db, 'school-lists');
-        const q = query(requestsCollection, orderBy('createdAt', 'desc'));
+  const fetchRequests = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/school-list');
+      if (!response.ok) {
+        throw new Error('Failed to fetch data. You may not be logged in as an admin.');
+      }
+      const data = await response.json();
+      setRequests(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-        const unsubscribe = onSnapshot(q, 
-            (snapshot) => {
-                const data = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as SchoolListRequest[];
-                setRequests(data);
-                setIsLoading(false);
-            }, 
-            (err) => {
-                console.error("Firestore error:", err);
-                setError("فشل تحميل الطلبات.");
-                setIsLoading(false);
-            }
-        );
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
 
-        return () => unsubscribe();
-    }, []);
+  const handleStatusChange = async (id: string, newStatus: 'new' | 'in-progress' | 'completed') => {
+    try {
+        const response = await fetch('/api/school-list', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, status: newStatus }),
+        });
 
-    const handleStatusChange = async (id: string, newStatus: SchoolListRequest['status']) => {
-        const docRef = doc(db, 'school-lists', id);
-        await updateDoc(docRef, { status: newStatus });
-    };
+        if (!response.ok) {
+            throw new Error('Failed to update status.');
+        }
 
-    const handleDeleteRequest = async (id: string) => {
-        if (!confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) return;
-        const docRef = doc(db, 'school-lists', id);
-        await deleteDoc(docRef);
-    };
+        trackFbqEvent('ChangeRequestStatus', { 
+            request_id: id,
+            new_status: newStatus 
+        });
 
-    if (isLoading) return <div className="text-center p-10 font-bold">جاري تحميل الطلبات...</div>;
-    if (error) return <div className="text-center p-10 text-red-600 font-bold">{error}</div>;
+        setRequests(prev => prev.map(req => req.id === id ? { ...req, status: newStatus } : req));
 
-    return (
-        <div className="bg-white shadow-md rounded-lg overflow-x-auto" dir="rtl">
-            {requests.length === 0 ? (
-                <p className="text-gray-500 text-center py-12">لا توجد طلبات قوائم مدرسية حالياً.</p>
-            ) : (
-                <table className="min-w-full table-auto">
-                    {/* 🎯 3. تحديث أعمدة الجدول لتناسب بيانات أولياء الأمور */}
-                    <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                        <tr>
-                            <th className="py-3 px-6 text-right">اسم ولي الأمر</th>
-                            <th className="py-3 px-6 text-right">رقم الهاتف</th>
-                            <th className="py-3 px-6 text-right">العنوان</th>
-                            <th className="py-3 px-6 text-right">صورة القائمة</th>
-                            <th className="py-3 px-6 text-right">تاريخ الطلب</th>
-                            <th className="py-3 px-6 text-center">الحالة</th>
-                            <th className="py-3 px-6 text-center">الإجراءات</th>
-                        </tr>
-                    </thead>
-                    {/* 🎯 4. تحديث جسم الجدول لعرض البيانات الجديدة بشكل عملي */}
-                    <tbody className="text-gray-800 text-sm font-light">
-                        {requests.map((list) => (
-                            <tr key={list.id} className="border-b border-gray-200 hover:bg-gray-50">
-                                <td className="py-3 px-6 text-right whitespace-nowrap font-medium">
-                                    {list.fullName || list.name || 'بدون اسم'}
-                                </td>
-                                <td className="py-3 px-6 text-right">
-                                    <a href={`tel:${list.phone}`} className="text-blue-600 underline font-semibold">
-                                        {list.phone || 'بدون هاتف'}
-                                    </a>
-                                </td>
-                                <td className="py-3 px-6 text-right max-w-xs whitespace-pre-wrap">
-                                    {list.address || 'بدون عنوان'}
-                                </td>
-                                <td className="py-3 px-6 text-right">
-                                    {list.imageUrl || list.image ? (
-                                        <a href={list.imageUrl || list.image} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-md px-3 py-1 text-xs font-bold text-blue-700 transition-all">
-                                            📂 فتح الصورة
-                                        </a>
-                                    ) : (
-                                        <span className="text-gray-400 text-xs">لا توجد</span>
-                                    )}
-                                </td>
-                                <td className="py-3 px-6 text-right">
-                                    {list.createdAt?.toDate ? new Date(list.createdAt.toDate()).toLocaleDateString('ar-EG') : 'غير مسجل'}
-                                </td>
-                                <td className="py-3 px-6 text-center">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${statusTranslations[list.status]?.color || 'bg-gray-200'}`}>
-                                        {statusTranslations[list.status]?.text || list.status}
-                                    </span>
-                                </td>
-                                <td className="py-3 px-6 text-center flex items-center justify-center gap-2">
-                                    <select 
-                                        value={list.status}
-                                        onChange={(e) => handleStatusChange(list.id, e.target.value as SchoolListRequest['status'])}
-                                        className="border rounded px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="new">جديد</option>
-                                        <option value="approved">قبول</option>
-                                        <option value="rejected">رفض</option>
-                                    </select>
-                                    <button onClick={() => handleDeleteRequest(list.id)} className="text-red-500 hover:text-red-700 p-1" title="حذف">
-                                        <FaTrash />
-                                    </button>
-                                </td>
+    } catch (err: any) {
+        setError(err.message);
+    }
+  };
+  
+  // 🎯 Function to handle exporting data to Excel
+  const handleExport = () => {
+      if (requests.length === 0) {
+          alert('لا توجد بيانات للتصدير.');
+          return;
+      }
+      const dataToExport = requests.map(req => ({
+          'الاسم الكامل': req.fullName,
+          'رقم الهاتف': req.phone,
+          'العنوان': req.address,
+          'تاريخ الطلب': new Date(req.createdAt).toLocaleDateString('ar-EG'),
+          'الحالة': statusTranslations[req.status],
+          'رابط الصورة': req.imageUrl,
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'طلبات القوائم المدرسية');
+      
+      // Set column widths for better readability
+      worksheet['!cols'] = [
+          { wch: 25 }, { wch: 15 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 50 }
+      ];
+      
+      XLSX.writeFile(workbook, 'طلبات_القوائم_المدرسية.xlsx');
+  };
+
+  return (
+    <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
+        <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h1 className="text-3xl font-bold text-gray-800">طلبات القوائم المدرسية</h1>
+                <div className="flex gap-2">
+                    <button 
+                        onClick={fetchRequests} 
+                        disabled={isLoading}
+                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+                    >
+                        <FaSync className={isLoading ? 'animate-spin' : ''} />
+                        <span>تحديث</span>
+                    </button>
+                    <button
+                        onClick={handleExport}
+                        className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors"
+                    >
+                        <FaFileExcel />
+                        <span>تصدير إلى Excel</span>
+                    </button>
+                </div>
+            </div>
+
+            {isLoading && <div className="text-center py-8">جاري تحميل الطلبات...</div>}
+            {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md"><strong>خطأ:</strong> {error}</div>}
+
+            {!isLoading && !error && requests.length === 0 && (
+                <div className="text-center py-8 bg-white shadow rounded-lg">
+                    <p className="text-gray-500">لا توجد أي طلبات حالياً.</p>
+                </div>
+            )}
+
+            {!isLoading && !error && requests.length > 0 && (
+                <div className="shadow-md overflow-x-auto rounded-lg">
+                    <table className="min-w-full bg-white leading-normal">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">العميل</th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">التاريخ</th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">صورة القائمة</th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">الحالة</th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">تغيير الحالة</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {requests.map((req) => (
+                                <tr key={req.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                    <td className="px-5 py-4 whitespace-nowrap">
+                                        <p className="text-gray-900 font-semibold">{req.fullName}</p>
+                                        {req.phone && <p className="text-gray-600 text-sm">{req.phone}</p>}
+                                        {req.address && <p className="text-gray-500 text-xs mt-1">{req.address}</p>}
+                                    </td>
+                                    <td className="px-5 py-4 text-sm text-gray-600">{new Date(req.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
+                                    <td className="px-5 py-4">
+                                        <a href={req.imageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 flex items-center gap-2">
+                                            عرض الصورة <FaExternalLinkAlt size={12}/>
+                                        </a>
+                                    </td>
+                                    <td className="px-5 py-4">
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${{
+                                            'new': 'bg-blue-200 text-blue-800',
+                                            'in-progress': 'bg-yellow-200 text-yellow-800',
+                                            'completed': 'bg-green-200 text-green-800'
+                                        }[req.status] || 'bg-gray-200 text-gray-800'}`}>
+                                            {statusTranslations[req.status] || req.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-4 text-sm">
+                                        <select 
+                                            value={req.status} 
+                                            onChange={(e) => handleStatusChange(req.id, e.target.value as any)}
+                                            className="border border-gray-300 rounded-md p-1"
+                                        >
+                                            <option value="new">جديد</option>
+                                            <option value="in-progress">قيد التنفيذ</option>
+                                            <option value="completed">مكتمل</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
-    );
-}
+    </div>
+  );
+};
+
+export default AdminSchoolLists;

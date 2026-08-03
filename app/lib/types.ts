@@ -42,6 +42,17 @@ export type CartItem = Product & {
   quantity: number;
 };
 
+// This is the data structure for creating a new order from the cart
+export type OrderData = {
+  customerName: string;
+  customerPhone: string;
+  customerGovernorate: string;
+  customerAddress: string;
+  items: CartItem[];
+  total: number;
+  status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+};
+
 export type Category = {
   id: string;
   name: string;
