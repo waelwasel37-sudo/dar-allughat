@@ -1,4 +1,3 @@
-
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -9,8 +8,8 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   
-  // 🎯 التصحيح السحري: كتبنا الرابط الأصلي مباشرة لتخطي خطأ الـ 500 والنافذة البيضاء للأبد ومجاناً
-  authDomain: "dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app",
+  // 🎯 التصحيح النهائي القاطع: استخدام النطاق الأصلي لـ Firebase لتجاوز البروكسي المعطوب
+  authDomain: "dar-allughat-97483992-fc6c5.firebaseapp.com",
   
   databaseURL: "https://dar-allughat-97483992-fc6c5-default-rtdb.firebaseio.com/",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
