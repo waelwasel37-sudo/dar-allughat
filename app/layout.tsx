@@ -33,6 +33,11 @@ export const metadata: Metadata = {
     metadataBase: new URL('https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app'),
     title: 'دار اللغات: كتب ومستلزمات مدرسية في مدينة العبور',
     description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية.',
+    icons: {
+      // 🎯 تصحيح ذهبي: الإشارة للاسم الدقيق لأيقونة التبويب الدائرية داخل مجلد images لإنهاء الـ 400 null
+      icon: '/images/logo-circular.png', 
+      apple: '/images/logo-circular.png', 
+    },
 };
 
 async function SessionFetcher({ children }: { children: (session: SessionData) => React.ReactNode }) {
@@ -56,10 +61,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Facebook Pixel Script - 🚀 مطابق ومعتمد بالرقم الفعلي للبيكسل الخاص بك */}
+        {/* Facebook Pixel Script - 🚀 تحديث الاستراتيجية لـ afterInteractive لتحسين أداء سلسلة المهام الرئيسية */}
         <Script
           id="fb-pixel"
-          strategy="lazyOnload" 
+          strategy="afterInteractive" 
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -77,12 +82,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         {/* Google tag (gtag.js) - 🚀 معرّف التتبع الصحيح والرابط الكامل لمتجرك */}
         <Script
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-5B1BGCLTM8"
         />
         <Script
           id="gtag-init"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -93,7 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body>
+      <body className="antialiased">
         <Providers>
           <SessionFetcher>
             {(session) => (

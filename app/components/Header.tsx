@@ -52,7 +52,7 @@ const Header = ({ session }: HeaderProps) => {
     } else {
       setNewRequestsCount(0);
       setNewFactoryRequestsCount(0);
-    } 
+    }
   }, [isAdmin, user]);
 
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
@@ -63,6 +63,7 @@ const Header = ({ session }: HeaderProps) => {
       {/* 1. الشريط العلوي الجديد للمعلومات الثانوية */}
       <div className={styles.topBar}>
         <div className={styles.topBarContainer}>
+          {/* 🎯 هنا يتواجد الرقم الضريبي الخاص بالمتجر */}
           <p className={styles.taxNumber}>الرقم الضريبي: 769499732</p>
           <div className={styles.socialLinks}>
             {/* 🎯 إضافة الـ aria-label لحل مشاكل التقرير وقارئ الشاشة */}
@@ -78,6 +79,7 @@ const Header = ({ session }: HeaderProps) => {
       <div className={styles.header}>
         <div className={styles.logo}>
           <Link href="/" onClick={closeMobileMenu}>
+            {/* 🎯 تصحيح ذهبي: تعديل مسار واسم صورة الشعار لتتوافق مع الـ public وتختفي الأخطاء */}
             <Image
               src="/images/logo-horizontal.png" 
               alt="شعار مكتبات دار اللغات"
@@ -100,7 +102,7 @@ const Header = ({ session }: HeaderProps) => {
                 {newRequestsCount > 0 && <span className={styles.notificationBadge}>{newRequestsCount}</span>}
               </Link>
               <Link href="/admin/factory-supplies" onClick={closeMobileMenu} className={styles.notificationLink}>
-                طلبات Companies
+                طلبات الشركات
                 {newFactoryRequestsCount > 0 && <span className={styles.notificationBadge} style={{backgroundColor: '#dc2626'}}>{newFactoryRequestsCount}</span>}
               </Link>
             </>

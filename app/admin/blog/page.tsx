@@ -40,22 +40,21 @@ const BlogAdminPage = () => {
         fetchPosts();
     }, []);
 
-    // Handler for deleting a post
-    const handleDelete = async (postId: string) => {
+    // 🎯 تصحيح دالة الحذف: استقبال الـ slug وتمريره عبر الرابط متوافقاً مع الـ Backend
+    const handleDelete = async (postSlug: string) => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذا المقال؟ لا يمكن التراجع عن هذا الإجراء.')) {
             try {
-                const response = await fetch('/api/posts', {
+                // إرسال طلب الـ DELETE مع الـ slug المشفر كـ Query Parameter
+                const response = await fetch(`/api/posts?slug=${encodeURIComponent(postSlug)}`, {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: postId }),
                 });
 
                 if (!response.ok) {
                     const data = await response.json();
-                    throw new Error(data.error || 'Failed to delete post');
+                    throw new Error(data.message || 'Failed to delete post');
                 }
 
-                // Refresh the list of posts after deletion
+                // تحديث قائمة المقالات فوراً بعد الحذف الناجح
                 await fetchPosts(); 
 
             } catch (err: any) {
@@ -102,11 +101,14 @@ const BlogAdminPage = () => {
                                     <Link href={`/admin/blog/edit/${encodeURIComponent(post.slug)}`} className={`${styles.actionButton} ${styles.editButton}`}>
                                         تعديل
                                     </Link>
+                                    
+                                    {/* 🎯 تصحيح زر الحذف: تمرير post.slug بدلاً من post.id لتجنب خطأ الـ 400 */}
                                     <button 
-                                        onClick={() => handleDelete(post.id)} 
+                                        onClick={() => handleDelete(post.slug)} 
                                         className={`${styles.actionButton} ${styles.deleteButton}`}>
                                         حذف
                                     </button>
+                                    
                                     <Link href={`/blog/${post.slug}`} className={`${styles.actionButton} ${styles.viewButton}`} target="_blank" rel="noopener noreferrer">
                                         عرض
                                     </Link>
