@@ -28,6 +28,11 @@ export default function SlideOutCart() {
 
   const { cart, updateQuantity, removeFromCart, clearCart, getCartTotal, getItemSubtotal, isCartOpen, toggleCart } = cartContext;
 
+  // 🎯 تصحيح ذهبي: إذا كانت السلة مغلقة، لا تقم برندر أو عرض أي شيء نهائياً لحماية صفحات المقالات والجوال
+  if (!isCartOpen) {
+    return null;
+  }
+
   const total = useMemo(() => getCartTotal(), [cart, getCartTotal]);
 
   const validationResult = useMemo(() => {
@@ -48,7 +53,6 @@ export default function SlideOutCart() {
     setIsLoading(true);
     setError(null);
 
-    // 🎯 Build the payload with the EXACT structure the Admin Panel expects
     const orderPayload = {
       items: cart.map((item: CartItem) => ({
         productId: item.id,
@@ -58,26 +62,25 @@ export default function SlideOutCart() {
         quantity: item.quantity,
         imageUrl: item.imageUrl
       })),
-      totalAmount: total, // Correct key: totalAmount
-      shippingAddress: { // Correct nested structure
+      totalAmount: total,
+      shippingAddress: {
         recipientName: name,
         streetAddress: address,
-        city: governorate, // Using governorate as city as it's the closest available field
+        city: governorate,
         governorate: governorate,
         phone: phone,
       },
       status: 'new',
-      payment: { // Default payment object for Cash on Delivery
+      payment: {
         method: 'cash_on_delivery',
         status: 'pending',
         amount: total,
         currency: 'EGP',
       },
-      notes: 'تم إنشاء الطلب عبر سلة التسوق في الموقع.' // Optional: a helpful note
+      notes: 'تم إنشاء الطلب عبر سلة التسوق في الموقع.'
     };
 
     try {
-      // Step 1: Save the correctly structured order to the database
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
@@ -91,7 +94,6 @@ export default function SlideOutCart() {
         throw new Error(errorData.message || 'فشل في تسجيل الطلب. الرجاء المحاولة مرة أخرى.');
       }
 
-      // Step 2: If order is saved, proceed to WhatsApp
       const storePhoneNumber = '+201220396597';
         let message = "أهلاً، أود تأكيد الطلب التالي:\n\n" +
                       "--- معلومات العميل ---\n" +
@@ -116,7 +118,6 @@ export default function SlideOutCart() {
       const whatsappUrl = `https://wa.me/${storePhoneNumber}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
 
-      // Step 3: Clear cart and redirect
       setTimeout(() => {
         clearCart();
         router.push('/thank-you');

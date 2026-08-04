@@ -1,12 +1,12 @@
 'use client';
 
-// 🎯 التصحيح الجذري النهائي: إجبار الصفحة على العمل بنظام ديناميكي كامل لتجاوز قفل الـ SECRET_COOKIE_PASSWORD ومنع فشل البناء والـ Build
+// 🎯 التصحيح الجذري النهائي: إجبار الصفحة على العمل بنظام ديناميكية كامل لتجاوز قفل الـ SECRET_COOKIE_PASSWORD ومنع فشل البناء والـ Build
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import styles from './OrdersPage.module.css';
-import { FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp, FaTrash } from 'react-icons/fa';
 
 type OrderStatus = 'new' | 'processing' | 'delivered' | 'cancelled';
 
@@ -103,6 +103,32 @@ const OrdersPage = () => {
         } catch (error) {
             setOrders(originalOrders);
             alert('حدث خطأ في الشبكة. يرجى المحاولة مرة أخرى.');
+        }
+    };
+
+    // 🎯 الدالة الجديدة لحذف الطلب نهائياً من قاعدة البيانات والواجهة
+    const handleDeleteOrder = async (orderId: string) => {
+        if (!confirm('هل أنت متأكد من رغبتك في حذف هذا الطلب نهائياً من سجلات المتجر وقاعدة البيانات؟')) {
+            return;
+        }
+
+        try {
+            // نرسل طلب الحذف برقم الـ orderId المختار إلى السيرفر API
+            const response = await fetch(`/api/orders/${orderId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'فشلت عملية حذف الطلب من السيرفر.');
+            }
+
+            // تحديث الواجهة فوراً ومسح البطاقة الخاصة بالطلب
+            setOrders(prevOrders => prevOrders.filter(o => o.id !== orderId));
+            alert('تم حذف الطلب نهائياً بنجاح.');
+
+        } catch (err: any) {
+            alert(err.message);
         }
     };
 
@@ -206,6 +232,14 @@ const OrdersPage = () => {
                                     <a href={getWhatsAppLink(order)} target="_blank" rel="noopener noreferrer" className={styles.whatsappButton}>
                                         <FaWhatsapp /> إرسال تحديث
                                     </a>
+                                    {/* 🎯 زر الحذف التفاعلي الجديد المضاف بنجاح لإنهاء المشكلة */}
+                                    <button
+                                        onClick={() => handleDeleteOrder(order.id)}
+                                        className="bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-3 py-1.5 rounded-md flex items-center gap-1 transition-colors font-medium border border-red-200"
+                                    >
+                                        <FaTrash size={14} />
+                                        <span>حذف الطلب</span>
+                                    </button>
                                 </div>
                             </div>
                         );

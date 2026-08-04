@@ -1,47 +1,50 @@
 .reportsContainer {
-    padding: 2rem 3rem;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    background-color: #f9fafb; /* Light gray background */
+    min-height: 100vh;
 }
 
 .title {
     font-size: 2.2rem;
-    font-weight: 700;
-    color: #1a73e8;
+    font-weight: bold;
+    color: #111827; /* Darker text */
     margin-bottom: 0.5rem;
 }
 
 .subtitle {
-    font-size: 1.1rem;
-    color: #5f6368;
-    margin-bottom: 2.5rem;
+    font-size: 1rem;
+    color: #6b7280; /* Gray text for subtitle */
+    margin-bottom: 2rem;
 }
 
 .loading, .error, .noData {
     text-align: center;
     font-size: 1.2rem;
-    color: #555;
-    padding: 4rem 0;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .error {
-    color: #d93025;
+    color: #ef4444; /* Red color for errors */
 }
 
 .reportList {
+    background-color: #ffffff;
     border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
 .listHeader {
     display: flex;
     justify-content: space-between;
-    background-color: #f1f3f4;
+    background-color: #f3f4f6; /* Header background */
     padding: 1rem 1.5rem;
-    font-weight: 600;
-    color: #3c4043;
-    border-bottom: 2px solid #e0e0e0;
+    font-weight: bold;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .reportItem {
@@ -49,9 +52,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background-color: #fff;
-    border-bottom: 1px solid #e8eaed;
-    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s;
 }
 
 .reportItem:last-child {
@@ -59,36 +61,64 @@
 }
 
 .reportItem:hover {
-    background-color: #f8f9fa;
+    background-color: #f9fafb;
 }
 
 .productInfo {
     display: flex;
     align-items: center;
-    gap: 1.5rem; /* Gap between rank, image, and name */
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #202124;
+    gap: 1.5rem;
 }
 
 .rank {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #1a73e8;
-    min-width: 25px; /* To align numbers nicely */
-    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #6b7280;
+    width: 30px;
 }
 
 .productImage {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .salesCount {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #34a853; /* Google Green for positive numbers */
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #10b981; /* Green for sales count */
 }
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.headerTitle {
+    flex-grow: 1;
+}
+
+.exportButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #10b981; /* Green background */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.exportButton:hover {
+    background-color: #059669; /* Darker green on hover */
+}
+

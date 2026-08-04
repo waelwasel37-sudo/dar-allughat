@@ -5,6 +5,8 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import styles from './ReportsPage.module.css';
+import { FaFileExcel } from 'react-icons/fa';
+import * as XLSX from 'xlsx';
 
 interface ProductReport {
     productId: string;
@@ -82,6 +84,34 @@ const ReportsPage = () => {
         generateReport();
     }, []);
 
+    const handleExport = () => {
+        if (reportData.length === 0) {
+            alert('لا توجد بيانات لتصديرها.');
+            return;
+        }
+
+        const dataToExport = reportData.map(item => ({
+            'معرف المنتج': item.productId,
+            'اسم المنتج': item.name,
+            'عدد المبيعات': item.salesCount,
+            'رابط الصورة': item.imageUrl,
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'تقرير المنتجات الأكثر مبيعاً');
+
+        worksheet['!cols'] = [
+            { wch: 30 }, // Product ID
+            { wch: 50 }, // Product Name
+            { wch: 15 }, // Sales Count
+            { wch: 60 }, // Image URL
+        ];
+
+        XLSX.writeFile(workbook, 'تقرير_المنتجات_الاكثر_مبيعا.xlsx');
+    };
+
+
     if (loading) {
         return <div className={styles.loading}>جاري إعداد تقرير الأكثر مبيعاً...</div>;
     }
@@ -92,8 +122,19 @@ const ReportsPage = () => {
 
     return (
         <div className={styles.reportsContainer} dir="rtl">
-            <h1 className={styles.title}>تقرير المنتجات الأكثر طلباً</h1>
-            <p className={styles.subtitle}>تحليل للمنتجات الأكثر مبيعاً بناءً على سجل الطلبات الواردة</p>
+            <div className={styles.headerContainer}>
+                <div className={styles.headerTitle}>
+                    <h1 className={styles.title}>تقرير المنتجات الأكثر طلباً</h1>
+                    <p className={styles.subtitle}>تحليل للمنتجات الأكثر مبيعاً بناءً على سجل الطلبات الواردة</p>
+                </div>
+                <button
+                    onClick={handleExport}
+                    className={styles.exportButton}
+                >
+                    <FaFileExcel />
+                    <span>تصدير إلى Excel</span>
+                </button>
+            </div>
 
             {reportData.length === 0 ? (
                 <p className={styles.noData}>لا توجد بيانات كافية لإنشاء التقرير حالياً.</p>

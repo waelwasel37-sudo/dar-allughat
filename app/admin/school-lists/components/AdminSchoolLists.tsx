@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { SchoolListRequest } from '@/app/lib/types';
-import { trackFbqEvent } from '@/app/lib/fpixel'; // Import the tracking helper
-import { FaExternalLinkAlt, FaSync, FaFileExcel } from 'react-icons/fa';
+import { trackFbqEvent } from '@/app/lib/fpixel'; 
+import { FaExternalLinkAlt, FaSync, FaFileExcel, FaTrash } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 
 const statusTranslations: { [key in SchoolListRequest['status']]: string } = {
@@ -61,8 +61,29 @@ const AdminSchoolLists = () => {
         setError(err.message);
     }
   };
+
+  // 🎯 الدالة الجديدة لحذف الطلب نهائياً من قاعدة البيانات والواجهة
+  const handleDeleteRequest = async (id: string) => {
+    if (!confirm('هل أنت متأكد من رغبتك في حذف هذا الطلب نهائياً؟')) {
+        return;
+    }
+    try {
+        const response = await fetch(`/api/school-list?id=${id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error('فشلت عملية الحذف من السيرفر.');
+        }
+
+        // مسح الطلب من الواجهة فوراً بعد نجاح الحذف في الفايربيس
+        setRequests(prev => prev.filter(req => req.id !== id));
+        alert('تم حذف الطلب بنجاح.');
+    } catch (err: any) {
+        alert(err.message);
+    }
+  };
   
-  // 🎯 Function to handle exporting data to Excel
   const handleExport = () => {
       if (requests.length === 0) {
           alert('لا توجد بيانات للتصدير.');
@@ -81,7 +102,6 @@ const AdminSchoolLists = () => {
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'طلبات القوائم المدرسية');
       
-      // Set column widths for better readability
       worksheet['!cols'] = [
           { wch: 25 }, { wch: 15 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 50 }
       ];
@@ -132,6 +152,7 @@ const AdminSchoolLists = () => {
                                 <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">صورة القائمة</th>
                                 <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">الحالة</th>
                                 <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">تغيير الحالة</th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -167,6 +188,16 @@ const AdminSchoolLists = () => {
                                             <option value="in-progress">قيد التنفيذ</option>
                                             <option value="completed">مكتمل</option>
                                         </select>
+                                    </td>
+                                    {/* 🎯 عمود زر الحذف الجديد المضاف بنجاح */}
+                                    <td className="px-5 py-4 text-sm">
+                                        <button
+                                            onClick={() => handleDeleteRequest(req.id)}
+                                            className="text-red-600 hover:text-red-900 flex items-center gap-1 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors font-medium"
+                                        >
+                                            <FaTrash size={14} />
+                                            <span>حذف</span>
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

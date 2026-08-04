@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation';
-
-// 🎯 التصحيح الجذري النهائي: إجبار صفحة المقال العام على العمل بنظام ديناميكي كامل لتجاوز قفل الـ Build للـ Secret Manager
-export const dynamic = 'force-dynamic';
-
 import styles from './Post.module.css';
 import VideoPlayer from '../VideoPlayer';
 import Image from 'next/image';
+
+// 🎯 إجبار صفحة المقال العام على العمل بنظام ديناميكي كامل
+export const dynamic = 'force-dynamic';
 
 interface Post {
     id: string;
@@ -18,12 +17,13 @@ interface Post {
 }
 
 async function getPost(slug: string): Promise<Post | null> {
-    const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts?slug=${slug}`;
+    // 🛠️ تصحيح الـ Slug العربي: فك الترميز لضمان إرسال النص العربي الصافي للـ API ومنع تداخل المسارات
+    const decodedSlug = decodeURIComponent(slug);
+    const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts?slug=${encodeURIComponent(decodedSlug)}`;
+    
     try {
         const res = await fetch(apiUrl, { cache: 'no-store' });
-        if (res.status === 404) {
-            return null;
-        }
+        if (res.status === 404) return null;
         if (!res.ok) {
             console.error(`Failed to fetch post, status: ${res.status}`);
             return null;
@@ -35,13 +35,11 @@ async function getPost(slug: string): Promise<Post | null> {
     }
 }
 
-// ✅ تصحيح المطور: مطابقة المواصفات القياسية لـ Next.js 14 لـ PageProps
 interface PageProps {
   params: { slug: string };
 }
 
 export default async function PostPage({ params }: PageProps) {
-    // ✅ تصحيح المطور: قراءة الـ slug مباشرة بدون await غير ضرورية
     const { slug } = params;
     const post = await getPost(slug);
 
@@ -50,7 +48,8 @@ export default async function PostPage({ params }: PageProps) {
     }
 
     return (
-        <article className={styles.container}>
+        // تم إضافة كلاس مقترح للمساعدة في حل هوامش الجوال (w-full px-4)
+        <article className={`${styles.container} post-responsive-wrapper`}>
             {post.imageUrl && (
                 <div className={styles.imageContainer}>
                     <Image 
@@ -69,9 +68,9 @@ export default async function PostPage({ params }: PageProps) {
                 <p className={styles.date}>تاريخ النشر: {new Date(post.createdAt).toLocaleDateString('ar-EG')}</p>
             </header>
 
-            {/* 🎯 تفسير الروابط وإجبارها على التلوين بالأزرق التفاعلي بفضل حزمة الـ typography */}
+            {/* 🎯 إجبار الروابط على التلوين بالأزرق والعمل التفاعلي ونزع الهوامش الجانبية الزائدة */}
             <div 
-              className="prose prose-blue max-w-none text-right font-sans text-gray-800"
+              className="prose prose-blue max-w-none text-right font-sans text-gray-800 article-links-fix"
               style={{
                   lineHeight: '1.8',
                   fontSize: '1.1rem'

@@ -148,3 +148,37 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: `Failed to update status: ${error.message}` }, { status: 500 });
     }
 }
+
+// 🎯 أضف هذا الكود في نهاية ملف app/api/school-list/route.ts
+export async function DELETE(req: NextRequest) {
+    try {
+        const firebaseAuth = getAdminAuth();
+        const db = getSecondaryDb();     
+
+        const cookieStore = await cookies();
+        const sessionCookie = cookieStore.get("__session")?.value; 
+        if (!sessionCookie) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true);
+        if (decodedToken.role !== 'admin') {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ error: 'Request ID is required' }, { status: 400 });
+        }
+
+        // حذف المستند مباشرة من الفايرستور
+        await db.collection('school-lists').doc(id).delete();
+
+        return NextResponse.json({ message: `Request ${id} deleted successfully` });
+
+    } catch (error: any) {
+        console.error('[DELETE /api/school-list]', error);
+        return NextResponse.json({ error: `Failed to delete request: ${error.message}` }, { status: 500 });
+    }
+}

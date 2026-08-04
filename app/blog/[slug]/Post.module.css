@@ -62,12 +62,36 @@
     color: #1a202c;
 }
 
-/* تنسيق إجباري للروابط داخل المقال لتبدو زرقاء ونشطة */
+/* تنسيق إجباري للروابط داخل المقال لتبدو زرقاء ونشطة وقابلة للضغط تماماً */
 .container a {
     color: #0066cc !important;
     text-decoration: underline !important;
-    font-weight: bold;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10 !important;
+    display: inline-block;
 }
 .container a:hover {
     color: #004499 !important;
+}
+
+/* ======================================================= */
+/* 🔥 تصحيح شاشات المحمول والجوال (الجمالية والاستجابة الفورية) */
+/* ======================================================= */
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem 0.75rem !important; /* تقليل الهامش الخارجي ليتناسب مع عرض الجوال */
+        padding: 1rem !important;        /* تقليل المسافة الداخلية لإعطاء مساحة أكبر للنص */
+        border-radius: 4px;
+        box-shadow: none;               /* نزع الظلال الثقيلة على شاشات الجوال لراحة العين */
+    }
+
+    .title {
+        font-size: 1.8rem !important;   /* تصغير حجم خط العنوان لكي لا ينكسر بشكل مشوه */
+    }
+
+    .videoTitle {
+        font-size: 1.4rem !important;
+    }
 }
