@@ -166,6 +166,13 @@
     .header {
       padding: 0.75rem 1rem;
     }
+    /* 🎯 التصحيح السحري: تصغير حجم الشعار على الموبايل ليوفر مساحة للثلاث شرط ويمنع هامش اليسار */
+    .logo img {
+        height: 40px !important;  /* تصغير الارتفاع من 64px لـ 40px ليصبح متناسقاً على الهاتف */
+        width: auto !important;   /* جعل العرض يتكيف تلقائياً لمنع تمطيط الصورة */
+        max-width: 160px !important; /* وضع حد أقصى لعرض اللوجو على الشاشات الضيقة */
+        display: block;
+    }
     .nav {
         flex-direction: column;
         position: fixed;
