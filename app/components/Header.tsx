@@ -8,7 +8,7 @@ import styles from './Header.module.css';
 import Cart from './Cart';
 import ShareButton from './ShareButton';
 import { SITE_LINKS } from '@/app/lib/constants';
-import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaUserCircle } from 'react-icons/fa';
+import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaUserCircle, FaBars } from 'react-icons/fa';
 import { SessionData } from '@/app/lib/session';
 
 interface HeaderProps {
@@ -47,7 +47,7 @@ const Header = ({ session }: HeaderProps) => {
       };
 
       fetchAllNewRequests();
-      const intervalId = setInterval(fetchAllNewRequests, 60000); // تحديث دوري كل دقيقة
+      const intervalId = setInterval(fetchAllNewRequests, 60000); 
       return () => clearInterval(intervalId);
     } else {
       setNewRequestsCount(0);
@@ -63,10 +63,8 @@ const Header = ({ session }: HeaderProps) => {
       {/* 1. الشريط العلوي الجديد للمعلومات الثانوية */}
       <div className={styles.topBar}>
         <div className={styles.topBarContainer}>
-          {/* 🎯 هنا يتواجد الرقم الضريبي الخاص بالمتجر */}
           <p className={styles.taxNumber}>الرقم الضريبي: 769499732</p>
           <div className={styles.socialLinks}>
-            {/* 🎯 إضافة الـ aria-label لحل مشاكل التقرير وقارئ الشاشة */}
             <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" className={styles.facebookIcon} aria-label="تابع صفحتنا على فيسبوك"><FaFacebook /></a>
             <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className={styles.whatsappIcon} aria-label="تواصل معنا عبر واتساب"><FaWhatsapp /></a>
             <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" className={styles.telegramIcon} aria-label="تابع قناتنا على تليجرام"><FaTelegram /></a>
@@ -79,7 +77,6 @@ const Header = ({ session }: HeaderProps) => {
       <div className={styles.header}>
         <div className={styles.logo}>
           <Link href="/" onClick={closeMobileMenu}>
-            {/* 🎯 تصحيح ذهبي: تعديل مسار واسم صورة الشعار لتتوافق مع الـ public وتختفي الأخطاء */}
             <Image
               src="/images/logo-horizontal.png" 
               alt="شعار مكتبات دار اللغات"
@@ -112,6 +109,8 @@ const Header = ({ session }: HeaderProps) => {
              <ShareButton />
           </div>
         </nav>
+        
+        {/* 🎯 تصحيح برمي: دمج كلاس معالجة مرن يتكيف تلقائياً مع الموبايل ليمنع بروز زر القائمة الجانبية خارج الشاشة */}
         <div className={styles.actionsContainer}>
           <Cart />
           {isLoggedIn ? (
@@ -124,8 +123,7 @@ const Header = ({ session }: HeaderProps) => {
               <FaUserCircle /> دخول
             </Link>
           )}
-          {/* 🎯 إضافة aria-label لزر القائمة الجانبية للموبايل */}
-          <button className={styles.menuButton} onClick={toggleMobileMenu} aria-label="افتح قائمة التصفح">☰</button>
+          <button className={styles.menuButton} onClick={toggleMobileMenu} aria-label="افتح قائمة التصفح"><FaBars /></button>
         </div>
       </div>
     </header>
