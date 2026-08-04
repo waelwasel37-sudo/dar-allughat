@@ -13,13 +13,14 @@ interface Post {
     content: string;
     imageUrl?: string;
     videoUrl?: string;
-    createdAt: string;
+    createdAt: string | { seconds: number; nanoseconds: number }; // تم تحديث النوع ليشمل كائن التاريخ
 }
 
 async function getPost(slug: string): Promise<Post | null> {
-    // 🛠️ تصحيح الـ Slug العربي: فك الترميز لضمان إرسال النص العربي الصافي للـ API ومنع تداخل المسارات
     const decodedSlug = decodeURIComponent(slug);
-    const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts?slug=${encodeURIComponent(decodedSlug)}`;
+    
+    // 🎯 تصحيح رابط الـ API: استخدام [slug] بدلاً من query param للحصول على المقال مباشرة
+    const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts/${encodeURIComponent(decodedSlug)}`;
     
     try {
         const res = await fetch(apiUrl, { cache: 'no-store' });
@@ -48,7 +49,6 @@ export default async function PostPage({ params }: PageProps) {
     }
 
     return (
-        // تم إضافة كلاس مقترح للمساعدة في حل هوامش الجوال (w-full px-4)
         <article className={`${styles.container} post-responsive-wrapper`}>
             {post.imageUrl && (
                 <div className={styles.imageContainer}>
@@ -65,10 +65,20 @@ export default async function PostPage({ params }: PageProps) {
 
             <header className={styles.header}>
                 <h1 className={styles.title}>{post.title}</h1>
-                <p className={styles.date}>تاريخ النشر: {new Date(post.createdAt).toLocaleDateString('ar-EG')}</p>
+                {/*// 🎯 تم تطبيق كود الحماية الذكي الذي اقترحته */}
+                <p className={styles.date}>
+                    تاريخ النشر: {(() => {
+                        if (!post.createdAt) return 'غير محدد';
+                        
+                        if (typeof post.createdAt === 'object' && 'seconds' in post.createdAt) {
+                            return new Date((post.createdAt as any).seconds * 1000).toLocaleDateString('ar-EG');
+                        }
+                        
+                        return new Date(post.createdAt).toLocaleDateString('ar-EG');
+                    })()}
+                </p>
             </header>
 
-            {/* 🎯 إجبار الروابط على التلوين بالأزرق والعمل التفاعلي ونزع الهوامش الجانبية الزائدة */}
             <div 
               className="prose prose-blue max-w-none text-right font-sans text-gray-800 article-links-fix"
               style={{
