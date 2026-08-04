@@ -28,11 +28,6 @@ export default function SlideOutCart() {
 
   const { cart, updateQuantity, removeFromCart, clearCart, getCartTotal, getItemSubtotal, isCartOpen, toggleCart } = cartContext;
 
-  // 🎯 تصحيح ذهبي: إذا كانت السلة مغلقة، لا تقم برندر أو عرض أي شيء نهائياً لحماية صفحات المقالات والجوال
-  if (!isCartOpen) {
-    return null;
-  }
-
   const total = useMemo(() => getCartTotal(), [cart, getCartTotal]);
 
   const validationResult = useMemo(() => {
@@ -131,6 +126,10 @@ export default function SlideOutCart() {
       setIsLoading(false);
     }
   };
+
+  if (!isCartOpen) {
+    return null;
+  }
 
   return (
     <>
