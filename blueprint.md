@@ -1,39 +1,44 @@
-# Blueprint: E-commerce Store Debugging
+# Blueprint: Dar Al-Lughat E-commerce Site
 
 ## Overview
 
-This document outlines the plan to debug and fix critical issues in a Next.js-based e-commerce application. The application is currently facing problems with user authentication, data fetching from Firestore, and displaying static assets.
+This document outlines the architecture and features of the Dar Al-Lughat e-commerce website. The project is built on Next.js with Firebase as the backend, focusing on high performance, SEO, and real-time data accuracy.
 
-## Current State Analysis
+## Core Architecture: Hybrid Caching Strategy
 
-Based on the user's report and the last deployment log, the following issues have been identified:
+The application employs a sophisticated hybrid caching model to deliver a fast user experience while ensuring critical data (price, stock) is always up-to-date.
 
-1.  **Login Failure:** Users cannot log into the admin dashboard.
-2.  **Data Not Displaying:** Products and categories are not visible on the main site or in the admin panel.
-3.  **Missing Logo:** The store's logo is not appearing.
-4.  **Build Warnings:** The deployment log shows warnings about an unsupported Node.js engine (`v20.20.2` is used, while some packages require `>=22`).
-5.  **Dynamic Rendering Errors:** The build log contains multiple "Dynamic server usage" errors related to the use of `cookies` during server-side rendering, which is a strong indicator of problems with session handling in the Next.js App Router.
+1.  **Server-side Caching (On-Demand ISR):**
+    *   Product pages are statically generated at build time or on the first request.
+    *   These pages are cached indefinitely on the server.
+    *   The cache for a specific product is only invalidated and regenerated (`On-Demand Revalidation`) when an update is triggered from the admin panel (e.g., changing product details). This is achieved using Next.js's `unstable_cache` and tagging mechanism (`revalidateTag`).
+    *   This provides maximum performance and reduces database reads.
 
-## Remediation Plan
+2.  **Client-side Real-time Data:**
+    *   Once a cached page is served to the user, the client-side code (`ProductClientPage.tsx`) immediately establishes a real-time connection to Firebase Realtime Database.
+    *   It listens for live updates on three critical fields: `price`, `stock`, and `discount`.
+    *   This ensures that even if the cache is a few seconds old, the user always sees the most accurate, real-time pricing and availability, preventing overselling and pricing errors.
 
-The following steps will be taken to resolve these issues. Each code modification will be presented to the user for approval before being saved.
+## Key Features Implemented
 
-1.  **✅ (Done) Update Node.js Environment:**
-    *   **Action:** Modify `.idx/dev.nix` to upgrade the development environment from `pkgs.nodejs_20` to `pkgs.nodejs_22`.
-    *   **Reason:** To resolve the `EBADENGINE` warnings and ensure compatibility with all project dependencies.
+*   **Product Catalog:**
+    *   Dynamic product pages (`/products/[slug]`).
+    *   Server-side rendering for fast initial load and optimal SEO.
+    *   Improved `Metadata` and `JSON-LD` schemas for rich snippets in search results and social media sharing.
+*   **Real-time Functionality:**
+    *   Live viewer count on product pages.
+    *   Real-time updates for stock, price, and discounts.
+*   **Shopping Cart:**
+    *   Client-side cart management using React Context (`CartContext`).
+    *   `Add to Cart` and `Buy Now` functionalities.
+*   **Pre-Orders:**
+    *   Users can pre-order out-of-stock items if enabled.
+*   **User Engagement:**
+    *   Product rating system.
+    *   Social sharing functionality.
 
-2.  **Investigate Authentication and Session Handling:**
-    *   **Action:** Review the code in `app/lib/session.ts`, `app/context/AuthContext.tsx`, and `app/login/page.tsx`. I will check how the session cookie is being created and read.
-    *   **Reason:** The "Dynamic server usage" errors point to incorrect handling of cookies. In the Next.js App Router, server-side components must use the `cookies()` function from `next/headers` to access cookies safely during rendering. Incorrect implementation is likely the root cause of the login failure.
+## Current Plan: Finalizing the Hybrid Caching Implementation
 
-3.  **Debug Data Fetching Logic:**
-    *   **Action:** Examine the data fetching functions in `app/lib/data-server.ts` and their usage in pages like `app/products/page.tsx` and `app/admin/products/page.tsx`.
-    *   **Reason:** The inability to fetch products and categories is likely a side effect of the authentication issue. If the user session cannot be verified, the backend queries to Firestore are probably failing or returning no data.
-
-4.  **Fix a Broken Logo Image Path:**
-    *   **Action:** Inspect `app/components/Header.tsx` to find how the logo is rendered. I will verify the image path and ensure the logo file exists in the `/public` directory.
-    *   **Reason:** The logo is a static asset. If it's not displaying, the path in the `<img>` tag is likely incorrect or the file is missing.
-
-5.  **Deploy and Verify:**
-    *   **Action:** After implementing and approving the fixes, a new deployment will be initiated.
-    *   **Reason:** To confirm that the fixes have resolved all the identified issues and the application is fully functional.
+*   **[COMPLETED]** Update `app/lib/data-server.ts` to wrap all data-fetching functions with `unstable_cache` and appropriate tags.
+*   **[COMPLETED]** Update `app/products/[slug]/page.tsx` to remove the time-based revalidation (`revalidate = 3600`) and rely on the new tagged-based On-Demand ISR.
+*   **[COMPLETED]** Update `app/products/[slug]/ProductClientPage.tsx` to fetch and display live price, stock, and discount data from Firebase Realtime Database, ensuring data accuracy.

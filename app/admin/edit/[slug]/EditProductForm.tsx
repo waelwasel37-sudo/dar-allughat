@@ -34,13 +34,12 @@ const uploadFile = (file: File, path: string, setProgress: (progress: number) =>
 
 export default function EditProductForm({ initialProduct, categories }: EditProductFormProps) {
     const router = useRouter();
-    const { isAdmin, loading: authLoading } = useAuth();
+    const { isAdmin, loading: authLoading, user } = useAuth(); // <-- تم إضافة user
 
     const [formData, setFormData] = useState<Partial<Product>>(initialProduct);
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // State for new files and their progress
     const [newMainImage, setNewMainImage] = useState<File | null>(null);
     const [mainImgUpProgress, setMainImgUpProgress] = useState(0);
     const [newSecondaryImage, setNewSecondaryImage] = useState<File | null>(null);
@@ -48,7 +47,6 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
     const [newVideo, setNewVideo] = useState<File | null>(null);
     const [videoUpProgress, setVideoUpProgress] = useState(0);
 
-    // State for previews
     const [mainImagePreview, setMainImagePreview] = useState<string | null>(initialProduct.imageUrl);
     const [secondaryImagePreview, setSecondaryImagePreview] = useState<string | null>(initialProduct.secondaryImageUrl || null);
     const [videoFileName, setVideoFileName] = useState<string | null>(initialProduct.videoUrl ? 'فيديو موجود' : null);
@@ -123,10 +121,14 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
         setError(null);
 
         try {
+            const token = user ? await user.getIdToken() : null; // <-- إضافة التوكن
+            if (!token) {
+                throw new Error("لم يتم العثور على توكن المصادقة. الرجاء تسجيل الدخول مرة أخرى.");
+            }
+
             let updatedData = { ...formData };
             const newSlug = generateSlug(formData.name || initialProduct.name);
 
-            // Upload new files if they exist
             if (newMainImage) {
                 updatedData.imageUrl = await uploadFile(newMainImage, `products/${newSlug}/main-${newMainImage.name}`, setMainImgUpProgress);
             }
@@ -142,7 +144,10 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
 
             const response = await fetch(`/api/products/${originalSlug}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // <-- إضافة التوكن للطلب
+                },
                 body: JSON.stringify(updatedData),
             });
 
@@ -151,9 +156,23 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
                 throw new Error(errorData.error || `فشل تحديث المنتج (Status: ${response.status})`);
             }
 
-            alert('تم تحديث المنتج بنجاح!');
+            // --- بداية الكود المضاف لتحديث الكاش ---
+            console.log('✅ تم تحديث المنتج، جاري إرسال إشارة لتحديث الكاش...');
+            await fetch('/api/revalidate', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}`
+              },
+              body: JSON.stringify({ 
+                tags: ['products-list', `product-${originalSlug}`, `product-${newSlug}`]
+              }), 
+            });
+            console.log('✅ تم تحديث كاش المنتجات بنجاح!');
+            // --- نهاية الكود المضاف لتحديث الكاش ---
+
+            alert('تم تحديث المنتج وتحديث الموقع فوراً للزوار وجوجل!');
             router.push('/admin/products');
-            router.refresh();
 
         } catch (err: any) {
             console.error("Client-side error on update:", err);
@@ -163,14 +182,12 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
         }
     };
     
-    // I've put the full JSX here again for clarity, with the fix applied.
     return (
          <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
             <div className="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">تعديل: <span className='text-blue-600'>{formData.name}</span></h2>
                  {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* --- Existing Form Fields --- */}
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2">
                             <label htmlFor="name" className="block text-sm font-medium text-gray-700">اسم المنتج</label>
@@ -212,9 +229,7 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
                         </div>
                     </div>
 
-                    {/* --- Media Sections --- */}
                     <div className="space-y-8 border-t pt-8 mt-8">
-                        {/* Main Image */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">صورة المنتج الرئيسية</label>
                             <div className="mt-2 flex items-center gap-4">
@@ -224,7 +239,6 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
                             {mainImgUpProgress > 0 && <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div className="bg-blue-600 h-2.5 rounded-full" style={{width: `${mainImgUpProgress}%`}}></div></div>}
                         </div>
 
-                        {/* Secondary Image */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">صورة ثانوية (اختياري)</label>
                              <div className="mt-2 flex items-center gap-4">
@@ -239,7 +253,6 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
                             {secondaryImgUpProgress > 0 && <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div className="bg-blue-600 h-2.5 rounded-full" style={{width: `${secondaryImgUpProgress}%`}}></div></div>}
                         </div>
 
-                        {/* Video */}
                         <div>
                              <label className="block text-sm font-medium text-gray-700">فيديو المنتج (اختياري)</label>
                              <div className="mt-2 flex items-center gap-4">

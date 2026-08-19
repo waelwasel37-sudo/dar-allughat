@@ -4,15 +4,14 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import ProductClientPage from './ProductClientPage';
 import Breadcrumbs from '../../components/Breadcrumbs';
 
-// تحديث الصفحة كل ساعة لضمان توازن الأداء وتحديث البيانات
-export const revalidate = 3600;
+// الكاش الزمني تم إلغاؤه والاعتماد كلياً على التحديث عند الطلب (On-Demand Revalidation) لتوفير قراءات قاعدة البيانات.
 
 type PageProps = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-// 1. تحسين الـ Metadata لضمان ظهور صور المنتجات في واتساب وفيسبوك
+// 1. تحسين الـ Metadata لضمان ظهور صور المنتجات في واتساب وفيسبوك وسكايب بشكل صحيح
 export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata
@@ -42,7 +41,7 @@ export async function generateMetadata(
       siteName: 'مكتبات دار اللغات',
       images: [
         {
-          url: product.imageUrl, // تأكد أنه رابط كامل يبدأ بـ https
+          url: product.imageUrl, 
           width: 800,
           height: 600,
           alt: product.name,
@@ -61,12 +60,11 @@ export async function generateMetadata(
 }
 
 const ProductDetailsPage = async ({ params, searchParams }: PageProps) => {
+  // استخراج الـ slug بـ await لضمان التوافق مع إصدارات Next.js الحديثة ومنع أخطاء الـ Build
   const { slug: encodedSlug } = await params;
   
-  // -- 👇 بداية التعديل --
-  // فك تشفير الـ slug يدويًا لضمان التعامل مع الأحرف العربية بشكل صحيح
+  // فك تشفير الـ slug يدويًا لضمان التعامل مع الأحرف العربية بشكل صحيح في روابط البحث والأرشفة
   const slug = decodeURIComponent(encodedSlug);
-  // -- 👆 نهاية التعديل --
 
   const product = await getProductBySlug(slug);
 
@@ -74,23 +72,22 @@ const ProductDetailsPage = async ({ params, searchParams }: PageProps) => {
     notFound();
   }
 
-  // استخدام الـ slug بدلاً من id لجلب المنتجات ذات الصلة تماشياً مع فلسفة المشروع
+  // جلب المنتجات ذات الصلة بناءً على فئة المنتج والـ slug الحالي لتفادي تكراره في المقترحات
   const relatedProducts = await getRelatedProducts(product.category, product.slug);
 
-  // 2. تحسين JSON-LD Schema (الـ SKU أصبح هو الـ slug)
+  // 2. تحسين هيكل الـ JSON-LD Schema لمطابقة محركات البحث وجوجل فوراً
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     image: product.imageUrl,
     description: product.description,
-    sku: product.slug, // توحيد المعرف ليكون slug
+    sku: product.slug, 
     offers: {
       '@type': 'Offer',
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/products/${slug}`,
       priceCurrency: 'EGP',
-      price: product.price,
-      // الربط مع حالة المخزون أو الطلب المسبق
+      price: product.price, // السعر المبدئي المحفوظ في الكاش والمستهدف للـ SEO
       availability: (product.stock ?? 0) > 0 
         ? 'https://schema.org/InStock' 
         : (product.preOrderEnabled ? 'https://schema.org/PreOrder' : 'https://schema.org/OutOfStock'),
@@ -106,7 +103,7 @@ const ProductDetailsPage = async ({ params, searchParams }: PageProps) => {
 
   return (
     <main>
-      {/* حقن الـ Schema في الـ Head */}
+      {/* حقن الـ Schema التوضيحية ليتعرف روبوت جوجل على مواصفات الكتاب والأسعار فوراً */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -114,7 +111,10 @@ const ProductDetailsPage = async ({ params, searchParams }: PageProps) => {
       
       <Breadcrumbs crumbs={crumbs} />
       
-      {/* ملاحظة: تأكد من حذف Breadcrumbs و JSON-LD من داخل ملف ProductClientPage لمنع التكرار */}
+      {/* 
+        تمرير البيانات كـ props مبدئية لعرضها فوراً أمام جوجل والزوار، 
+        على أن يتولى الـ Client Component تحديث السعر الدقيق والمخزون الحي بالخلفية.
+      */}
       <ProductClientPage product={product} relatedProducts={relatedProducts} />
     </main>
   );

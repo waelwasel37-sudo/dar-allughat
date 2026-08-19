@@ -18,7 +18,11 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
   const router = useRouter();
   const [added, setAdded] = useState(false);
   const [viewers, setViewers] = useState(0);
+  
+  // 👇 التعديل الأول: تحويل السعر والخصم إلى حالات حية (Live States) تبدأ بقيم السيرفر المبدئية
   const [realTimeStock, setRealTimeStock] = useState(product.stock ?? 0);
+  const [livePrice, setLivePrice] = useState(product.price ?? 0);
+  const [liveDiscount, setLiveDiscount] = useState(product.discount || 0);
   
   // Pre-order states
   const [showPreOrderInput, setShowPreOrderInput] = useState(false);
@@ -34,16 +38,19 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
 
   const [activeMedia, setActiveMedia] = useState({ type: 'image', src: product.imageUrl, poster: product.imageUrl });
 
-  const originalPrice = product.price;
-  const priceAfter = useMemo(() => originalPrice * (1 - (product.discount || 0) / 100), [originalPrice, product.discount]);
-  const discountPercentage = product.discount || 0;
+  // 👇 التعديل الثاني: حساب السعر النهائي بعد الخصم بناءً على القيم الحية الحالية (Live Prices)
+  const priceAfter = useMemo(() => livePrice * (1 - liveDiscount / 100), [livePrice, liveDiscount]);
 
   const userId = useMemo(() => uuidv4(), []);
 
   useEffect(() => {
     const presenceRef = ref(database, `products/${product.slug}/viewers`);
     const userRef = ref(database, `products/${product.slug}/viewers/${userId}`);
+    
+    // روابط مسارات جلب البيانات الحية من Firebase Realtime Database
     const stockRef = ref(database, `products/${product.slug}/stock`);
+    const priceRef = ref(database, `products/${product.slug}/price`);
+    const discountRef = ref(database, `products/${product.slug}/discount`);
 
     set(userRef, { timestamp: serverTimestamp() });
     onDisconnect(userRef).remove();
@@ -52,27 +59,57 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
       setViewers(snapshot.size);
     });
 
+    // مراقبة وتحديث المخزون حياً
     const stockListener = onValue(stockRef, (snapshot) => {
       if (snapshot.exists()) {
         setRealTimeStock(snapshot.val());
       }
     });
 
+    // 👇 التعديل الثالث: مراقبة وتحديث السعر حياً عند تعديله من لوحة التحكم
+    const priceListener = onValue(priceRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setLivePrice(snapshot.val());
+      }
+    });
+
+    // 👇 التعديل الرابع: مراقبة وتحديث نسبة الخصم حياً
+    const discountListener = onValue(discountRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setLiveDiscount(snapshot.val());
+      }
+    });
+
     return () => {
       viewersListener();
       stockListener();
+      priceListener();
+      discountListener();
       set(userRef, null);
     };
   }, [product.slug, userId]);
 
+  // 👇 التعديل الخامس: تحديث دالة الإضافة للسلة لتأخذ السعر والمخزون الحي الحالي وليس القديم
   const handleAddToCart = () => {
-    addToCart(product);
+    const liveProduct = { 
+      ...product, 
+      stock: realTimeStock, 
+      price: livePrice, 
+      discount: liveDiscount 
+    };
+    addToCart(liveProduct);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   const handleBuyNow = () => {
-    addToCart(product);
+    const liveProduct = { 
+      ...product, 
+      stock: realTimeStock, 
+      price: livePrice, 
+      discount: liveDiscount 
+    };
+    addToCart(liveProduct);
     router.push('/checkout');
   };
 
@@ -88,7 +125,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
         const response = await fetch('/api/pre-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slug: product.slug, phone: preOrderPhone }), // Send slug instead of id
+            body: JSON.stringify({ slug: product.slug, phone: preOrderPhone }),
         });
 
         const result = await response.json();
@@ -98,7 +135,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
         }
 
         setPreOrderSubmitted(true);
-        setShowPreOrderInput(false); // Hide input on success
+        setShowPreOrderInput(false);
         setTimeout(() => setPreOrderSubmitted(false), 5000); 
 
     } catch (error: any) {
@@ -134,11 +171,10 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
     ];
   }, [product.imageUrl, product.secondaryImageUrl, product.videoUrl]);
 
-  // Helper function to safely format the release date
   const formatReleaseDate = (dateString: string | undefined) => {
     if (!dateString) return null;
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return null; // Invalid date
+    if (isNaN(date.getTime())) return null;
     return date.toLocaleDateString('ar-EG');
   };
 
@@ -165,7 +201,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
   return (
       <div className={styles.productPageContainer}>
         <div className={styles.container}>
-          <div className={styles.mediaContainer}>{/* Media gallery code... */}
+          <div className={styles.mediaContainer}>
            <div className={styles.mainMediaView}>
               {activeMedia.type === 'image' ? (
                 <Image 
@@ -213,9 +249,18 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
           <div className={styles.detailsContainer}>
             <h1 className={styles.name}>{product.name}</h1>
             {viewers > 1 && <div className={styles.viewersCount}><FaEye /><span>{`${viewers} أشخاص يشاهدون هذا المنتج الآن`}</span></div>}
-            <div className={styles.ratingDisplay}>{/* Rating display code... */}</div>
-            <p className={styles.description}>{product.description}</p>
-            <div className={styles.priceContainer}>{/* Price display code... */}</div>
+            {/* بقية كود عرض السعر الحي والمحتوى يكمل هنا بنفس الأسلوب المستهدف... */}
+            <div className={styles.priceContainer}>
+                {liveDiscount > 0 ? (
+                    <>
+                        <span className={styles.originalPrice}>{livePrice.toFixed(2)} جنيه</span>
+                        <span className={styles.priceAfter}>{priceAfter.toFixed(2)} جنيه</span>
+                        <span className={styles.discountBadge}>{`خصم ${liveDiscount}%`}</span>
+                    </>
+                ) : (
+                    <span className={styles.price}>{livePrice.toFixed(2)} جنيه</span>
+                )}
+            </div>
             <div className={styles.stockContainer}>{getStockInfo()}</div>
 
             <div className={styles.stickyButtonContainer}>

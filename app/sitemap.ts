@@ -1,24 +1,31 @@
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 import { MetadataRoute } from 'next';
 import { getProducts, getPosts } from './lib/data-server'; 
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // توحيد الرابط ليتطابق تماماً مع النطاق المرفوع عليه المشروع حالياً
-  const baseUrl = 'https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app'; 
+// 👇 تم التطهير النهائي: تم إزالة خطوط force-dynamic و revalidate=0 لمنع استهلاك خطة Blaze المالي.
+// الآن سيعتمد الـ sitemap على دوال الكاش المستقرة والآمنة التي بنيناها في data-server.
 
-  // 1. المسارات الثابتة
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // استخدام المتغير العام للمشروع لتحديد رابط الموقع ديناميكياً بدلاً من الرابط الثابت
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://hosted.app'; 
+
+  // 1. المسارات الثابتة العامة (المستخرجة من تقرير الـ Build الفعلي لمشروعك)
   const staticRoutes = [
-    '', '/about', '/contact', '/blog', '/privacy-policy'
+    '',               // الرئيسية
+    '/about',         // من نحن
+    '/contact',       // اتصل بنا
+    '/blog',          // المدونة العامة
+    '/products',      // صفحة المنتجات العامة
+    '/privacy-policy', 
+    '/return-policy', 
+    '/shipping-policy'
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date().toISOString(),
-    changeFrequency: 'monthly' as const,
-    priority: route === '' ? 1.0 : 0.7,
+    changeFrequency: 'weekly' as const, 
+    priority: route === '' ? 1.0 : route === '/products' ? 0.9 : 0.7,
   }));
 
-  // 2. مسارات المنتجات
+  // 2. مسارات تفاصيل المنتجات الديناميكية (تُقرأ بسرعة ومن الكاش دون استهلاك Firebase)
   let productRoutes: MetadataRoute.Sitemap = [];
   try {
     const products = await getProducts();
@@ -32,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Error fetching live products for sitemap:", error);
   }
 
-  // 3. مسارات المقالات
+  // 3. مسارات تفاصيل مقالات المدونة الديناميكية
   let postRoutes: MetadataRoute.Sitemap = [];
   try {
     const posts = await getPosts();
@@ -40,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/blog/${post.slug}`,
       lastModified: post.updatedAt || new Date().toISOString(),
       changeFrequency: 'weekly' as const,
-      priority: 0.9,
+      priority: 0.8,
     }));
   } catch (error) {
     console.error("Error fetching live posts for sitemap:", error);

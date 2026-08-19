@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext'; // 🎯 1. استيراد hook المصادقة
+import { useAuth } from '../../context/AuthContext';
 import { Product, Category } from '../../lib/types';
 import { FaUpload, FaTimesCircle, FaSpinner } from 'react-icons/fa';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -44,7 +44,6 @@ const uploadFile = (file: File, path: string, setProgress: (progress: number) =>
 
 export default function AddProductForm({ categories }: AddProductFormProps) {
     const router = useRouter();
-    // 🎯 2. الحصول على كائن المستخدم الكامل من hook المصادقة
     const { isAdmin, loading: authLoading, user } = useAuth();
 
     useEffect(() => {
@@ -177,7 +176,6 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
         setError(null);
 
         try {
-             // 🎯 3. الحصول على توكن المصادقة من المستخدم الحالي
             const token = user ? await user.getIdToken() : null;
             if (!token) {
                 throw new Error('لم يتم العثور على توكن المصادقة. الرجاء تسجيل الدخول مرة أخرى.');
@@ -203,7 +201,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                 videoUrl = await uploadFile(videoFile, videoPath, setVideoUploadProgress);
             }
 
-            const productData: Omit<Product, 'id'> & { id?: string } = {
+            const productData = {
                 ...formData,
                 slug,
                 imageUrl: mainImageUrl,
@@ -214,7 +212,6 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                 updatedAt: new Date().toISOString(),
             };
 
-            // 🎯 4. إرسال الطلب مع ترويسة المصادقة التي تحتوي على التوكن
             const response = await fetch('/api/products', {
                 method: 'POST',
                 headers: {
@@ -229,9 +226,23 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                 throw new Error(errorResult.error || `فشل إنشاء المنتج. (Status: ${response.status})`);
             }
 
-            alert('تمت إضافة المنتج بنجاح!');
+            // --- بداية الكود المضاف لتحديث الكاش ---
+            console.log('✅ تم حفظ المنتج، جاري إرسال إشارة لتحديث الكاش...');
+            await fetch('/api/revalidate', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}` 
+              },
+              body: JSON.stringify({ 
+                tags: ['products-list', `product-${slug}`] 
+              }), 
+            });
+            console.log('✅ تم تحديث كاش المنتجات بنجاح!');
+            // --- نهاية الكود المضاف لتحديث الكاش ---
+
+            alert('تم حفظ المنتج وتحديث الموقع فوراً للزوار وجوجل!');
             router.push('/admin/products');
-            router.refresh();
 
         } catch (err: any) {
             console.error("Client-side error during product submission:", err);
