@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../../context/AuthContext'; 
-import { Product, Category } from '../../../../lib/types'; 
+import { useAuth } from '../../../context/AuthContext'; 
+import { Product, Category } from '../../../lib/types'; 
 import Image from 'next/image';
 import { FaTimesCircle } from 'react-icons/fa';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
-import { storage } from '../../../../lib/firebase-client'; 
+import { storage } from '../../../lib/firebase-client'; 
 
 interface EditProductFormProps {
   initialProduct: Product;
@@ -17,7 +17,7 @@ interface EditProductFormProps {
 const generateSlug = (name: string) => {
     if (!name) return '';
     return name.trim().toLowerCase()
-        .replace(/[^؀-ۿa-z0-9\s\-]/g, '')
+        .replace(/[^\u0600-\u06FFa-z0-9\s\-]/g, '')
         .replace(/[\s_-]+/g, '-')
         .replace(/^-+|-+$/g, '');
 };
