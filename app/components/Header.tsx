@@ -60,18 +60,25 @@ const Header = ({ session }: HeaderProps) => {
 
   return (
     <header className={styles.headerWrapper}>
-      {/* 🎯 نص سيو احترافي مخفي تماماً عن الجمهور ومرئي بالكامل لروبوتات جوجل لتسريع الفهرسة فوراً */}
-      <h1 className="sr-only">
-        مكتبات دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية. 
-        مرحباً بكم في مكتبات دار اللغات في مدينة العبور. نوفر لأبنائكم تشكيلة متكاملة من كتب خارجية, 
-        كتب مدرسية, كتب أزهري, كتب تأسيس, وكتب مستوى رفيع لغات لكافة المراحل التعليمية. 
-        كما نتميز بتقديم أفضل كتب تنمية مهارات أطفال, قصص أطفال، وألعاب تنمية مهارات أطفال منتسوري 
-        المصممة علمياً لتطوير ذكاء طفلك، بجانب كافة مستلزمات الـ أدوات مكتبية ومدرسية وقسم خاص لـ كتب مرتجع بأسعار تنافسية.
-        📋 ارفع قائمة مدرستك الآن
-        🏢 قسم توريدات مصانع ومؤسسات
+      {/* SEO hidden h1 */}
+      <h1 
+        className="sr-only"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: '0',
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: '0'
+        }}
+      >
+        مكتبات دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية.
       </h1>
 
-      {/* 1. الشريط العلوي للمعلومات الثانوية */}
+      {/* 1. Top Bar */}
       <div className={styles.topBar}>
         <div className={styles.topBarContainer}>
           <p className={styles.taxNumber}>الرقم الضريبي: 769499732</p>
@@ -84,7 +91,7 @@ const Header = ({ session }: HeaderProps) => {
         </div>
       </div>
 
-      {/* 2. الهيدر الرئيسي (الشعار، القائمة، السلة، إلخ) */}
+      {/* 2. Main Header */}
       <div className={styles.header}>
         <div className={styles.logo}>
           <Link href="/" onClick={closeMobileMenu}>
@@ -94,7 +101,6 @@ const Header = ({ session }: HeaderProps) => {
               width={256}
               height={64}
               priority={true}
-              // 🚀 تنحيف الشعار: إجبار الخادم على توليد المقاس الفعلي فقط ومنع هدر 30.2 كيبيبايت
               sizes="(max-width: 768px) 200px, 256px"
               className="object-contain"
             />
