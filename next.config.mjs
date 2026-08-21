@@ -1,11 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ✅ هذا الجزء صحيح
+  // 1. نقل الخيار للمستوى الأول مباشرة لتجاوز خطأ الـ Invalid Unrecognized key
+  serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library", "sharp"],
+
   experimental: {
-    serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library", "sharp"],
+    // تم تفريغه لعدم الحاجة لخيارات تجريبية زائدة حالياً
   },
   
-  // ✅ هذا الجزء صحيح
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 
@@ -13,10 +14,8 @@ const nextConfig = {
     unoptimized: false,
     remotePatterns: [
       { protocol: 'https', hostname: '*.googleapis.com' },
-      // ✅ تم تصحيح الخطأ هنا
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' }, 
       { protocol: 'https', hostname: '*.googleusercontent.com' },
-      // ✅ وتم تصحيح الخطأ هنا أيضاً
       { protocol: 'https', hostname: 'storage.googleapis.com' },
       { protocol: 'https', hostname: '*.run.app' },
       { protocol: 'https', hostname: '*.firebaseapp.com' },
@@ -26,9 +25,14 @@ const nextConfig = {
 
   async headers() {
     return [
-      // 🎯 Added cache control for static images
+      // تفعيل كاش المتصفح لصور المتجر المحلية لـ سنة كاملة
       {
         source: '/images/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      // تفعيل كاش المتصفح للأكواد والملفات الثابتة لتقليل الاستهلاك وتسريع المتجر للزوار
+      {
+        source: '/_next/static/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
       {
@@ -41,7 +45,6 @@ const nextConfig = {
     ];
   },
 
-  // ✅ تم استخدام الرابط الذي أعطيتني إياه وصياغته بالشكل البرمجي الصحيح
   async rewrites() {
     return [
       {

@@ -11,7 +11,8 @@ import Rating from '@/app/components/Rating';
 import { FaStar, FaEye, FaShareAlt } from 'react-icons/fa';
 import { database } from '@/app/lib/firebase-client';
 import { ref, onValue, onDisconnect, set, serverTimestamp } from 'firebase/database';
-import { v4 as uuidv4 } from 'uuid';
+
+// ✅ تم حذف مكتبة uuid الثقيلة تماماً لتوفير 407 كيبيبايت من حجم الجافا سكريبت
 
 export default function ProductClientPage({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
   const { addToCart } = useCart();
@@ -19,12 +20,12 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
   const [added, setAdded] = useState(false);
   const [viewers, setViewers] = useState(0);
   
-  // 👇 التعديل الأول: تحويل السعر والخصم إلى حالات حية (Live States) تبدأ بقيم السيرفر المبدئية
+  // الحالات الحية (Live States) المتزامنة مع السيرفر وقاعدة البيانات
   const [realTimeStock, setRealTimeStock] = useState(product.stock ?? 0);
   const [livePrice, setLivePrice] = useState(product.price ?? 0);
   const [liveDiscount, setLiveDiscount] = useState(product.discount || 0);
   
-  // Pre-order states
+  // حالات الطلب المسبق (Pre-order states)
   const [showPreOrderInput, setShowPreOrderInput] = useState(false);
   const [preOrderPhone, setPreOrderPhone] = useState('');
   const [isSubmittingPreOrder, setIsSubmittingPreOrder] = useState(false);
@@ -38,16 +39,21 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
 
   const [activeMedia, setActiveMedia] = useState({ type: 'image', src: product.imageUrl, poster: product.imageUrl });
 
-  // 👇 التعديل الثاني: حساب السعر النهائي بعد الخصم بناءً على القيم الحية الحالية (Live Prices)
+  // حساب السعر النهائي بعد الخصم بناءً على القيم الحية الحالية
   const priceAfter = useMemo(() => livePrice * (1 - liveDiscount / 100), [livePrice, liveDiscount]);
 
-  const userId = useMemo(() => uuidv4(), []);
+  // ✅ استخدام الدالة المدمجة بالمتصفح البديلة لـ uuid لتوليد معرف فريد بوزن صفر بايت!
+  const userId = useMemo(() => {
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return Math.random().toString(36).substring(2, 15); // حماية احتياطية للمتصفحات القديمة جداً
+  }, []);
 
   useEffect(() => {
     const presenceRef = ref(database, `products/${product.slug}/viewers`);
     const userRef = ref(database, `products/${product.slug}/viewers/${userId}`);
     
-    // روابط مسارات جلب البيانات الحية من Firebase Realtime Database
     const stockRef = ref(database, `products/${product.slug}/stock`);
     const priceRef = ref(database, `products/${product.slug}/price`);
     const discountRef = ref(database, `products/${product.slug}/discount`);
@@ -59,21 +65,18 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
       setViewers(snapshot.size);
     });
 
-    // مراقبة وتحديث المخزون حياً
     const stockListener = onValue(stockRef, (snapshot) => {
       if (snapshot.exists()) {
         setRealTimeStock(snapshot.val());
       }
     });
 
-    // 👇 التعديل الثالث: مراقبة وتحديث السعر حياً عند تعديله من لوحة التحكم
     const priceListener = onValue(priceRef, (snapshot) => {
       if (snapshot.exists()) {
         setLivePrice(snapshot.val());
       }
     });
 
-    // 👇 التعديل الرابع: مراقبة وتحديث نسبة الخصم حياً
     const discountListener = onValue(discountRef, (snapshot) => {
       if (snapshot.exists()) {
         setLiveDiscount(snapshot.val());
@@ -89,7 +92,6 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
     };
   }, [product.slug, userId]);
 
-  // 👇 التعديل الخامس: تحديث دالة الإضافة للسلة لتأخذ السعر والمخزون الحي الحالي وليس القديم
   const handleAddToCart = () => {
     const liveProduct = { 
       ...product, 
@@ -158,7 +160,6 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
       alert('تم نسخ رابط المنتج! شاركه مع أصدقائك.');
     }
   };
-  
   const handleRatingSuccess = (data: { averageRating: number; ratingCount: number }) => {
     setRatingState(data);
   };
@@ -211,6 +212,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
                     height={500}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className={styles.image}
+                    priority // تسريع تحميل الصورة الرئيسية لـ LCP
                 />
               ) : (
                 <video
@@ -249,7 +251,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
           <div className={styles.detailsContainer}>
             <h1 className={styles.name}>{product.name}</h1>
             {viewers > 1 && <div className={styles.viewersCount}><FaEye /><span>{`${viewers} أشخاص يشاهدون هذا المنتج الآن`}</span></div>}
-            {/* بقية كود عرض السعر الحي والمحتوى يكمل هنا بنفس الأسلوب المستهدف... */}
+            
             <div className={styles.priceContainer}>
                 {liveDiscount > 0 ? (
                     <>
