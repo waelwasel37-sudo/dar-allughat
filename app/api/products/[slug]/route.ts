@@ -4,6 +4,7 @@ import { getDb, getAdminAuth, getBucket } from '@/app/lib/firebase-admin';
 import { firestore } from 'firebase-admin';
 import { Product } from '@/app/lib/types';
 import { generateSlug } from '@/app/lib/utils';
+import { revalidateTag } from 'next/cache'; // استيراد دالة تحديث الكاش من Next.js
 
 export const dynamic = 'force-dynamic';
 
@@ -77,7 +78,6 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
         const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, false);
         
-        // Strict check: Block if email does not match the admin's email
         if (decodedToken.email !== "waelwasel37@gmail.com") {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
@@ -90,6 +90,9 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
         const productUpdateData: Partial<Product> = await req.json();
         
         const currentData = (await productDocRef.get()).data() as Product;
+        
+        let finalSlug = decodedOriginalSlug; 
+
         if (productUpdateData.name && productUpdateData.name !== currentData.name) {
             const baseSlug = generateSlug(productUpdateData.name);
             let newSlug = baseSlug;
@@ -101,6 +104,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
                 counter++;
             }
             productUpdateData.slug = newSlug;
+            finalSlug = newSlug;
         }
 
         const finalUpdateData = {
@@ -109,7 +113,16 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
         };
         
         await productDocRef.update(finalUpdateData);
-        return NextResponse.json({ message: 'Updated', slug: finalUpdateData.slug || decodedOriginalSlug });
+        console.log('✅ تم تحديث المنتج في قاعدة البيانات.');
+
+        // تحديث الكاش على السيرفر بعد التعديل
+        revalidateTag('products-list');
+        revalidateTag(`product-${decodedOriginalSlug}`);
+        revalidateTag(`product-${finalSlug}`);
+        console.log('✅ تم تحديث كاش المنتج والقائمة.');
+
+        return NextResponse.json({ message: 'Updated', slug: finalSlug });
+
     } catch (error: any) {
         console.error("❌ PUT Error:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
@@ -132,7 +145,6 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
         
         const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, false);
         
-        // Strict check: Block if email does not match the admin's email
         if (decodedToken.email !== "waelwasel37@gmail.com") {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
@@ -153,6 +165,13 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
         }
 
         await doc.ref.delete();
+        console.log(`✅ تم حذف المنتج (${decodedSlug}) من قاعدة البيانات والملفات.`);
+
+        // تحديث الكاش لتختفي الصفحة والمنتج فوراً من الموقع عند الزوار
+        revalidateTag('products-list');
+        revalidateTag(`product-${decodedSlug}`);
+        console.log('✅ تم تحديث الكاش بعد الحذف.');
+
         return NextResponse.json({ message: 'Deleted' });
     } catch (error: any) {
         console.error("❌ DELETE Error:", error);
@@ -184,6 +203,9 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
                 updatedAt: firestore.FieldValue.serverTimestamp() 
             }, { merge: true });
         });
+
+        // تحديث كاش صفحة المنتج ليظهر التقييم الجديد فوراً للعميل
+        revalidateTag(`product-${decodedProductSlug}`);
 
         return NextResponse.json({ message: 'Rating added' });
     } catch (error: any) {
