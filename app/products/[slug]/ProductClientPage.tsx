@@ -7,12 +7,13 @@ import { Product } from '@/app/lib/types';
 import { useCart } from '@/app/context/CartContext';
 import styles from './ProductDetails.module.css';
 import RelatedProducts from '@/app/components/RelatedProducts';
-import Rating from '@/app/components/Rating';
-import { FaStar, FaEye, FaShareAlt } from 'react-icons/fa';
+import { FaEye, FaShareAlt } from 'react-icons/fa';
 import { database } from '@/app/lib/firebase-client';
 import { ref, onValue, onDisconnect, set, serverTimestamp } from 'firebase/database';
 
-// ✅ تم حذف مكتبة uuid الثقيلة تماماً لتوفير 407 كيبيبايت من حجم الجافا سكريبت
+// 🎯 حل الـ 6 مهام طويلة: استيراد مكون التقييمات بشكل ديناميكي (Lazy Loading) ليتأخر ثانية واحدة فقط
+import nextDynamic from 'next/dynamic';
+const Rating = nextDynamic(() => import('@/app/components/Rating'), { ssr: false });
 
 export default function ProductClientPage({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
   const { addToCart } = useCart();
@@ -20,12 +21,12 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
   const [added, setAdded] = useState(false);
   const [viewers, setViewers] = useState(0);
   
-  // الحالات الحية (Live States) المتزامنة مع السيرفر وقاعدة البيانات
+  // الحالات الحية (Live States) المتزامنة مع السيرفر وقاعدة البيانات لتسعير والمخزون الحي
   const [realTimeStock, setRealTimeStock] = useState(product.stock ?? 0);
   const [livePrice, setLivePrice] = useState(product.price ?? 0);
   const [liveDiscount, setLiveDiscount] = useState(product.discount || 0);
   
-  // حالات الطلب المسبق (Pre-order states)
+  // حالات الطلب المسبق (Pre-order)
   const [showPreOrderInput, setShowPreOrderInput] = useState(false);
   const [preOrderPhone, setPreOrderPhone] = useState('');
   const [isSubmittingPreOrder, setIsSubmittingPreOrder] = useState(false);
@@ -160,6 +161,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
       alert('تم نسخ رابط المنتج! شاركه مع أصدقائك.');
     }
   };
+
   const handleRatingSuccess = (data: { averageRating: number; ratingCount: number }) => {
     setRatingState(data);
   };
@@ -212,7 +214,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
                     height={500}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className={styles.image}
-                    priority // تسريع تحميل الصورة الرئيسية لـ LCP
+                    priority // تسريع تحميل الصورة الرئيسية لـ LCP وإلغاء الحظر
                 />
               ) : (
                 <video
@@ -305,11 +307,11 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
                 <div className={styles.actionsContainer}>
                     <button onClick={handleShare} className={`${styles.iconButton} ${styles.shareButton}`} aria-label="شارك المنتج">
                         <FaShareAlt />
-                        <span>شارك واربح</span>
                     </button>
                 </div>
             </div>
 
+            {/* تم تحميل صندوق التقييم ديناميكياً لتأجيل عبء ملف iframe.js الخاص بالـ Auth وتسريع الـ LCP */}
             <Rating productId={product.id} currentRating={ratingState.averageRating} ratingCount={ratingState.ratingCount} onRatingSuccess={handleRatingSuccess} />
           </div>
         </div>

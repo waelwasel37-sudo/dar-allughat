@@ -5,7 +5,7 @@ import './globals.css';
 import { Providers } from './providers';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
-import RelatedProductsBar from './components/RelatedProductsBar'; // ✅ مستورد بنجاح ويفصل التوصيات عن السلة تلقائياً
+import RelatedProductsBar from './components/RelatedProductsBar'; 
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { getIronSession } from 'iron-session';
@@ -39,7 +39,6 @@ export const metadata: Metadata = {
     title: 'دار اللغات: كتب ومستلزمات مدرسية في مدينة العبور',
     description: 'اكتشف تشكيلة واسعة من الكتب العربية والأجنبية، ومستلزمات الدراسة والأدوات المكتبية.',
     icons: {
-      // 🎯 تصحيح ذهبي: الإشارة للاسم الدقيق لأيقونة التبويب الدائرية داخل مجلد images لإنهاء الـ 400 null
       icon: '/images/logo-circular.png', 
       apple: '/images/logo-circular.png', 
     },
@@ -49,7 +48,6 @@ async function SessionFetcher({ children }: { children: (session: SessionData) =
   let session: SessionData = { isLoggedIn: false, username: 'زائر' };
   
   try {
-    // 🎯 متوافق مع Next.js 14 كـ synchronous call يمنع توقف البناء سحابياً
     const cookieStore = cookies(); 
     const ironSession = await getIronSession<SessionData>(cookieStore, sessionOptions);
     if (ironSession) {
@@ -66,10 +64,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Facebook Pixel Script - 🚀 تحديث الاستراتيجية لـ afterInteractive لتحسين أداء سلسلة المهام الرئيسية */}
+        {/* 
+          Facebook Pixel Script - 🚀 تحديث الاستراتيجية لـ lazyOnload
+          يتم تحميل الكود في أوقات خمول المتصفح لعدم حظر رسم الصفحة، مع الحفاظ التام على دقة بيانات حملاتك الإعلانية ومبيعاتك.
+        */}
         <Script
           id="fb-pixel"
-          strategy="afterInteractive" 
+          strategy="lazyOnload" 
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -85,14 +86,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `,
           }}
         />
-        {/* Google tag (gtag.js) - 🚀 معرّف التتبع الصحيح والرابط الكامل لمتجرك */}
+        {/* Google tag (gtag.js) - 🚀 تحديث الاستراتيجية لـ lazyOnload لإخراج التحليلات من المسار الحرج للشبكة */}
         <Script
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           src="https://www.googletagmanager.com/gtag/js?id=G-5B1BGCLTM8"
         />
         <Script
           id="gtag-init"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -111,7 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Header session={session} />
                 <main>{children}</main>
                 <SlideOutCart />
-                <RelatedProductsBar /> {/* ✅ سيقوم الشريط تلقائياً بالاختفاء بمجرد تعبئة بيانات الشحن لعدم تغطية السلة */}
+                <RelatedProductsBar /> 
                 <Footer />
               </>
             )}
