@@ -44,7 +44,7 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
 
   // ✅ استخدام الدالة المدمجة بالمتصفح البديلة لـ uuid لتوليد معرف فريد بوزن صفر بايت!
   const userId = useMemo(() => {
-    if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+    if (typeof window !== 'undefined' && window.crypto) {
       return crypto.randomUUID();
     }
     return Math.random().toString(36).substring(2, 15); // حماية احتياطية للمتصفحات القديمة جداً

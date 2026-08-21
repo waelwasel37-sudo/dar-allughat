@@ -1,12 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 1. نقل الخيار للمستوى الأول مباشرة لتجاوز خطأ الـ Invalid Unrecognized key
-  serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library", "sharp"],
-
+  // ✅ وضع الخيار داخل experimental لضمان استقرار حزم Firebase Admin
   experimental: {
-    // تم تفريغه لعدم الحاجة لخيارات تجريبية زائدة حالياً
+    serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library", "sharp"],
   },
-  
+
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 
@@ -14,8 +12,8 @@ const nextConfig = {
     unoptimized: false,
     remotePatterns: [
       { protocol: 'https', hostname: '*.googleapis.com' },
-      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' }, 
-      { protocol: 'https', hostname: '*.googleusercontent.com' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
+      { protocol: 'https', hostname: '*.googleusercontent.com' }, // ✅ تم تصحيح الفاصلة هنا
       { protocol: 'https', hostname: 'storage.googleapis.com' },
       { protocol: 'https', hostname: '*.run.app' },
       { protocol: 'https', hostname: '*.firebaseapp.com' },
@@ -30,7 +28,7 @@ const nextConfig = {
         source: '/images/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
-      // تفعيل كاش المتصفح للأكواد والملفات الثابتة لتقليل الاستهلاك وتسريع المتجر للزوار
+      // تفعيل كاش المتصفح للأكواد والملفات الثابتة لتسريع المتجر للزوار
       {
         source: '/_next/static/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
