@@ -98,13 +98,21 @@ export default function SlideOutCart() {
                       `📍 *العنوان:* ${address}\n\n` +
                       "--- تفاصيل الطلب ---\n";
 
+        // 🌟 إعادة حقن روابط الصور والمنتجات داخل نص رسالة الواتساب لمنع الطلبات الخاطئة
         cart.forEach((item: CartItem) => {
             const finalPrice = item.discount ? item.price * (1 - item.discount / 100) : item.price;
+            
+            // بناء رابط صفحة الكتاب ورابط الصورة بناءً على قيم الـ item الممررة بالفعل في السلة
+            const productPageUrl = `${window.location.origin}/products/${item.slug}`;
+            const productImageUrl = item.imageUrl || '';
+
             message += "------------------------\n" +
                        `📖 *المنتج:* ${item.name}\n` +
                        `🔢 *الكود:* ${item.slug}\n` +
                        `📦 *الكمية:* ${item.quantity}\n` +
-                       `💲 *السعر:* ${finalPrice.toFixed(2)} جنيه\n`;
+                       `💲 *السعر:* ${finalPrice.toFixed(2)} جنيه\n` +
+                       `🔗 *رابط الكتاب:* ${productPageUrl}\n` +
+                       (productImageUrl ? `🖼️ *رابط الصورة:* ${productImageUrl}\n` : '');
         });
 
         message += "------------------------\n\n" +
