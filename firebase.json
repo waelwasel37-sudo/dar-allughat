@@ -41,6 +41,15 @@
             "value": "Content-Type, Authorization, X-Requested-With, Accept"
           }
         ]
+      },
+      {
+        "source": "/images/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
       }
     ]
   }

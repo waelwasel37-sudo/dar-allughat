@@ -206,3 +206,16 @@
     padding: 0.9rem 3rem 0.9rem 1.2rem; /* ضبط المسافات على الموبايل */
   }
 }
+
+/* 🌟 The Standard SEO-Friendly Visually Hidden Class */
+.seoIntroHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

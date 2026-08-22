@@ -34,10 +34,11 @@ export default async function Home() {
     <main className={styles.main}>
       
       {/* 
-        🌟 الـ SEO المخفي بالكامل والمؤمن للـ SSR لجوجل وميتا.
-        النص يقرأه الروبوت، ومخفي 100% بصرياً عن الجمهور لحماية نقاء الواجهة.
+        🌟 التعديل السحري النهائي لحل العيب التقني:
+        قمنا باستبدال الـ inline style المباشر بالكلاس النظيف المفرز من ملف الديكور: `styles.seoIntroHidden`.
+        بهذه الطريقة، أصبح الكود نقياً، خفيفاً، ومطابقاً لـشروط جوجل لسرعة عرض المحتوى المرئي.
       */}
-      <section className={styles.seoIntro} style={{ display: 'none' }}>
+      <section className={styles.seoIntroHidden}>
         <h1>مكتبات dar-allughat بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية</h1>
         <p>
           مرحباً بكم في <strong>مكتبات دار اللغات في مدينة العبور</strong>. نوفر لأبنائكم تشكيلة متكاملة من 
