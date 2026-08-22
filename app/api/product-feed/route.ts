@@ -42,6 +42,9 @@ export async function GET() {
 
       const availability = item.stock && item.stock > 0 ? 'in_stock' : 'out_of_stock';
 
+      // Conditionally add gtin tag if isbn exists
+      const gtinTag = item.isbn ? `<g:gtin>${item.isbn}</g:gtin>` : '';
+
       return `
         <item>
           <g:id>${item.id}</g:id>
@@ -54,6 +57,7 @@ export async function GET() {
           <g:condition>new</g:condition>
           <g:brand><![CDATA[مكتبات دار اللغات]]></g:brand>
           <g:google_product_category>Media &gt; Books</g:google_product_category>
+          ${gtinTag}
         </item>
       `;
     }).join('');

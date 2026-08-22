@@ -35,6 +35,7 @@ export type Product = {
   averageRating?: number; // Average rating score
   preOrderEnabled?: boolean; // Whether pre-ordering is enabled
   releaseDate?: string; // Expected release date for pre-orders
+  isbn?: string; // 🌟 ISBN/GTIN for the product
 };
 
 // A cart item is a product with a quantity

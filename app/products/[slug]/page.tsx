@@ -49,6 +49,7 @@ export async function generateMetadata(
       ],
       locale: 'ar_EG',
       type: 'article',
+      "product:isbn": product.isbn || '',
     },
     twitter: {
       card: 'summary_large_image',
@@ -83,6 +84,8 @@ const ProductDetailsPage = async ({ params, searchParams }: PageProps) => {
     image: product.imageUrl,
     description: product.description,
     sku: product.slug, 
+    isbn: product.isbn || '',
+    mpn: product.isbn || product.slug,
     offers: {
       '@type': 'Offer',
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/products/${slug}`,

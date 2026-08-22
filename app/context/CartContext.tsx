@@ -103,16 +103,36 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             return;
         }
 
+        // 🌟 حزام الأمان الأول: فحص المخزون قبل الإضافة (يمنع إضافة كتاب نفد مخزونه)
+        if (product.stock !== undefined && product.stock <= 0) {
+            setMessage(`عذراً، منتج "${product.name}" نفد من المخزون حالياً ولا يمكن إضافته.`);
+            return;
+        }
+
+        let isStockExceeded = false;
+
         setCart(currentCart => {
             const existingItem = currentCart.find(item => item.slug === product.slug);
             if (existingItem) {
+                // 🌟 حزام الأمان الثاني: التأكد من أن العميل لا يطلب كمية أكبر من المتاحة في المخزن
+                const totalRequested = existingItem.quantity + quantity;
+                if (product.stock !== undefined && totalRequested > product.stock) {
+                    isStockExceeded = true;
+                    return currentCart; // إرجاع السلة كما هي دون زيادة
+                }
                 return currentCart.map(item =>
-                    item.slug === product.slug ? { ...item, quantity: item.quantity + quantity } : item
+                    item.slug === product.slug ? { ...item, quantity: totalRequested } : item
                 );
             } else {
                 return [...currentCart, { ...product, quantity }];
             }
         });
+
+        // إذا تجاوز العميل الحد المتاح في المخزن، نبهه ولا تفتح السلة
+        if (isStockExceeded) {
+            setMessage(`عذراً، لا يمكنك إضافة المزيد. الكمية المتاحة في المخزن هي ${product.stock} فقط.`);
+            return;
+        }
 
         setMessage(`${product.name} تمت إضافته إلى السلة!`);
         setIsCartOpen(true);
@@ -128,7 +148,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 content_ids: [product.slug],
                 content_type: 'product',
                 value: discountedPrice * quantity,
-                currency: 'EGP' // Assuming EGP, change if needed
+                currency: 'EGP' 
             });
         }
     };
@@ -142,11 +162,20 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         if (quantity <= 0) {
             removeFromCart(slug);
         } else {
-            setCart(currentCart => 
-                currentCart.map(item =>
-                    item.slug === slug ? { ...item, quantity } : item
-                )
-            );
+            // 🌟 حزام الأمان الثالث: حماية دالة تحديث الكمية داخل صفحة السلة نفسها لكي لا يتخطى المخزون
+            setCart(currentCart => {
+                return currentCart.map(item => {
+                    if (item.slug === slug) {
+                        if (item.stock !== undefined && quantity > item.stock) {
+                            // إذا حاول العميل كتابة رقم أكبر من المخزون، نثبته على الحد الأقصى للمخزون وننبهه
+                            setMessage(`الكمية المتاحة للمنتج "${item.name}" هي ${item.stock} فقط.`);
+                            return { ...item, quantity: item.stock };
+                        }
+                        return { ...item, quantity };
+                    }
+                    return item;
+                });
+            });
         }
     };
 

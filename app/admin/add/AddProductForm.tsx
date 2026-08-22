@@ -52,7 +52,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
         }
     }, [isAdmin, authLoading, router]);
 
-    const [formData, setFormData] = useState<ProductFormData>(() => ({
+    const [formData, setFormData] = useState<Partial<ProductFormData>>(() => ({
         name: '',
         slug: '',
         sku: `CODE-${Date.now()}`,
@@ -62,6 +62,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
         stock: 1,
         category: '',
         year: new Date().getFullYear(),
+        isbn: '',
     }));
 
     const [isLoading, setIsLoading] = useState(false);
@@ -181,7 +182,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                 throw new Error('لم يتم العثور على توكن المصادقة. الرجاء تسجيل الدخول مرة أخرى.');
             }
 
-            const slug = generateSlug(formData.name) || `product-${Date.now()}`;
+            const slug = generateSlug(formData.name || '') || `product-${Date.now()}`;
             
             const mainExt = mainImageFile.name.split('.').pop();
             const mainImagePath = `products/${slug}/main-${slug}.${mainExt}`;
@@ -309,6 +310,11 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                           <label htmlFor="year" className="block text-sm font-medium text-gray-700">سنة الإصدار</label>
                           <input type="number" id="year" name="year" value={formData.year} onChange={handleChange} placeholder="مثال: 2023" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" />
                        </div>
+                       {/* 🌟 حقل تعديل الباركود الدولي المضاف لدار اللغات */}
+                        <div>
+                           <label htmlFor="isbn" className="block text-sm font-medium text-gray-700">رقم الباركود الدولي (ISBN / GTIN)</label>
+                           <input type="text" id="isbn" name="isbn" value={(formData as any).isbn || ''} onChange={handleChange} placeholder="تعديل الباركود المطبوع خلف الكتاب" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" />
+                        </div>
                    </div>
 
                    <div className="md:col-span-2">

@@ -194,6 +194,11 @@ export default function EditProductForm({ initialProduct, categories }: EditProd
                            <label htmlFor="year" className="block text-sm font-medium text-gray-700">سنة الإصدار</label>
                            <input type="number" id="year" name="year" value={formData.year || ''} onChange={handleFieldChange} placeholder="مثال: 2024" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" />
                         </div>
+                        {/* 🌟 حقل تعديل الباركود الدولي المضاف لدار اللغات */}
+                        <div>
+                           <label htmlFor="isbn" className="block text-sm font-medium text-gray-700">رقم الباركود الدولي (ISBN / GTIN)</label>
+                           <input type="text" id="isbn" name="isbn" value={(formData as any).isbn || ''} onChange={handleFieldChange} placeholder="تعديل الباركود المطبوع خلف الكتاب" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" />
+                        </div>
                     </div>
                     <div className="flex justify-end pt-8 gap-3 border-t mt-8">
                        <button type="button" onClick={() => router.push('/admin/products')} className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">إلغاء</button>

@@ -5,7 +5,6 @@ import SearchAndFilter from './components/SearchAndFilter';
 import { getProducts, getCategories } from '@/app/lib/data-server'; 
 import { Product, Category } from '@/app/lib/types';
 import HomeProductsLoader from './components/HomeProductsLoader';
-// 👇 تم التأكيد: استيراد Link البرمجي الصحيح من Next.js لتسريع الانتقال بين الصفحات
 import Link from 'next/link'; 
 
 async function loadData(): Promise<{ products: Product[], categories: Category[] }> {
@@ -35,28 +34,31 @@ export default async function Home() {
   return (
     <main className={styles.main}>
       
-      {/* قسم النص التشريحي الشامل لأقسام المكتبة وخدماتها لدعم أرشفة جوجل الفورية */}
-      <section className={styles.seoIntro} style={{ padding: '30px 20px', backgroundColor: '#fdfdfd', borderBottom: '1px solid #eee', textAlign: 'center' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <h1 style={{ fontSize: '26px', color: '#2c3e50', fontWeight: 'bold', marginBottom: '15px' }}>
-            مكتبات دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية
-          </h1>
-          <p style={{ fontSize: '16px', color: '#555', lineHeight: '1.8', marginBottom: '25px' }}>
-            مرحباً بكم في <strong>مكتبات دار اللغات في مدينة العبور</strong>. نوفر لأبنائكم تشكيلة متكاملة من 
-            <em> كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وكتب مستوى رفيع لغات</em> لكافة المراحل التعليمية. 
-            كما نتميز بتقديم أفضل <em>كتب تنمية مهارات أطفال، قصص أطفال، وألعاب تنمية مهارات أطفال منتسوري</em> المصممة علمياً لتطوير ذكاء طفلك، 
-            بجانب كافة مستلزمات الـ <em>أدوات مكتبية ومدرسية</em> وقسم خاص لـ <em>كتب مرتجع</em> بأسعار تنافسية.
-          </p>
+      {/* 
+        🌟 الخدعة السحرية للـ SEO المتقدم 🌟
+        قمت بإضافة خاصية display: 'none' على حاوية النص التشريحي.
+        - النتيجة للجمهور والزوار: يختفي النص والوصف تماماً من الشاشة ولا يأخذ أي مساحة بصرية.
+        - النتيجة لروبوتات جوجل وميتا: يقرأون النص بالكامل داخل كود الـ HTML المفرز من السيرفر (SSR) ويؤرشفون الكلمات المفتاحية دون أي نقص.
+      */}
+      <section className={styles.seoIntro} style={{ display: 'none' }}>
+        <h1>مكتبات دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية</h1>
+        <p>
+          مرحباً بكم في <strong>مكتبات دار اللغات في مدينة العبور</strong>. نوفر لأبنائكم تشكيلة متكاملة من 
+          <em> كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وكتب مستوى رفيع لغات</em> لكافة المراحل التعليمية. 
+          كما نتميز بتقديم أفضل <em>كتب تنمية مهارات أطفال، قصص أطفال، وألعاب تنمية مهارات أطفال منتسوري</em> المصممة علمياً لتطوير ذكاء طفلك، 
+          بجانب كافة مستلزمات الـ <em>أدوات مكتبية ومدرسية</em> وقسم خاص لـ <em>كتب مرتجع</em> بأسعار تنافسية.
+        </p>
+      </section>
 
-          {/* 👇 تم التعديل والتأكيد: استخدام مكونات الـ Link الذكية لسرعة تصفح خارقة للزوار وتكامل الـ SEO */}
-          <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '20px' }}>
-            <Link href="/school-lists" style={{ padding: '12px 24px', backgroundColor: '#e74c3c', color: '#fff', borderRadius: '5px', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-              📋 ارفع قائمة مدرستك الآن
-            </Link>
-            <Link href="/factory-supplies" style={{ padding: '12px 24px', backgroundColor: '#2ecc71', color: '#fff', borderRadius: '5px', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-              🏢 قسم توريدات مصانع ومؤسسات
-            </Link>
-          </div>
+      {/* 🏛️ أبقينا على الأزرار التفاعلية الهامة للجمهور ظاهرة ومنسقة بشكل جذاب في أعلى الصفحة */}
+      <section style={{ padding: '20px 20px', backgroundColor: '#fdfdfd', borderBottom: '1px solid #eee', textAlign: 'center' }}>
+        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link href="/school-lists" style={{ padding: '12px 24px', backgroundColor: '#e74c3c', color: '#fff', borderRadius: '5px', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+            📋 ارفع قائمة مدرستك الآن
+          </Link>
+          <Link href="/factory-supplies" style={{ padding: '12px 24px', backgroundColor: '#2ecc71', color: '#fff', borderRadius: '5px', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+            🏢 قسم توريدات مصانع ومؤسسات
+          </Link>
         </div>
       </section>
 
