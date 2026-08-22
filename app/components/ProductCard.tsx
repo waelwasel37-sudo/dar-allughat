@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,8 +25,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     return <div className={styles.cardContainer} aria-hidden="true"></div>;
   }
 
-  // 1. التحقق من حالة المخزون
-  const isOutOfStock = product.stockStatus === 'OUT_OF_STOCK';
+  const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
   const originalPrice = product.price || 0;
   const discountPercentage = product.discount || 0;
@@ -36,7 +35,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
     ? originalPrice - (originalPrice * (discountPercentage / 100))
     : originalPrice;
 
-  // 2. بناء البيانات المنظمة (Schema) المحدثة لمطابقة زواحف جوجل ميرشنت فوراً
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -46,10 +44,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
     "offers": {
       "@type": "Offer",
       "url": productUrl,
-      "priceCurrency": "EGP", // العملة الرسمية لمصر لجوجل ميرشنت
+      "priceCurrency": "EGP", 
       "price": discountedPrice.toFixed(2),
       "priceValidUntil": "2027-12-31",
-      // ✅ المسارات الكاملة والمصححة لضمان القبول الفوري في جوجل ميرشنت
       "itemCondition": "https://schema.org/NewCondition", 
       "availability": isOutOfStock 
         ? "https://schema.org/OutOfStock" 
@@ -63,9 +60,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
       }
     } : {})
   };
+
   return (
     <div className={styles.cardContainer}>
-      {/* 3. حقن كود السكيما خفياً في الصفحة لتقرأه زواحف جوجل ميرشنت */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
@@ -74,7 +71,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <Link href={`/products/${product.slug}`} className={styles.cardLink}>
         <div className={styles.card}>
           <div className={styles.imageContainer}>
-            {/* 4. طبقة معتمة ورسالة "نفذ المخزون" على الصورة */}
             {isOutOfStock && (
               <div className={styles.outOfStockOverlay}>
                 <span>نفذ المخزون</span>
@@ -83,9 +79,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <Image
               src={product.imageUrl || '/placeholder.jpg'}
               alt={product.name || 'Product image'}
-              width={240} // 🚀 تنحيف: تقليص الحجم الافتراضي لتسريع الـ LCP ومنع هدر الكيلوبايتات [4.1]
+              width={240} 
               height={240}
-              sizes="(max-width: 768px) 50vw, 240px" // ضبط الأبعاد المتجاوبة بدقة لشاشات الموبايل [4.1]
+              sizes="(max-width: 768px) 50vw, 240px" 
               className={`${styles.image} ${isOutOfStock ? styles.outOfStockImage : ''}`}
             />
             {hasDiscount && (
@@ -97,14 +93,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <div className={styles.details}>
             <h3 className={styles.name}>{product.name || 'اسم المنتج غير متوفر'}</h3>
             
-            {/* 🎯 إضافة تفاصيل/وصف المنتج المصغر بشكل ذكي وأنيق يقتطع سطرين فقط */}
             {product.description && (
               <p className={styles.shortDescription} style={{
                 fontSize: '13px',
                 color: '#666',
                 margin: '4px 0 8px 0',
                 display: '-webkit-box',
-                WebkitLineClamp: 2, // عرض سطرين كحد أقصى وثم ثلاث نقاط تلقائياً (...)
+                WebkitLineClamp: 2, 
                 WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
                 lineHeight: '1.4'
@@ -138,9 +133,26 @@ const ProductCard = ({ product }: ProductCardProps) => {
               )}
             </div>
             
-            {/* 5. عرض رسالة "نفذ المخزون" بدلاً من زر الإضافة للسلة */}
+            {/* 🌟 اللمسة الوظيفية الأخيرة: تحويل النص لزر معطل منسق بصرياً لحماية تجربة الشراء */}
             {isOutOfStock ? (
-              <div className={styles.outOfStockLabel}>نفذ المخزون</div>
+              <button 
+                disabled 
+                className={styles.disabledButton}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  backgroundColor: '#e0e0e0', // لون رمادي باهت يدل على القفل
+                  color: '#888888', // لون نص خافت
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'not-allowed', // تغيير شكل الماوس لعلامة المنع عند الوقوف عليه
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  textAlign: 'center'
+                }}
+              >
+                نفد المخزون
+              </button>
             ) : (
               <AddToCartButton product={product} />
             )}

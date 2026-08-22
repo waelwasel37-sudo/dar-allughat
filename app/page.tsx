@@ -5,7 +5,6 @@ import SearchAndFilter from './components/SearchAndFilter';
 import { getProducts, getCategories } from '@/app/lib/data-server'; 
 import { Product, Category } from '@/app/lib/types';
 import HomeProductsLoader from './components/HomeProductsLoader';
-import Link from 'next/link'; 
 
 async function loadData(): Promise<{ products: Product[], categories: Category[] }> {
   const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
@@ -35,13 +34,11 @@ export default async function Home() {
     <main className={styles.main}>
       
       {/* 
-        🌟 الخدعة السحرية للـ SEO المتقدم 🌟
-        قمت بإضافة خاصية display: 'none' على حاوية النص التشريحي.
-        - النتيجة للجمهور والزوار: يختفي النص والوصف تماماً من الشاشة ولا يأخذ أي مساحة بصرية.
-        - النتيجة لروبوتات جوجل وميتا: يقرأون النص بالكامل داخل كود الـ HTML المفرز من السيرفر (SSR) ويؤرشفون الكلمات المفتاحية دون أي نقص.
+        🌟 الـ SEO المخفي بالكامل والمؤمن للـ SSR لجوجل وميتا.
+        النص يقرأه الروبوت، ومخفي 100% بصرياً عن الجمهور لحماية نقاء الواجهة.
       */}
       <section className={styles.seoIntro} style={{ display: 'none' }}>
-        <h1>مكتبات دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية</h1>
+        <h1>مكتبات dar-allughat بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية</h1>
         <p>
           مرحباً بكم في <strong>مكتبات دار اللغات في مدينة العبور</strong>. نوفر لأبنائكم تشكيلة متكاملة من 
           <em> كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وكتب مستوى رفيع لغات</em> لكافة المراحل التعليمية. 
@@ -50,26 +47,13 @@ export default async function Home() {
         </p>
       </section>
 
-      {/* 🏛️ أبقينا على الأزرار التفاعلية الهامة للجمهور ظاهرة ومنسقة بشكل جذاب في أعلى الصفحة */}
-      <section style={{ padding: '20px 20px', backgroundColor: '#fdfdfd', borderBottom: '1px solid #eee', textAlign: 'center' }}>
-        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/school-lists" style={{ padding: '12px 24px', backgroundColor: '#e74c3c', color: '#fff', borderRadius: '5px', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-            📋 ارفع قائمة مدرستك الآن
-          </Link>
-          <Link href="/factory-supplies" style={{ padding: '12px 24px', backgroundColor: '#2ecc71', color: '#fff', borderRadius: '5px', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-            🏢 قسم توريدات مصانع ومؤسسات
-          </Link>
-        </div>
-      </section>
-
+      {/* 🏛️ الدخول المباشر للـ Hero وبقية عناصر الواجهة النظيفة */}
       <Hero />
       
-      {/* تفعيل الفلاتر والبحث بدون شاشات رمادية */}
       <Suspense fallback={<div className={styles.loading}>جاري تحميل أقسام المكتبة...</div>}> 
         <SearchAndFilter categories={categories || []} />
       </Suspense>
       
-      {/* عرض المنتجات مدمجة مباشرة من السيرفر ليراها جوجل فوراً ويؤرشف الكتب */}
       <Suspense fallback={<div className={styles.loading}>جاري عرض الكتب والمستلزمات...</div>}> 
         <HomeProductsLoader initialProducts={initialProducts || []} categories={categories || []} />
       </Suspense>
