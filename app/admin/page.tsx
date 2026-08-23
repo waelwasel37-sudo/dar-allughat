@@ -37,7 +37,7 @@ const AdminPage = () => {
             </div>
         </div>
 
-        <p className={styles.description}>أهلاً بك في لوحة التحكم الخاصة بمتجر "مكتبات دار اللغات".</p>
+        <p className={styles.description}>أهلاً بك في لوحة التحكم الخاصة بمتجر "مكتبة دار اللغات".</p>
 
         <div className={styles.cardContainer}>
             <Link href="/admin/blog" className={`${styles.card} ${styles.blogCard}`}>

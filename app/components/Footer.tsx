@@ -44,7 +44,7 @@ const Footer = () => {
         </div>
       </div>
       <div className={styles.copyright}>
-        <p>&copy; {new Date().getFullYear()} مكتبات دار اللغات. جميع الحقوق محفوظة.</p>
+        <p>&copy; {new Date().getFullYear()} مكتبة دار اللغات. جميع الحقوق محفوظة.</p>
         <p className={styles.taxNumber}>
           الرقم الضريبي: 769499732
         </p>

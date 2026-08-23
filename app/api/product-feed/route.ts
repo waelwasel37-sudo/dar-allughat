@@ -55,7 +55,7 @@ export async function GET() {
           <g:image_link><![CDATA[${item.imageUrl}]]></g:image_link>
           <g:availability>${availability}</g:availability>
           <g:condition>new</g:condition>
-          <g:brand><![CDATA[مكتبات دار اللغات]]></g:brand>
+          <g:brand><![CDATA[مكتبة دار اللغات]]></g:brand>
           <g:google_product_category>Media &gt; Books</g:google_product_category>
           ${gtinTag}
         </item>
@@ -65,9 +65,9 @@ export async function GET() {
     const xmlFeed = `<?xml version="1.0" encoding="UTF-8" ?>
       <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
         <channel>
-          <title>موجز منتجات مكتبات دار اللغات</title>
+          <title>موجز منتجات مكتبة دار اللغات</title>
           <link>${domain}</link>
-          <description>قائمة محدثة بجميع الكتب والمنتجات المتوفرة في مكتبات دار اللغات.</description>
+          <description>قائمة محدثة بجميع الكتب والمنتجات المتوفرة في مكتبة دار اللغات.</description>
           ${feedItems}
         </channel>
       </rss>
