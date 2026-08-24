@@ -75,13 +75,14 @@ const Header = ({ session }: HeaderProps) => {
           border: '0'
         }}
       >
-        مكتبات دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية.
+        مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية.
       </h1>
 
       {/* 1. Top Bar */}
       <div className={styles.topBar}>
         <div className={styles.topBarContainer}>
           <p className={styles.taxNumber}>الرقم الضريبي: 769499732</p>
+          <p className={styles.taxNumber}>السجل التجاري: 100160</p>
           <div className={styles.socialLinks}>
             <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" className={styles.facebookIcon} aria-label="تابع صفحتنا على فيسبوك"><FaFacebook /></a>
             <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className={styles.whatsappIcon} aria-label="تواصل معنا عبر واتساب"><FaWhatsapp /></a>
@@ -97,7 +98,7 @@ const Header = ({ session }: HeaderProps) => {
           <Link href="/" onClick={closeMobileMenu}>
             <Image
               src="/images/logo-horizontal.png" 
-              alt="شعار مكتبات دار اللغات"
+              alt="شعار مكتبة دار اللغات"
               width={256}
               height={64}
               priority={true}
