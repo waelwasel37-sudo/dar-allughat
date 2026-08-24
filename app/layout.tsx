@@ -44,8 +44,8 @@ export const metadata: Metadata = {
     description: 'مرحباً بكم في مكتبة دار اللغات في مدينة العبور. نوفر لأبنائكم تشكيلة متكاملة من كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وقصص أطفال وألعاب تنمية مهارات أطفال منتسوري بأسعار تنافسية.',
     
     icons: {
-      icon: '/images/logo-circular.png', 
-      apple: '/images/logo-circular.png', 
+      icon: '/images/logo-circular.png1', 
+      apple: '/images/logo-circular.png1', 
     },
     
     // 🌟 تأمين الأرشفة لوسائل التواصل كواتساب وفيسبوك عند مشاركة الرابط الأساسي للموقع

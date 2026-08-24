@@ -97,7 +97,7 @@ const Header = ({ session }: HeaderProps) => {
         <div className={styles.logo}>
           <Link href="/" onClick={closeMobileMenu}>
             <Image
-              src="/images/logo-horizontal.png" 
+              src="/images/logo-horizontal.png1" 
               alt="شعار مكتبة دار اللغات"
               width={256}
               height={64}

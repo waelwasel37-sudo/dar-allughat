@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import styles from './Footer.module.css';
 import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaPhoneAlt } from 'react-icons/fa';
@@ -46,7 +47,7 @@ const Footer = () => {
       <div className={styles.copyright}>
         <p>&copy; {new Date().getFullYear()} مكتبة دار اللغات. جميع الحقوق محفوظة.</p>
         <p className={styles.taxNumber}>
-          الرقم الضريبي: 769499732
+          الرقم الضريبي: 769499732 | السجل التجاري: 100160
         </p>
       </div>
     </footer>

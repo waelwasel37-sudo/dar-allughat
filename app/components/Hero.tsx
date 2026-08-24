@@ -7,13 +7,13 @@ const Hero = () => {
     <div className={styles.hero}>
       <div className={styles.overlay} />
       <div className={styles.content}>
-        <h1 className={styles.title}>مكتبات دار اللغات</h1>
+        <h1 className={styles.title}>مكتبة دار اللغات</h1>
         {/* The subtitle text has been changed and styled to be white */}
         <p 
           className={styles.subtitle}
           style={{ color: '#FFFFFF' }} // Added inline style for white color
         >
-          مستقبل أطفالك يبدأ هنا
+          مستقبل أطفالك يبدأ من هنا
         </p>
       </div>
     </div>
