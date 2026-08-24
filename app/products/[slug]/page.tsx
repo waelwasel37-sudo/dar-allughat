@@ -22,12 +22,12 @@ export async function generateMetadata(
 
   if (!product) {
     return {
-      title: 'مكتبات دار اللغات - المنتج غير موجود',
+      title: 'مكتبة دار اللغات - المنتج غير موجود', // 🌟 تم تعديلها إلى مكتبة
       description: 'عذراً، هذا المنتج الذي تبحث عنه غير متوفر حالياً.',
     };
   }
 
-  const pageTitle = `مكتبات دار اللغات - ${product.name}`;
+  const pageTitle = `مكتبة دار اللغات - ${product.name}`; // 🌟 تم تعديلها إلى مكتبة
   const pageDescription = (product.description || `اكتشف المزيد حول ${product.name} وأفضل الأسعار في مصر.`)
     .substring(0, 160);
 
@@ -38,7 +38,7 @@ export async function generateMetadata(
       title: pageTitle,
       description: pageDescription,
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/products/${slug}`,
-      siteName: 'مكتبات دار اللغات',
+      siteName: 'مكتبة دار اللغات', // 🌟 تم تعديلها إلى مكتبة
       images: [
         {
           url: product.imageUrl, 
@@ -49,8 +49,11 @@ export async function generateMetadata(
       ],
       locale: 'ar_EG',
       type: 'article',
-      "product:isbn": product.isbn || '',
     },
+    // 🌟 الطريقة القياسية لحقن الـ custom meta tags لـ ISBN في Next.js بدون أخطاء TypeScript
+    other: product.isbn ? {
+      'product:isbn': product.isbn,
+    } : {},
     twitter: {
       card: 'summary_large_image',
       title: pageTitle,

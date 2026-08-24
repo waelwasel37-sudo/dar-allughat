@@ -25,7 +25,7 @@
     gap: 0.75rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
     .stickyButtonContainer {
         position: static;
         background: none;
@@ -133,40 +133,6 @@
     margin-top: 0.5rem;
 }
 
-/* Actions & Share Button */
-.actionsContainer {
-    margin-top: 0.5rem; /* Reduced margin */
-}
-
-.iconButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    width: 100%; /* Make it full width inside the container */
-}
-
-.iconButton:hover {
-    background-color: #f3f4f6;
-}
-
-.shareButton {
-    color: #3b82f6;
-    font-size: 1.25rem; /* Adjusted size */
-}
-
-.shareButton span {
-    margin-right: 0.5rem;
-    font-weight: 500;
-    font-size: 1rem;
-}
-
-/* Release Date Info */
 .releaseDateInfo {
     margin-top: 0.5rem;
     font-size: 0.9rem;
@@ -180,4 +146,74 @@
 .stockInfo.outOfStock {
     background-color: #fee2e2;
     color: #991b1b;
+}
+
+/* ==========================================================================
+   20. قسم وصف المنتج
+   ========================================================================== */
+.descriptionContainer {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.descriptionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.75rem;
+}
+
+.descriptionText {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #374151;
+  white-space: pre-wrap; /* للحفاظ على فواصل الأسطر والفقرات */
+}
+
+/* ==========================================================================
+   21. زر شارك واربح الثابت تحت السعر
+   ========================================================================== */
+
+/* حاوية الزر تحت السعر */
+.productStaticShareContainer {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  width: 100%;
+  display: flex;
+}
+
+/* تصميم زر شارك واربح الاحترافي */
+.productStaticShareButton {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important; /* تدرج أخضر جذاب للربح */
+  color: #ffffff !important;
+  font-weight: bold !important;
+  font-size: 1rem !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 10px 20px !important;
+  width: 100%; /* يأخذ كامل العرض المتاح في الموبايل */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.15);
+}
+
+.productStaticShareButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px -2px rgba(16, 185, 129, 0.25);
+  background: linear-gradient(135deg, #047857 0%, #059669 100%) !important;
+}
+
+/* 💻 الشاشات الكبيرة (الكمبيوتر) */
+@media (min-width: 769px) {
+  .productStaticShareButton {
+    width: auto; /* حجم أنيق بجانب تفاصيل المنتج على الكمبيوتر */
+    min-width: 180px;
+  }
 }

@@ -254,6 +254,14 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
             <h1 className={styles.name}>{product.name}</h1>
             {viewers > 1 && <div className={styles.viewersCount}><FaEye /><span>{`${viewers} أشخاص يشاهدون هذا المنتج الآن`}</span></div>}
             
+            {product.description && (
+              <div className={styles.descriptionContainer}>
+                <h2 className={styles.descriptionTitle}>وصف المنتج</h2>
+                <p className={styles.descriptionText}>{product.description}</p>
+              </div>
+            )}
+
+            {/* حاوية السعر الحالية */}
             <div className={styles.priceContainer}>
                 {liveDiscount > 0 ? (
                     <>
@@ -265,6 +273,14 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
                     <span className={styles.price}>{livePrice.toFixed(2)} جنيه</span>
                 )}
             </div>
+
+            {/* 🌟 زر شارك واربح الثابت: يظهر هنا تحت السعر مباشرة على كل منتج */}
+            <div className={styles.productStaticShareContainer}>
+                <button onClick={handleShare} className={styles.productStaticShareButton} aria-label="شارك المنتج واربح">
+                    <FaShareAlt /> <span>شارك واربح</span>
+                </button>
+            </div>
+
             <div className={styles.stockContainer}>{getStockInfo()}</div>
 
             <div className={styles.stickyButtonContainer}>
@@ -304,11 +320,6 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
                 ) : (
                     <button className={styles.button} disabled>نفد المخزون</button>
                 )}
-                <div className={styles.actionsContainer}>
-                    <button onClick={handleShare} className={`${styles.iconButton} ${styles.shareButton}`} aria-label="شارك المنتج">
-                        <FaShareAlt />
-                    </button>
-                </div>
             </div>
 
             {/* تم تحميل صندوق التقييم ديناميكياً لتأجيل عبء ملف iframe.js الخاص بالـ Auth وتسريع الـ LCP */}
