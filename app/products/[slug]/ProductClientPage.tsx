@@ -150,10 +150,12 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
     }
   };
 
-  // 🎯 دالة المشاركة الذكية بعد تطبيق تعديلك الهندسي الفخم
+  // 🎯 دالة المشاركة الذكية فائقة التقصير والديناميكية
   const handleShare = () => {
-    // استخدام علامات `` ومتغير البيئة والمسار الفرعي /p/ بشكل سليم وديناميكي
-    const shortUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/p/${product.id}`;
+    // نأخذ أول 6 أحرف فقط من الـ ID
+    const ultraShortId = product.id.substring(0, 6);
+    // نستخدم رابط الموقع الحالي ديناميكياً لتجنب أي مشاكل
+    const shortUrl = `${window.location.origin}/p/${ultraShortId}`;
 
     if (navigator.share) {
       navigator.share({
