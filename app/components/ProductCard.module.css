@@ -7,17 +7,26 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background-color: #fff; 
     border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
 }
 
-.cardContainer:hover {
-    transform: translateY(-8px); 
-    box-shadow: 0 12px 24px rgba(0,0,0,0.12); 
+/* تفعيل تأثير الحركية فقط على الشاشات التي تدعم الماوس لمنع مشاكل اللمس على الموبايل */
+@media (hover: hover) {
+    .cardContainer:hover {
+        transform: translateY(-8px); 
+        box-shadow: 0 12px 24px rgba(0,0,0,0.12); 
+    }
+    .cardContainer:hover .image:not(.outOfStockImage) {
+        transform: scale(1.05);
+    }
 }
 
 .cardLink {
     text-decoration: none;
     color: inherit;
     display: block;
+    flex-grow: 1;
 }
 
 .card {
@@ -44,10 +53,6 @@
     transition: transform 0.3s ease;
 }
 
-.cardContainer:hover .image:not(.outOfStockImage) {
-    transform: scale(1.05);
-}
-
 .discountBadge {
     position: absolute;
     top: 12px;
@@ -64,51 +69,6 @@
     transition: all 0.3s ease;
 }
 
-.shareIconContainer {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 5;
-}
-
-.shareIconContainer :global(.shareButton) {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    color: #2c3e50 !important;
-    border-radius: 50% !important;
-    width: 38px;
-    height: 38px;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: width 0.3s ease, height 0.3s ease;
-}
-
-.shareIconContainer :global(.shareButton:hover) {
-    background-color: #fff !important;
-}
-
-@media (max-width: 420px) {
-    .shareIconContainer :global(.shareButton) {
-        width: 34px;
-        height: 34px;
-    }
-    .discountBadge {
-        top: auto;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        transform: rotate(0deg);
-        border-radius: 0;
-        text-align: center;
-        font-size: 0.9rem;
-        padding: 6px 0;
-        box-shadow: none;
-        border-top: 1px solid rgba(0,0,0,0.1);
-    }
-}
-
 .details {
     padding: 16px;
     display: flex;
@@ -116,19 +76,26 @@
     flex-grow: 1;
 }
 
-@media (max-width: 420px) {
-    .details {
-        padding-top: 24px;
-    }
-}
-
 .name {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin: 0 0 12px;
-    flex-grow: 1;
+    margin: 0 0 8px;
     line-height: 1.4;
     color: #34495e;
+    flex-grow: 1;
+    min-height: 44px;
+}
+
+.shortDescription {
+    font-size: 13px;
+    color: #666;
+    margin: 4px 0 8px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; 
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
 }
 
 .ratingContainer {
@@ -155,30 +122,25 @@
     align-items: baseline;
     justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
-.currentPrice {
-    font-size: 1.5rem;
+.currentPrice, .newPrice {
+    font-size: 1.4rem;
     font-weight: bold;
     color: #2c3e50;
-    order: 1;
 }
 
 .newPrice {
-    font-size: 1.6rem;
-    font-weight: 700;
     color: #e63946;
-    order: 1;
 }
 
 .oldPrice {
-    font-size: 1.1rem;
-    color: #95a5a6; /* 🎯 تم تغميق اللون لتحسين التباين */
+    font-size: 1rem;
+    color: #95a5a6;
     text-decoration: line-through;
     text-decoration-thickness: 1.5px;
-    order: 2;
 }
 
 .outOfStockOverlay {
@@ -192,6 +154,7 @@
   justify-content: center;
   align-items: center;
   z-index: 3;
+  border-radius: 12px 12px 0 0;
 }
 
 .outOfStockOverlay span {
@@ -209,17 +172,90 @@
   opacity: 0.6;
 }
 
-.outOfStockLabel {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px;
-  background-color: #f1f2f6;
-  color: #a0aec0;
-  font-weight: bold;
-  font-size: 1rem;
-  border-radius: 8px; 
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box; 
+.disabledButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #e0e0e0;
+    color: #888888;
+    border: none;
+    border-radius: 5px;
+    cursor: not-allowed;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.shareEarnButtonWrapper {
+    padding: 0 16px 16px;
+    margin-top: auto; /* Push to the bottom */
+}
+
+
+/* ==========================================================================
+   تعديلات خاصة بشاشات الموبايل والأجهزة الصغيرة (أقل من 576 بكسل)
+   ========================================================================== */
+@media (max-width: 575.98px) {
+    .details {
+        padding: 10px; /* تقليل الحواف الداخلية لحفظ المساحة */
+    }
+
+    .name {
+        font-size: 0.95rem; /* تصغير اسم المنتج ليتناسب مع كارت الموبايل */
+        min-height: 38px;  /* تعديل الطول الافتراضي لسطرين بحجم أصغر */
+        margin-bottom: 4px;
+    }
+
+    .shortDescription {
+        font-size: 11px; /* تصغير الوصف القصير */
+        margin: 2px 0 6px 0;
+    }
+
+    .discountBadge {
+        top: 8px;
+        left: 8px;
+        padding: 3px 8px;
+        font-size: 0.75rem; /* تصغير شارة الخصم */
+    }
+
+    .priceContainer {
+        gap: 6px; /* تقريب السعر الحالي من السعر القديم */
+        margin-bottom: 8px;
+    }
+
+    .currentPrice, .newPrice {
+        font-size: 1.15rem; /* تصغير حجم السعر لعدم كسر السطر */
+    }
+
+    .oldPrice {
+        font-size: 0.85rem;
+    }
+
+    .ratingContainer {
+        margin-bottom: 8px;
+        gap: 3px;
+    }
+
+    .ratingValue {
+        font-size: 0.85rem;
+    }
+
+    .ratingCount {
+        font-size: 0.75rem;
+    }
+
+    .disabledButton {
+        padding: 8px;
+        font-size: 12px; /* تقليص زر نفاد الكمية ليناسب الشاشة */
+    }
+
+    .shareEarnButtonWrapper {
+        padding: 0 10px 10px; /* مواءمة حواف زر المشاركة مع الـ details */
+        margin-top: auto;
+    }
+    
+    .outOfStockOverlay span {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
 }

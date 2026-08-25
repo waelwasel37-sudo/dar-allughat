@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './ShareButton.module.css';
 import { FaShareAlt, FaWhatsapp, FaFacebook, FaTwitter, FaCopy } from 'react-icons/fa';
 
@@ -12,36 +12,46 @@ interface ShareButtonProps {
 }
 
 const ShareButton: React.FC<ShareButtonProps> = ({ 
-  title = 'مكتبات دار اللغات', 
-  text = 'اكتشف عالماً من المعرفة واللوازم المدرسية في مكتبات دار اللغات!', 
-  url = typeof window !== 'undefined' ? window.location.origin : '' 
+  title = 'مكتبة دار اللغات', // تم التعديل حسب الاسم القانوني
+  text = 'اكتشف عالماً من المعرفة واللوازم المدرسية في مكتبة دار اللغات!', // تم التعديل
+  url 
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [copySuccess, setCopySuccess] = useState('');
+  const [finalUrl, setFinalUrl] = useState('');
 
-  const shareData = { title, text, url };
+  useEffect(() => {
+    // Ensure this code runs only on the client side
+    const determinedUrl = url || window.location.href;
+    setFinalUrl(determinedUrl);
+  }, [url]);
 
-  const handleNativeShare = async () => {
-    // Check if we are sharing the main site or a product page
-    const isProduct = url.includes('/product/');
-    const sharePayload = {
-        title: shareData.title,
-        text: isProduct ? `${shareData.title}: ${shareData.text}` : shareData.text,
-        url: shareData.url,
-    };
+
+  const shareData = { title, text, url: finalUrl };
+
+  const handleShareClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
 
     if (navigator.share) {
       try {
-        await navigator.share(sharePayload);
+        await navigator.share({
+            title: shareData.title,
+            text: shareData.text,
+            url: shareData.url,
+        });
       } catch (err) {
         console.error('Error using native share:', err);
+        // Fallback to menu if native share is cancelled or fails
+        setShowMenu(!showMenu);
       }
     } else {
       setShowMenu(!showMenu);
     }
   };
 
-  const copyToClipboard = () => {
+  const copyToClipboard = (e: React.MouseEvent) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(shareData.url).then(() => {
       setCopySuccess('تم النسخ!');
       setTimeout(() => setCopySuccess(''), 2000);
@@ -51,26 +61,30 @@ const ShareButton: React.FC<ShareButtonProps> = ({
     });
   };
 
-  const openShareLink = (shareUrl: string) => {
+  const openShareLink = (e: React.MouseEvent, shareUrl: string) => {
+    e.stopPropagation();
     window.open(shareUrl, '_blank', 'noopener,noreferrer');
   }
 
+  // Determine if this is a product card context to show only the icon
+  const isProductCard = shareData.url.includes('/products/');
+
   return (
     <div className={styles.container}>
-      <button onClick={handleNativeShare} className={styles.shareButton} title="شارك المنتج">
+      <button onClick={handleShareClick} className={styles.shareButton} title="شارك واربح">
         <FaShareAlt />
-        {/* Hide text on product card to save space */}
-        {!url.includes('/product/') && <span>شارك واربح</span>}
+        {!isProductCard && <span>شارك واربح</span>}
       </button>
+
       {showMenu && (
         <div className={styles.shareMenu}>
-            <a onClick={() => openShareLink(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`)} aria-label="Share on WhatsApp">
+            <a onClick={(e) => openShareLink(e, `https://api.whatsapp.com/send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`)} aria-label="Share on WhatsApp">
                 <FaWhatsapp style={{color: '#25D366'}}/>
             </a>
-            <a onClick={() => openShareLink(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareData.url)}`)} aria-label="Share on Facebook">
+            <a onClick={(e) => openShareLink(e, `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareData.url)}`)} aria-label="Share on Facebook">
                 <FaFacebook style={{color: '#1877F2'}}/>
             </a>
-            <a onClick={() => openShareLink(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareData.url)}&text=${encodeURIComponent(shareData.text)}`)} aria-label="Share on Twitter">
+            <a onClick={(e) => openShareLink(e, `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareData.url)}&text=${encodeURIComponent(shareData.text)}`)} aria-label="Share on Twitter">
                 <FaTwitter style={{color: '#1DA1F2'}}/>
             </a>
             <button onClick={copyToClipboard} aria-label="Copy link">

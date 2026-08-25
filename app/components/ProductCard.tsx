@@ -6,7 +6,8 @@ import { useState, useEffect } from 'react';
 import { Product } from '../lib/types';
 import styles from './ProductCard.module.css';
 import AddToCartButton from './AddToCartButton';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaShareAlt } from 'react-icons/fa'; // إضافة أيقونة المشاركة
+import ShareButton from './ShareButton'; // استيراد زر المشاركة المصحح
 
 interface ProductCardProps {
   product?: Product;
@@ -16,8 +17,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const [productUrl, setProductUrl] = useState<string>('');
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setProductUrl(`${window.location.origin}/products/${product?.slug || ''}`);
+    if (typeof window !== 'undefined' && product?.slug) {
+      setProductUrl(`${window.location.origin}/products/${product.slug}`);
     }
   }, [product?.slug]);
 
@@ -94,16 +95,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <h3 className={styles.name}>{product.name || 'اسم المنتج غير متوفر'}</h3>
             
             {product.description && (
-              <p className={styles.shortDescription} style={{
-                fontSize: '13px',
-                color: '#666',
-                margin: '4px 0 8px 0',
-                display: '-webkit-box',
-                WebkitLineClamp: 2, 
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                lineHeight: '1.4'
-              }}>
+              <p className={styles.shortDescription}>
                 {product.description}
               </p>
             )}
@@ -133,23 +125,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
               )}
             </div>
             
-            {/* 🌟 اللمسة الوظيفية الأخيرة: تحويل النص لزر معطل منسق بصرياً لحماية تجربة الشراء */}
             {isOutOfStock ? (
               <button 
                 disabled 
                 className={styles.disabledButton}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  backgroundColor: '#e0e0e0', // لون رمادي باهت يدل على القفل
-                  color: '#888888', // لون نص خافت
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'not-allowed', // تغيير شكل الماوس لعلامة المنع عند الوقوف عليه
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  textAlign: 'center'
-                }}
               >
                 نفد المخزون
               </button>
@@ -159,6 +138,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
       </Link>
+      
+      {/* 🌟 زر شارك واربح يوضع هنا خارج الرابط الأساسي */}
+      {!isOutOfStock && (
+         <div className={styles.shareEarnButtonWrapper}>
+            <ShareButton 
+                title={product.name} 
+                text={`شاهد هذا المنتج المميز: ${product.name}`} 
+                url={productUrl} 
+            />
+        </div>
+      )}
     </div>
   );
 };
