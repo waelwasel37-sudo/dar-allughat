@@ -13,11 +13,17 @@ export async function GET(req: NextRequest) {
         const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
         const posts = snapshot.docs.map((doc: firestore.QueryDocumentSnapshot) => {
             const data = doc.data();
+            
+            // 🎯 توحيد التاريخ: نرسل الكائن يحتوي على seconds و nanoseconds ليطابق الملف الأول وملف الـ [slug]
             return {
                 id: doc.id,
                 ...data,
-                createdAt: data.createdAt instanceof firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
-                updatedAt: data.updatedAt instanceof firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
+                createdAt: data.createdAt instanceof firestore.Timestamp 
+                    ? { seconds: data.createdAt.seconds, nanoseconds: data.createdAt.nanoseconds }
+                    : data.createdAt || new Date().toISOString(),
+                updatedAt: data.updatedAt instanceof firestore.Timestamp 
+                    ? { seconds: data.updatedAt.seconds, nanoseconds: data.updatedAt.nanoseconds }
+                    : data.updatedAt || new Date().toISOString(),
             };
         });
         return NextResponse.json(posts);
@@ -54,11 +60,19 @@ export async function POST(req: NextRequest) {
         
         const docRef = await db.collection('posts').add(newPost);
         
-        // Return the full new object including the generated ID and timestamps
+        // 🎯 الحماية من خطأ قراءة السيرفر الفورية للـ serverTimestamp
         const newDoc = await docRef.get();
+        const rawData = newDoc.data() || {};
+        
         const finalData = {
             id: newDoc.id,
-            ...newDoc.data()
+            ...rawData,
+            createdAt: rawData.createdAt instanceof firestore.Timestamp 
+                ? { seconds: rawData.createdAt.seconds, nanoseconds: rawData.createdAt.nanoseconds }
+                : new Date().toISOString(),
+            updatedAt: rawData.updatedAt instanceof firestore.Timestamp 
+                ? { seconds: rawData.updatedAt.seconds, nanoseconds: rawData.updatedAt.nanoseconds }
+                : new Date().toISOString(),
         };
 
         return NextResponse.json(finalData, { status: 201 });

@@ -1,4 +1,3 @@
-// app/api/posts/[slug]/route.ts
 import { type NextRequest, NextResponse } from 'next/server';
 import { getDb, getAdminAuth } from '@/app/lib/firebase-admin';
 import { firestore } from 'firebase-admin';
@@ -45,11 +44,17 @@ export async function GET(request: NextRequest, context: RouteContext) {
     }
 
     const data = foundDoc.data();
+    
+    // 🎯 التصحيح الذكي: توحيد بنية التواريخ بإرسال الـ seconds والـ nanoseconds لتطابق الملف الأول والثالث
     const post = {
       id: foundDoc.id,
       ...data,
-      createdAt: data.createdAt instanceof firestore.Timestamp ? data.createdAt.toDate().toISOString() : new Date(data.createdAt || Date.now()).toISOString(),
-      updatedAt: data.updatedAt instanceof firestore.Timestamp ? data.updatedAt.toDate().toISOString() : new Date(data.updatedAt || Date.now()).toISOString(),
+      createdAt: data.createdAt instanceof firestore.Timestamp 
+          ? { seconds: data.createdAt.seconds, nanoseconds: data.createdAt.nanoseconds }
+          : data.createdAt || new Date().toISOString(),
+      updatedAt: data.updatedAt instanceof firestore.Timestamp 
+          ? { seconds: data.updatedAt.seconds, nanoseconds: data.updatedAt.nanoseconds }
+          : data.updatedAt || new Date().toISOString(),
     };
     return NextResponse.json(post);
   } catch (error) {
@@ -77,16 +82,21 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     const { slug } = await context.params;
     const cleanSlug = decodeURIComponent(slug);
+    const normalizedTarget = normalizeArabic(cleanSlug);
 
-    const updateData: Partial<Post> = await request.json();
+    // 🎯 تصحيح البحث المرن: جلب المستندات والبحث المتسامح مع العربية لضمان الوصول للمقال المطلوب تعديله
+    const snapshot = await db.collection('posts').get();
+    const foundDoc = snapshot.docs.find(doc => {
+        const docSlug = doc.data().slug || '';
+        return normalizeArabic(docSlug) === normalizedTarget || docSlug === cleanSlug;
+    });
 
-    const snapshot = await db.collection('posts').where('slug', '==', cleanSlug).limit(1).get();
-    if (snapshot.empty) {
+    if (!foundDoc) {
       return NextResponse.json({ message: 'Post not found' }, { status: 404 });
     }
     
-    // 🎯 تصحيح الاستدعاء المباشر للمستند من المصفوفة لمنع أخطاء الـ Terminal
-    const postRef = snapshot.docs[0].ref;
+    const postRef = foundDoc.ref;
+    const updateData: Partial<Post> = await request.json();
 
     const finalUpdateData = {
       ...updateData,
@@ -100,9 +110,18 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     await postRef.update(finalUpdateData);
 
     const updatedDoc = await postRef.get();
+    const rawData = updatedDoc.data() || {};
+    
+    // 🎯 توحيد صيغة التواريخ العائدة بعد التحديث لمنع مشاكل الـ State في الفروتنيد
     const responseData = {
       id: updatedDoc.id,
-      ...updatedDoc.data()
+      ...rawData,
+      createdAt: rawData.createdAt instanceof firestore.Timestamp 
+          ? { seconds: rawData.createdAt.seconds, nanoseconds: rawData.createdAt.nanoseconds }
+          : new Date().toISOString(),
+      updatedAt: rawData.updatedAt instanceof firestore.Timestamp 
+          ? { seconds: rawData.updatedAt.seconds, nanoseconds: rawData.updatedAt.nanoseconds }
+          : new Date().toISOString(),
     };
 
     return NextResponse.json(responseData);
@@ -131,13 +150,20 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
 
     const { slug } = await context.params;
     const cleanSlug = decodeURIComponent(slug);
+    const normalizedTarget = normalizeArabic(cleanSlug);
 
-    const snapshot = await db.collection('posts').where('slug', '==', cleanSlug).limit(1).get();
-    if (snapshot.empty) {
+    // 🎯 تصحيح البحث المرن: البحث المتسامح مع اللغة العربية لضمان حذف المقال الصحيح دون تعليق العملية
+    const snapshot = await db.collection('posts').get();
+    const foundDoc = snapshot.docs.find(doc => {
+        const docSlug = doc.data().slug || '';
+        return normalizeArabic(docSlug) === normalizedTarget || docSlug === cleanSlug;
+    });
+
+    if (!foundDoc) {
       return NextResponse.json({ message: 'Post not found' }, { status: 404 });
     }
 
-    await snapshot.docs[0].ref.delete();
+    await foundDoc.ref.delete();
 
     return NextResponse.json({ message: `Post with slug '${cleanSlug}' deleted successfully` });
   } catch (error) {

@@ -115,38 +115,46 @@ const PostEditor = ({ post: initialPost, isNew }: PostEditorProps) => {
         try {
             let imageUrl = post.imageUrl;
             let videoUrl = post.videoUrl;
-            let currentPostId = post.id;
 
-            // Ensure the slug is up-to-date before saving
+            // 🎯 تحديث حيوي: دمج منطق التعديل والإنشاء مع استخدام الـ slug للمقال الأصلي كمرجع
             const finalPost = { ...post, slug: generateSlug(post.title) };
 
-            if (isNew && !currentPostId) {
+            let currentPostId = post.id;
+
+            // الخطوة 1: إذا كان المقال جديدًا، قم بإنشائه أولاً للحصول على ID
+            if (isNew) {
                 const createResponse = await fetch('/api/posts', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ...finalPost, createdAt: new Date().toISOString() }),
+                    body: JSON.stringify({ title: finalPost.title, slug: finalPost.slug, content: finalPost.content }),
                 });
                 const createResult = await createResponse.json();
-                if (!createResponse.ok) throw new Error(createResult.error || 'Failed to create post.');
-                currentPostId = createResult.postId;
+                if (!createResponse.ok) throw new Error(createResult.message || 'Failed to create post.');
+                currentPostId = createResult.id;
+                finalPost.id = currentPostId; // تحديث الـ ID في كائن المقال
             }
 
             if (!currentPostId) throw new Error('Post ID is missing.');
 
+            // الخطوة 2: رفع الملفات (إذا وجدت) باستخدام الـ ID المؤكد
             if (imageFile) imageUrl = await uploadFile(imageFile, currentPostId);
             if (videoFile) videoUrl = await uploadFile(videoFile, currentPostId);
 
-            const finalPostData = { id: currentPostId, ...finalPost, imageUrl, videoUrl };
+            // الخطوة 3: تجميع البيانات النهائية وإرسال طلب التحديث النهائي (PUT)
+            const finalPostData = { ...finalPost, imageUrl, videoUrl, id: currentPostId };
+            
+            // 🎯 الكود الذكي المقترح منك: تحديد الرابط والطريقة بشكل ديناميكي وآمن
+            const apiUrl = `/api/posts/${encodeURIComponent(finalPost.slug)}`;
 
-            const saveResponse = await fetch('/api/posts', {
-                method: 'PUT',
+            const saveResponse = await fetch(apiUrl, {
+                method: 'PUT', // دائماً PUT في هذه المرحلة لأننا نحدث المقال بالروابط
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(finalPostData),
             });
 
             if (!saveResponse.ok) {
                 const result = await saveResponse.json();
-                throw new Error(result.error || 'Failed to save post.');
+                throw new Error(result.message || 'Failed to save post.');
             }
             
             alert('تم حفظ المقال بنجاح!');
