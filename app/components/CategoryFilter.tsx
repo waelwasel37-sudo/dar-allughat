@@ -4,9 +4,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './CategoryFilter.module.css';
-import { Category } from '../lib/types'; // Import the full Category type
+import { Category } from '../lib/types';
 
-// The component now expects the full Category objects.
 interface CategoryFilterProps {
   categories: Category[];
 }
@@ -14,23 +13,23 @@ interface CategoryFilterProps {
 const CategoryFilter = ({ categories }: CategoryFilterProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const selectedCategoryName = searchParams.get('category') || 'الكل';
+  // 🎯 نقرأ الـ slug المختار من الرابط مباشرة
+  const selectedCategorySlug = searchParams.get('category') || 'all';
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const categoryName = e.target.value;
+    const categorySlug = e.target.value; // هنا الـ value ستصبح الـ slug
     const params = new URLSearchParams(searchParams.toString());
 
-    if (categoryName === 'الكل') {
+    if (categorySlug === 'all') {
       params.delete('category');
     } else {
-      params.set('category', categoryName);
+      params.set('category', categorySlug);
     }
     params.delete('page'); // Reset pagination
     router.push(`/?${params.toString()}`);
   };
 
-  // Create the "All" category for the dropdown
-  const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨' };
+  const allCategory: Category = { id: 'all', name: 'الكل', emoji: '✨', slug: 'all' };
   const displayCategories = [allCategory, ...(categories || [])];
 
   return (
@@ -39,13 +38,12 @@ const CategoryFilter = ({ categories }: CategoryFilterProps) => {
       <div className={styles.selectWrapper}>
         <select 
           id="category-select"
-          value={selectedCategoryName}
+          value={selectedCategorySlug} // 🎯 القيمة مرتبطة بالـ slug
           onChange={handleCategoryChange}
           className={styles.select}
         >
-          {/* Map over the full Category objects to display name and emoji */}
           {displayCategories.map(cat => (
-            <option key={cat.id} value={cat.name}>
+            <option key={cat.id} value={cat.slug || 'all'}> {/* 🎯 القيمة هنا هي الـ slug */}
               {cat.emoji} {cat.name}
             </option>
           ))}

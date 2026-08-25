@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation';
 import styles from './Post.module.css';
 import VideoPlayer from '../VideoPlayer';
 import Image from 'next/image';
+import { marked } from 'marked';
 
-// 🎯 إجبار صفحة المقال العام على العمل بنظام ديناميكي كامل
 export const dynamic = 'force-dynamic';
 
 interface Post {
@@ -13,13 +13,11 @@ interface Post {
     content: string;
     imageUrl?: string;
     videoUrl?: string;
-    createdAt: string | { seconds: number; nanoseconds: number }; // تم تحديث النوع ليشمل كائن التاريخ
+    createdAt: string | { seconds: number; nanoseconds: number };
 }
 
 async function getPost(slug: string): Promise<Post | null> {
     const decodedSlug = decodeURIComponent(slug);
-    
-    // 🎯 تصحيح رابط الـ API: استخدام [slug] بدلاً من query param للحصول على المقال مباشرة
     const apiUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/posts/${encodeURIComponent(decodedSlug)}`;
     
     try {
@@ -48,6 +46,12 @@ export default async function PostPage({ params }: PageProps) {
         notFound();
     }
 
+    // 🎯 الحل الأضمن: تفعيل ميزة تحويل الروابط النصية الخام تلقائياً عبر إعدادات marked
+    const parsedContent = await marked.parse(post.content || '', {
+        gfm: true,        // تفعيل GitHub Flavored Markdown للتعرف على الروابط الخام
+        breaks: true      // تحويل السطور الجديدة إلى <br> تلقائياً لضبط التنسيق العربي
+    });
+
     return (
         <article className={`${styles.container} post-responsive-wrapper`}>
             {post.imageUrl && (
@@ -65,7 +69,6 @@ export default async function PostPage({ params }: PageProps) {
 
             <header className={styles.header}>
                 <h1 className={styles.title}>{post.title}</h1>
-                {/*// 🎯 تم تطبيق كود الحماية الذكي الذي اقترحته */}
                 <p className={styles.date}>
                     تاريخ النشر: {(() => {
                         if (!post.createdAt) return 'غير محدد';
@@ -79,13 +82,14 @@ export default async function PostPage({ params }: PageProps) {
                 </p>
             </header>
 
+            {/* 🎯 عرض المحتوى بعد معالجة الروابط بأمان وثبات */}
             <div 
               className="prose prose-blue max-w-none text-right font-sans text-gray-800 article-links-fix"
               style={{
                   lineHeight: '1.8',
                   fontSize: '1.1rem'
               }}
-              dangerouslySetInnerHTML={{ __html: post.content }} 
+              dangerouslySetInnerHTML={{ __html: parsedContent }} 
             />
 
             {post.videoUrl && (
