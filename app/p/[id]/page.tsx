@@ -2,17 +2,15 @@ import { redirect } from 'next/navigation';
 import { getDb } from '../../lib/firebase-admin';
 import type { Product } from '../../lib/types';
 
+// العودة إلى النوع القياسي والموثوق والمتوافق مع بيئة السيرفر الحالية
 interface PageProps {
-    params: Promise<{ id: string }>; // 🎯 تحديث النوع ليتوافق مع Next.js الحديث كـ Promise
+    params: { id: string };
 }
 
-// 🎯 محرك إعادة التوجيه بالصيغة الصحيحة لـ Admin SDK
 export default async function ShortLinkRedirectPage({ params }: PageProps) {
-    // ⚠️ خطوة جوهرية: يجب عمل await للـ params في النسخ الحديثة لمنع الـ Crash
-    const resolvedParams = await params;
-    const shortId = resolvedParams.id;
+    // استخراج الـ ID مباشرة من الـ params بدون await لمنع الفشل الصامت
+    const { id: shortId } = params;
 
-    // حماية إضافية: التأكد من وجود المعرف وطوله
     if (!shortId || shortId.length < 6) {
         redirect('/');
     }
@@ -21,7 +19,7 @@ export default async function ShortLinkRedirectPage({ params }: PageProps) {
         const db = getDb();
         const productsRef = db.collection('products');
 
-        // 🔥 استعلام فائق الذكاء يبحث بالـ Document ID (مستند إلى الـ 6 أحرف الأولى)
+        // استعلام ذكي يبحث في Firestore بالـ ID المقصوص لـ 6 أحرف
         const snapshot = await productsRef
             .where('__name__', '>=', shortId)
             .where('__name__', '<', shortId + '\uf8ff')
@@ -32,6 +30,7 @@ export default async function ShortLinkRedirectPage({ params }: PageProps) {
             redirect('/');
         }
 
+        // ✅ تصحيح: استخراج أول مستند مصفوفة الـ docs بشكل صحيح [0]
         const productDoc = snapshot.docs[0];
         const product = { id: productDoc.id, ...productDoc.data() } as Product;
 
@@ -39,7 +38,7 @@ export default async function ShortLinkRedirectPage({ params }: PageProps) {
             redirect('/');
         }
 
-        // 🚀 توجيه العميل فوراً وبأمان إلى السلوج العربي النظيف
+        // تحويل العميل فوراً وبسرعة بالسلوج العربي
         redirect(`/products/${encodeURIComponent(product.slug)}`);
 
     } catch (error) {
