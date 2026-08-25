@@ -1,3 +1,4 @@
+
 import { getDb } from './firebase-admin';
 import type { DocumentSnapshot } from 'firebase-admin/firestore';
 import type { Product, Category, Post } from './types';
@@ -88,15 +89,35 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
             try {
                 const snapshot = await db.collection("products").where("slug", "==", decodedSlug).limit(1).get();
                 if (snapshot.empty) return null;
-                // تم التأكيد والإصلاح: قراءة أول مستند في المصفوفة بأمان
+                // Simplified based on our discussion
                 return serializeDocument<Product>(snapshot.docs[0]);
             } catch (error: any) {
                 console.error(`❌ Critical Error in getProductBySlug for slug "${decodedSlug}":`, error);
                 throw new Error(`Failed to fetch product by slug: ${error.message}`);
             }
         },
-        ['product-by-slug', decodedSlug], // 👇 تم التحسين الهندسي: تمرير المتغير كعنصر مستقل في مفتاح الكاش
-        { tags: [`product-${decodedSlug}`, 'products-list'] } // ربطه بوسم المنتج وبقائمة المنتجات العامة
+        ['product-by-slug', decodedSlug], 
+        { tags: [`product-${decodedSlug}`, 'products-list'] } 
+    )();
+}
+
+// 🎯 دالة جديدة بالكامل لجلب المنتج بالـ ID لخدمة فكرة الروابط المختصرة (p/[id])
+export async function getProductById(id: string): Promise<Product | null> {
+    return unstable_cache(
+        async () => {
+            console.log(`[data-server] Fetching product from Firebase for ID: "${id}"`);
+            const db = getDb();
+            try {
+                const doc = await db.collection('products').doc(id).get();
+                if (!doc.exists) return null;
+                return serializeDocument<Product>(doc);
+            } catch (error: any) {
+                console.error(`❌ Critical Error in getProductById for ID "${id}":`, error);
+                throw new Error(`Failed to fetch product by ID: ${error.message}`);
+            }
+        },
+        ['product-by-id', id],
+        { tags: [`product-id-${id}`, 'products-list'] }
     )();
 }
 
@@ -120,8 +141,8 @@ export async function getRelatedProducts(category: string, currentSlug: string):
                 throw new Error(`Failed to fetch related products: ${error.message}`);
             }
         },
-        ['related-products-by-category', category, decodedCurrentSlug], // 👇 تم التحسين الهندسي: فصل المتغيرات لمنع تداخل كاش الأقسام
-        { tags: ['products-list'] } // يمسح الكاش إذا تغيرت المنتجات العامة
+        ['related-products-by-category', category, decodedCurrentSlug], 
+        { tags: ['products-list'] } 
     )();
 }
 
@@ -140,6 +161,6 @@ export async function getPosts(): Promise<Post[]> {
             }
         },
         ['all-posts'],
-        { tags: ['posts-list'] } // يمسح الكاش عند إضافة مقال جديد
+        { tags: ['posts-list'] } 
     )();
 }

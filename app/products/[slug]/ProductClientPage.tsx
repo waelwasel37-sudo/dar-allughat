@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -11,7 +12,7 @@ import { FaEye, FaShareAlt } from 'react-icons/fa';
 import { database } from '@/app/lib/firebase-client';
 import { ref, onValue, onDisconnect, set, serverTimestamp } from 'firebase/database';
 
-// 🎯 حل الـ 6 مهام طويلة: استيراد مكون التقييمات بشكل ديناميكي (Lazy Loading) ليتأخر ثانية واحدة فقط
+// 🎯 استيراد مكون التقييمات بشكل ديناميكي (Lazy Loading) تسريعاً للـ LCP
 import nextDynamic from 'next/dynamic';
 const Rating = nextDynamic(() => import('@/app/components/Rating'), { ssr: false });
 
@@ -43,12 +44,12 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
   // حساب السعر النهائي بعد الخصم بناءً على القيم الحية الحالية
   const priceAfter = useMemo(() => livePrice * (1 - liveDiscount / 100), [livePrice, liveDiscount]);
 
-  // ✅ استخدام الدالة المدمجة بالمتصفح البديلة لـ uuid لتوليد معرف فريد بوزن صفر بايت!
+  // ✅ استخدام الدالة المدمجة بالمتصفح لتوليد معرف فريد بوزن صفر بايت!
   const userId = useMemo(() => {
     if (typeof window !== 'undefined' && window.crypto) {
       return crypto.randomUUID();
     }
-    return Math.random().toString(36).substring(2, 15); // حماية احتياطية للمتصفحات القديمة جداً
+    return Math.random().toString(36).substring(2, 15);
   }, []);
 
   useEffect(() => {
@@ -149,16 +150,20 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
     }
   };
 
+  // 🎯 دالة المشاركة الذكية بعد تطبيق تعديلك الهندسي الفخم
   const handleShare = () => {
+    // استخدام علامات `` ومتغير البيئة والمسار الفرعي /p/ بشكل سليم وديناميكي
+    const shortUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/p/${product.id}`;
+
     if (navigator.share) {
       navigator.share({
         title: product.name,
-        text: `شاهد هذا المنتج الرائع: ${product.name}`,
-        url: window.location.href,
+        text: `📚 مكتبة دار اللغات | شاهد هذا المنتج الرائع: ${product.name}`,
+        url: shortUrl,
       });
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('تم نسخ رابط المنتج! شاركه مع أصدقائك.');
+      navigator.clipboard.writeText(shortUrl);
+      alert('تم نسخ رابط المنتج المختصر بنجاح! شاركه مع أصدقائك وجمهورك. 📋✨');
     }
   };
 
