@@ -184,3 +184,29 @@
     background-color: #D1FAE5;
     color: #065F46;
 }
+
+/* ========================================================================= */
+/* 🛡️ اللمسة التصحيحية الآمنة والمصلحة لنجاح الـ Build وحظر هدر الورق (80mm) */
+/* ========================================================================= */
+@media print {
+    .no-print { 
+        display: none !important; 
+    }
+    .print-only { 
+        display: block !important; 
+    }
+    
+    /* 🌟 الحل السحري: استخدام :global لمنع خطأ الـ Selector is not pure والسماح ببناء السيرفر */
+    :global(body) { 
+        background: white !important; 
+        padding: 0 !important; 
+        margin: 0 !important; 
+        width: 80mm !important; 
+    }
+}
+
+@media screen {
+    .print-only { 
+        display: none !important; 
+    }
+}
