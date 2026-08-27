@@ -1,8 +1,5 @@
 'use client';
 
-// 🎯 التصحيح الجذري والنهائي: إجبار جذر لوحة التحكم على العمل ديناميكياً لتخطي قفل الـ Build للـ Secret Manager وفتح بوابة التحديث
-export const dynamic = 'force-dynamic';
-
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
@@ -40,6 +37,12 @@ const AdminPage = () => {
         <p className={styles.description}>أهلاً بك في لوحة التحكم الخاصة بمتجر "مكتبة دار اللغات".</p>
 
         <div className={styles.cardContainer}>
+            {/* 🌟 1. كارت نظام الكاشير (POS) المضاف حديثاً لربط الواجهة بالمشروع */}
+            <Link href="/pos" className={`${styles.card} ${styles.posCard}`}>
+                <h2>نظام الكاشير (POS) 🔎</h2>
+                <p>شاشة مبيعات المحل الفورية وجرد الخزينة اليومي كـ Excel.</p>
+            </Link>
+
             <Link href="/admin/blog" className={`${styles.card} ${styles.blogCard}`}>
                 <h2>إدارة المدونة</h2>
                 <p>كتابة وتعديل المقالات والتحكم بها.</p>
@@ -47,7 +50,7 @@ const AdminPage = () => {
 
             <Link href="/admin/orders" className={`${styles.card} ${styles.ordersCard}`}>
                 <h2>سجل الطلبات</h2>
-                <p>عرض جميع الطلبات الواردة عبر واتساب.</p>
+                <p>عرض جميع الطلبات الواردة عبر الموقع.</p>
             </Link>
 
             <Link href="/admin/add" className={styles.card}>

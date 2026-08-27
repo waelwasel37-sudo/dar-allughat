@@ -1,4 +1,3 @@
-// app/api/orders/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { headers, cookies } from 'next/headers'; 
 // 🎯 استيراد الأدوات المحدثة وقاعدة البيانات السليمة
@@ -54,14 +53,14 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// --- POST: إنشاء طلبية شراء جديدة لجميع المنتجات متوافقة مع الـ Installment API ---
+// --- POST: إنشاء طلبية شراء جديدة لجميع المنتجات متوافقة مع الـ Installment API واﻟـ POS ---
 export async function POST(req: NextRequest) {
     const db = getDb();
 
     try {
         const body = await req.json();
 
-        // 🎯 تفكيك البيانات بناءً على الـ Order Schema الدقيق الذي أرسلته
+        // 🎯 تفكيك البيانات بناءً على الـ Order Schema الدقيق مع إرسال مصدر الطلب (source)
         const {
             userId,
             items,
@@ -70,28 +69,48 @@ export async function POST(req: NextRequest) {
             shippingFee,
             payment,        // تفاصيل الـ PaymentDetails (البنك أو الكاش)
             installment,    // تفاصيل الـ InstallmentDetails (شركة التقسيط)
-            notes
+            notes,
+            source          // 🌟 المتغير الجديد لاستقبال مصدر الطلب: "Web" أو "POS"
         }: { 
             userId: string,
             items: OrderItem[], 
             totalAmount: number, 
-            shippingAddress: ShippingAddress,
+            shippingAddress?: ShippingAddress, // 🌟 جعلناه اختيارياً لتجنب مشاكل نظام الكاشير
             shippingFee: number,
             payment: Omit<PaymentDetails, 'amount' | 'currency'> & { method: string, status: string, transactionId?: string },
             installment?: InstallmentDetails,
-            notes?: string
+            notes?: string,
+            source?: string // 🌟 تحديد نوع المنشأ برمجياً
         } = body;
 
-        // التحقق الصارم من الحقول الأساسية المطلوبة هندسياً
-        if (!items || items.length === 0 || totalAmount === undefined || !shippingAddress || !shippingAddress.phone || !shippingAddress.recipientName) {
+        // تحديد المصدر الافتراضي بـ "Web" إن لم يُرسل صراحة من واجهة الكاشير
+        const orderSource = source || 'Web';
+
+        // 🌟 بناء بيانات شحن وهمية في حال كان الطلب قادم من الكاشير بالمحل (POS) لتجنب أخطاء حظر البيانات
+        let finalShippingAddress = shippingAddress;
+        
+        if (orderSource === 'POS') {
+            finalShippingAddress = {
+                recipientName: shippingAddress?.recipientName || 'عميل المحل (الكاشير)',
+                streetAddress: shippingAddress?.streetAddress || 'شراء مباشر من الفرع',
+                city: shippingAddress?.city || 'المحل',
+                governorate: shippingAddress?.governorate || 'الفرع الرئيسي',
+                postalCode: shippingAddress?.postalCode || null,
+                phone: shippingAddress?.phone || '00000000000'
+            };
+        }
+
+        // التحقق الصارم المعدل (يتفقد الآن العنوان النهائي المعالج برمجياً لعدم ضرب الكود)
+        if (!items || items.length === 0 || totalAmount === undefined || !finalShippingAddress || !finalShippingAddress.phone || !finalShippingAddress.recipientName) {
             return NextResponse.json({ error: 'Missing required order fields: items, totalAmount, or shipping details.' }, { status: 400 });
         }
 
         const serverTimestamp = firestore.FieldValue.serverTimestamp();
 
-        // 💳 بناء كائن الطلب المطابق تماماً للـ Schema المحترف والجاهز لبوابات التقسيط
+        // 💳 بناء كائن الطلب المطابق تماماً للـ Schema المحترف والجاهز لبوابات التقسيط والـ POS
         const orderData = {
             userId: userId || 'guest',
+            source: orderSource, // 🌟 حفظ حقل المصدر في الفايربيس لتسهيل الفلترة في صفحة التقارير
             items: items.map(item => ({
                 productId: item.productId,
                 name: item.name,
@@ -102,22 +121,22 @@ export async function POST(req: NextRequest) {
             })),
             totalAmount, 
             shippingAddress: {
-                recipientName: shippingAddress.recipientName,
-                streetAddress: shippingAddress.streetAddress,
-                city: shippingAddress.city,
-                governorate: shippingAddress.governorate,
-                postalCode: shippingAddress.postalCode || null,
-                phone: shippingAddress.phone
+                recipientName: finalShippingAddress.recipientName,
+                streetAddress: finalShippingAddress.streetAddress,
+                city: finalShippingAddress.city,
+                governorate: finalShippingAddress.governorate,
+                postalCode: finalShippingAddress.postalCode || null,
+                phone: finalShippingAddress.phone
             },
-            shippingFee: shippingFee || 0,
-            status: 'new', // حالة الطلب الافتراضية
+            shippingFee: orderSource === 'POS' ? 0 : (shippingFee || 0), // مبيعات الفرع ليس لها رسوم شحن
+            status: orderSource === 'POS' ? 'completed' : 'new', // 🌟 مبيعات الكاشير تكتمل فوراً ولا تنتظر الشحن والتجهيز
             
             // بيانات الدفع البنكي الرقمي أو الكاش الجاهزة
             payment: {
-                method: payment?.method || 'cash_on_delivery',
+                method: payment?.method || (orderSource === 'POS' ? 'cash' : 'cash_on_delivery'),
                 transactionId: payment?.transactionId || null,
-                status: payment?.status || 'pending',
-                amount: totalAmount + (shippingFee || 0),
+                status: orderSource === 'POS' ? 'paid' : (payment?.status || 'pending'), // 🌟 مبيعات الفرع مدفوعة تلقائياً
+                amount: totalAmount + (orderSource === 'POS' ? 0 : (shippingFee || 0)),
                 currency: 'EGP'
             },
             
@@ -140,25 +159,27 @@ export async function POST(req: NextRequest) {
         // حفظ الطلبية في قاعدة البيانات
         const newOrderRef = await db.collection('orders').add(orderData);
 
-        // 🚀 إرسال حدث الشراء الفوري إلى فيسبوك لتتبع الحملات التسويقية (Meta CAPI)
-        try {
-            const headersList = await headers();
-            const ipAddress = headersList.get('x-forwarded-for') || '127.0.0.1';
-            const userAgent = headersList.get('user-agent') || '';
+        // 🚀 إرسال حدث الشراء الفوري إلى فيسبوك (فقط للأونلاين لمنع تخريب بيانات الحملات الإعلانية بمبيعات الفرع)
+        if (orderSource === 'Web') {
+            try {
+                const headersList = await headers();
+                const ipAddress = headersList.get('x-forwarded-for') || '127.0.0.1';
+                const userAgent = headersList.get('user-agent') || '';
 
-            sendPurchaseEvent({
-                value: totalAmount,
-                content_ids: items.map(item => item.slug).filter((slug): slug is string => !!slug),
-                num_items: items.reduce((sum, item) => sum + item.quantity, 0),
-                ipAddress: ipAddress,
-                userAgent: userAgent,
-            });
-        } catch (capiError) {
-            console.error("Error triggering Meta CAPI purchase event:", capiError);
+                sendPurchaseEvent({
+                    value: totalAmount,
+                    content_ids: items.map(item => item.slug).filter((slug): slug is string => !!slug),
+                    num_items: items.reduce((sum, item) => sum + item.quantity, 0),
+                    ipAddress: ipAddress,
+                    userAgent: userAgent,
+                });
+            } catch (capiError) {
+                console.error("Error triggering Meta CAPI purchase event:", capiError);
+            }
         }
 
         return NextResponse.json({ 
-            message: 'Order created successfully', 
+            message: orderSource === 'POS' ? 'POS Order completed successfully' : 'Order created successfully', 
             orderId: newOrderRef.id 
         }, { status: 201 });
 
