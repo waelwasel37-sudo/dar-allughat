@@ -1,8 +1,7 @@
-/* CSS styles for OrdersPage component */
-
 .ordersContainer {
     padding: 2rem;
-    background-color: #f9fafb;
+    background-color: #f9f9f9;
+    min-height: 100vh;
 }
 
 .headerContainer {
@@ -13,113 +12,145 @@
 }
 
 .title {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: bold;
+    color: #333;
 }
 
 .exportButton {
-    background-color: #10B981;
+    background-color: #1a73e8;
     color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
     border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.exportButton:hover {
+    background-color: #1558b0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .exportButton:disabled {
-    background-color: #D1D5DB;
+    background-color: #ccc;
     cursor: not-allowed;
 }
 
 .loading, .error, .noOrders {
     text-align: center;
-    padding: 2rem;
-    color: #6B7280;
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 5rem;
 }
 
 .error {
-    color: #EF4444;
+    color: #d93025;
 }
 
 .ordersList {
     display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 1.5rem;
 }
 
 .orderCard {
     background-color: white;
-    border: 1px solid #E5E7EB;
-    border-radius: 0.75rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.orderCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 .cardHeader {
+    background-color: #f1f3f4;
+    padding: 1.25rem 1.5rem;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #E5E7EB;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cardHeader h2 {
+    font-size: 1.3rem;
+    color: #202124;
+    margin: 0;
 }
 
 .date {
-    font-size: 0.8rem;
-    color: #6B7280;
+    font-size: 0.9rem;
+    color: #5f6368;
+    margin-top: 0.25rem;
 }
 
 .statusBadge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
     font-weight: 600;
-    text-transform: capitalize;
+    font-size: 0.9rem;
+    color: white;
 }
 
 .statusNew {
-    background-color: #DBEAFE;
-    color: #1E40AF;
+    background-color: #3498db;
 }
 
 .statusProcessing {
-    background-color: #FEF3C7;
-    color: #92400E;
+    background-color: #ff9800;
 }
 
 .statusDelivered {
-    background-color: #D1FAE5;
-    color: #065F46;
+    background-color: #4caf50;
 }
 
 .statusCancelled {
-    background-color: #FEE2E2;
-    color: #991B1B;
+    background-color: #f44336;
 }
 
 .cardBody {
     padding: 1.5rem;
+    flex-grow: 1;
+}
+
+.cardBody h3 {
+    font-size: 1.2rem;
+    color: #3c4043;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    border-bottom: 2px solid #e8f0fe;
+    padding-bottom: 0.5rem;
 }
 
 .cardBody p {
-    margin-bottom: 0.5rem;
+    margin: 0.5rem 0;
+    color: #5f6368;
 }
 
 .itemsTitle {
-    font-weight: bold;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1.5rem !important;
 }
 
 .itemsList {
-    list-style-type: none;
-    padding-left: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #F3F4F6;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f3f4;
 }
 
 .item:last-child {
@@ -127,60 +158,94 @@
 }
 
 .itemImage {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
-    border-radius: 0.25rem;
+    border-radius: 8px;
+    margin-left: 1rem;
+}
+
+.itemDetails {
+    display: flex;
+    flex-direction: column;
+    color: #3c4043;
 }
 
 .cardActions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 1rem;
+    background-color: #f8f9fa;
     padding: 1rem 1.5rem;
-    background-color: #F9FAFB;
-    border-top: 1px solid #E5E7EB;
+    border-top: 1px solid #e0e0e0;
+    align-items: center;
 }
 
-.statusSelect,
-.whatsappButton,
-.printButton {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #D1D5DB;
+.statusSelect {
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
     background-color: white;
+    font-size: 1rem;
+    font-family: inherit;
     cursor: pointer;
-    font-size: 0.875rem;
-    display: flex;
+}
+
+.whatsappButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #25d366;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.whatsappButton:hover {
+    background-color: #128c7e;
+    transform: scale(1.05);
+}
+
+.whatsappButton svg {
+    font-size: 1.5rem;
+}
+
+.sourceBadge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: white;
+}
+
+.sourcePOS {
+    background-color: #9b59b6;
+}
+
+.sourceWeb {
+    background-color: #1a73e8;
+}
+
+.printButton {
+    background-color: #706fd3;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.whatsappButton {
-    background-color: #25D366;
-    color: white;
-    border: none;
-}
-
-.printButton {
-    background-color: #8B5CF6;
-    color: white;
-    border: none;
-}
-
-.sourceBadge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-weight: 600;
-}
-
-.sourcePOS {
-    background-color: #DBEAFE;
-    color: #1E40AF;
-}
-
-.sourceWeb {
-    background-color: #D1FAE5;
-    color: #065F46;
+.printButton:hover {
+    background-color: #474787;
+    transform: scale(1.05);
 }
