@@ -251,14 +251,3 @@
     background-color: #474787;
     transform: scale(1.05);
 }
-
-/* Print Styles */
-@media print {
-    .no-print { display: none !important; }
-    .print-only { display: block !important; }
-    body { background: white !important; padding: 0 !important; margin: 0 !important; width: 80mm !important; }
-}
-
-@media screen {
-    .print-only { display: none !important; }
-}
