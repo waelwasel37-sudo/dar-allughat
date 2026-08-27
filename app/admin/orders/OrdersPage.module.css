@@ -101,6 +101,10 @@
     color: white;
 }
 
+.statusNew {
+    background-color: #3498db; /* Blue for new orders */
+}
+
 .statusProcessing {
     background-color: #ff9800; /* Orange */
 }
@@ -208,4 +212,53 @@
 
 .whatsappButton svg {
     font-size: 1.5rem;
+}
+
+/* Source Badges */
+.sourceBadge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: white;
+}
+
+.sourcePOS {
+    background-color: #9b59b6; /* Purple for POS sales */
+}
+
+.sourceWeb {
+    background-color: #1a73e8; /* Blue for web sales */
+}
+
+/* Print Button */
+.printButton {
+    background-color: #706fd3;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.printButton:hover {
+    background-color: #474787;
+    transform: scale(1.05);
+}
+
+/* Print Styles */
+@media print {
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    body { background: white !important; padding: 0 !important; margin: 0 !important; width: 80mm !important; }
+}
+
+@media screen {
+    .print-only { display: none !important; }
 }

@@ -1,0 +1,186 @@
+/* CSS styles for OrdersPage component */
+
+.ordersContainer {
+    padding: 2rem;
+    background-color: #f9fafb;
+}
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.exportButton {
+    background-color: #10B981;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.exportButton:disabled {
+    background-color: #D1D5DB;
+    cursor: not-allowed;
+}
+
+.loading, .error, .noOrders {
+    text-align: center;
+    padding: 2rem;
+    color: #6B7280;
+}
+
+.error {
+    color: #EF4444;
+}
+
+.ordersList {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.orderCard {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.date {
+    font-size: 0.8rem;
+    color: #6B7280;
+}
+
+.statusBadge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.statusNew {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
+
+.statusProcessing {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.statusDelivered {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
+
+.statusCancelled {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.cardBody {
+    padding: 1.5rem;
+}
+
+.cardBody p {
+    margin-bottom: 0.5rem;
+}
+
+.itemsTitle {
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.itemsList {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.itemImage {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}
+
+.cardActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background-color: #F9FAFB;
+    border-top: 1px solid #E5E7EB;
+}
+
+.statusSelect,
+.whatsappButton,
+.printButton {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #D1D5DB;
+    background-color: white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.whatsappButton {
+    background-color: #25D366;
+    color: white;
+    border: none;
+}
+
+.printButton {
+    background-color: #8B5CF6;
+    color: white;
+    border: none;
+}
+
+.sourceBadge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+}
+
+.sourcePOS {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+}
+
+.sourceWeb {
+    background-color: #D1FAE5;
+    color: #065F46;
+}
