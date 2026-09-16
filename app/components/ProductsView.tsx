@@ -1,7 +1,8 @@
 'use client';
 
 import { Product } from '../lib/types';
-import ProductCard from './ProductCard';
+// 🎯 تصحيح الاستيراد: تحويل الاستيراد إلى Named Import بوضع الأقواس المتعرجة لحل عيب بناء الكروت التالف
+import { ProductCard } from './ProductCard';
 import styles from './ProductsView.module.css';
 
 interface ProductsViewProps {
@@ -29,7 +30,6 @@ export default function ProductsView({ products, searchQuery }: ProductsViewProp
   }
 
   return (
-    // حاوية عرض المنتجات المباشرة، غوغل سيقرأ كافة الـ Cards المحقونة هنا دفعة واحدة
     <div className={styles.grid}>
       {products.map((product) => (
         <ProductCard 

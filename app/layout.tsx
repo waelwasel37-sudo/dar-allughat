@@ -16,7 +16,6 @@ import dynamic from 'next/dynamic';
 
 const SlideOutCart = dynamic(() => import('./components/SlideOutCart'), { ssr: false });
 
-// Define fbq on the window object for TypeScript safety
 declare global {
   interface Window {
     dataLayer: any[];
@@ -37,7 +36,6 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-    // Using the site URL from environment variables for accuracy
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://dar-allughat.com'),
     title: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
     description: 'مرحباً بكم في مكتبة دار اللغات في مدينة العبور. نوفر لأبنائكم تشكيلة متكاملة من كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وقصص أطفال وألعاب تنمية مهارات أطفال منتسوري بأسعار تنافسية.',
@@ -80,7 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Google Tag Manager - Final Version using Environment Variable */}
+        {/* Google Tag Manager - Build-Safe Version */}
         {gaId && (
             <>
                 <Script
@@ -102,18 +100,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </>
         )}
 
-        {/* Facebook Pixel - Final, Perfected Version using onLoad and Environment Variable */}
+        {/* Facebook Pixel - Build-Safe Version using dangerouslySetInnerHTML */}
         {pixelId && (
             <>
                 <Script
                     id="fb-pixel"
                     strategy="afterInteractive"
-                    src="https://connect.facebook.net/en_US/fbevents.js"
-                    onLoad={() => {
-                        if (window.fbq) {
-                            window.fbq('init', pixelId);
-                            window.fbq('track', 'PageView');
-                        }
+                    dangerouslySetInnerHTML={{
+                      __html: `
+                        !function(f,b,e,v,n,t,s)
+                        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                        n.queue=[];t=b.createElement(e);t.async=!0;
+                        t.src=v;s=b.getElementsByTagName(e)[0];
+                        s.parentNode.insertBefore(t,s)}(window, document,'script',
+                        'https://connect.facebook.net/en_US/fbevents.js');
+                        fbq('init', '${pixelId}');
+                        fbq('track', 'PageView');
+                      `,
                     }}
                 />
                 <noscript>

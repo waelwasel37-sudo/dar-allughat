@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ✅ وضع الخيار داخل experimental لضمان استقرار حزم Firebase Admin
   experimental: {
-    serverExternalPackages: ["firebase-admin", "googleapis", "google-auth-library", "sharp"],
+    // serverExternalPackages was removed to resolve build warning
   },
 
   typescript: { ignoreBuildErrors: true },
@@ -13,7 +12,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '*.googleapis.com' },
       { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
-      { protocol: 'https', hostname: '*.googleusercontent.com' }, // ✅ تم تصحيح الفاصلة هنا
+      { protocol: 'https', hostname: '*.googleusercontent.com' },
       { protocol: 'https', hostname: 'storage.googleapis.com' },
       { protocol: 'https', hostname: '*.run.app' },
       { protocol: 'https', hostname: '*.firebaseapp.com' },
@@ -23,12 +22,10 @@ const nextConfig = {
 
   async headers() {
     return [
-      // تفعيل كاش المتصفح لصور المتجر المحلية لـ سنة كاملة
       {
         source: '/images/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
-      // تفعيل كاش المتصفح للأكواد والملفات الثابتة لتسريع المتجر للزوار
       {
         source: '/_next/static/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
