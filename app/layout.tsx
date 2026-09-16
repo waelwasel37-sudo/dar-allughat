@@ -3,7 +3,7 @@ import './globals.css';
 import { Providers } from './providers';
 import Header from '@/app/components/Header';
 import Footer from '@/app/components/Footer';
-import RelatedProductsBar from './components/RelatedProductsBar'; 
+import RelatedProductsBar from './components/RelatedProductsBar';
 import { Noto_Kufi_Arabic, Cairo } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { getIronSession } from 'iron-session';
@@ -16,11 +16,11 @@ import dynamic from 'next/dynamic';
 
 const SlideOutCart = dynamic(() => import('./components/SlideOutCart'), { ssr: false });
 
+// Define fbq on the window object for TypeScript safety
 declare global {
   interface Window {
     dataLayer: any[];
-    fbq: any;
-    _fbq: any;
+    fbq: (...args: any[]) => void;
   }
 }
 
@@ -37,12 +37,13 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://hosted.app'),
+    // Using the site URL from environment variables for accuracy
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://dar-allughat.com'),
     title: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
     description: 'مرحباً بكم في مكتبة دار اللغات في مدينة العبور. نوفر لأبنائكم تشكيلة متكاملة من كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وقصص أطفال وألعاب تنمية مهارات أطفال منتسوري بأسعار تنافسية.',
     icons: {
-      icon: '/images/logo-circular.png1.png', 
-      apple: '/images/logo-circular.png1.png', 
+      icon: '/images/logo-circular.png1.png',
+      apple: '/images/logo-circular.png1.png',
     },
     openGraph: {
       title: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
 async function getSessionData(): Promise<SessionData> {
   let session: SessionData = { isLoggedIn: false, username: 'زائر' };
   try {
-    const cookieStore = cookies(); 
+    const cookieStore = cookies();
     const ironSession = await getIronSession<SessionData>(cookieStore, sessionOptions);
     if (ironSession) {
       session = ironSession;
@@ -73,58 +74,59 @@ async function SessionWrapper({ children }: { children: (session: SessionData) =
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const gaId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
+  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Facebook Pixel Code - Refactored for Next.js */}
-        <Script
-          id="fb-pixel-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              !function(f,b,e,v,n,t,s)
-              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-              n.queue=[];}(window, document,'script');
-              
-              fbq('init', '2031832027677972');
-              fbq('track', 'PageView');
-            `,
-          }}
-        />
-        <Script
-          id="fb-pixel-script"
-          strategy="afterInteractive"
-          src="https://connect.facebook.net/en_US/fbevents.js"
-        />
-        <noscript>
-          <img 
-            height="1" 
-            width="1" 
-            style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=2031832027677972&ev=PageView&noscript=1"
-            alt="fb-pixel-noscript"
-          />
-        </noscript>
+        {/* Google Tag Manager - Final Version using Environment Variable */}
+        {gaId && (
+            <>
+                <Script
+                    strategy="afterInteractive"
+                    src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+                />
+                <Script
+                    id="gtag-init"
+                    strategy="afterInteractive"
+                    dangerouslySetInnerHTML={{
+                    __html: `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){window.dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', '${gaId}');
+                    `,
+                    }}
+                />
+            </>
+        )}
 
-        {/* Google Tag Manager - Refactored for Next.js */}
-        <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-5B1BGCLTM8"
-        />
-        <Script
-          id="gtag-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){window.dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-5B1BGCLTM8');
-            `,
-          }}
-        />
+        {/* Facebook Pixel - Final, Perfected Version using onLoad and Environment Variable */}
+        {pixelId && (
+            <>
+                <Script
+                    id="fb-pixel"
+                    strategy="afterInteractive"
+                    src="https://connect.facebook.net/en_US/fbevents.js"
+                    onLoad={() => {
+                        if (window.fbq) {
+                            window.fbq('init', pixelId);
+                            window.fbq('track', 'PageView');
+                        }
+                    }}
+                />
+                <noscript>
+                    <img 
+                        height="1" 
+                        width="1" 
+                        style={{ display: 'none' }}
+                        src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+                        alt="fb-pixel-noscript"
+                    />
+                </noscript>
+            </>
+        )}
       </head>
       <body className="antialiased">
         <Providers>
@@ -135,7 +137,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Header session={session} />
                   <main>{children}</main>
                   <SlideOutCart />
-                  <RelatedProductsBar /> 
+                  <RelatedProductsBar />
                   <Footer />
                 </>
               )}
