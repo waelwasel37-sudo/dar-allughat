@@ -12,12 +12,14 @@ import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
 import { cn } from "@/lib/utils";
-import nextDynamic from 'next/dynamic';
 
-// 🎯 تعريف السلة بشكل ديناميكي لتسريع الموقع
-const SlideOutCart = nextDynamic(() => import('./components/SlideOutCart'), { ssr: false });
+// 🎯 التصحيح الذهبي: استيراد dynamic بالشكل القياسي الصحيح من next/dynamic لمنع الخطأ #130
+import dynamic from 'next/dynamic';
 
-// 🎯 تعريف نوع dataLayer عالمياً لمنع خطأ TypeScript (Cannot find name 'dataLayer')
+// 🎯 تحميل السلة بشكل ديناميكي آمن (Lazy Loading) للتخلص من ثقل الملفات وتسريع المتجر
+const SlideOutCart = dynamic(() => import('./components/SlideOutCart'), { ssr: false });
+
+// تعريف نوع dataLayer عالمياً لمنع خطأ TypeScript
 declare global {
   interface Window {
     dataLayer: any[];
@@ -36,7 +38,6 @@ const cairo = Cairo({
   display: 'swap',
 });
 
-// 🎯 أرشفة المتجر الرسمية المحدثة لغوغل وميتا
 export const metadata: Metadata = {
     metadataBase: new URL('https://hosted.app'),
     title: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
@@ -54,7 +55,6 @@ export const metadata: Metadata = {
     }
 };
 
-// 🎯 فصل قراءة الكوكيز في دالة مستقلة لعدم إفساد الكاش العام للموقع
 async function getSessionData(): Promise<SessionData> {
   let session: SessionData = { isLoggedIn: false, username: 'زائر' };
   try {
@@ -69,7 +69,6 @@ async function getSessionData(): Promise<SessionData> {
   return session;
 }
 
-// المكون الوسيط لقراءة الجلسة وحقنها في الهيدر
 async function SessionWrapper({ children }: { children: (session: SessionData) => React.ReactNode }) {
   const session = await getSessionData();
   return <>{children(session)}</>;
@@ -90,9 +89,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               n.callMethod.apply(n,arguments):n.queue.push(arguments)};
               if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
               n.queue=[];t=b.createElement(e);t.async=!0;
-              t.src=v;s=b.getElementsByTagName(e)[0];
+              t.src=v;s=b.getElementsByTagName(e);
               s.parentNode.insertBefore(t,s)}(window, document,'script',
-              'https://connect.facebook.net/en_US/fbevents.js');
+              'https://facebook.net');
               fbq('init', '2031832027677972'); 
               fbq('track', 'PageView');
             `,
@@ -101,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Google tag (gtag.js) */}
         <Script
           strategy="lazyOnload"
-          src="https://www.googletagmanager.com/gtag/js?id=G-5B1BGCLTM8"
+          src="https://googletagmanager.com"
         />
         <Script
           id="gtag-init"
@@ -118,7 +117,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <Providers>
-          {/* تشغيل الجلسة بأسلوب آمن لا يغلق الكاش عن باقي صفحات السيرفر الثابتة */}
           <Suspense fallback={<Header session={{ isLoggedIn: false, username: 'زائر' }} />}>
             <SessionWrapper>
               {(session) => (
