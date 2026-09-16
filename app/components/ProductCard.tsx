@@ -13,7 +13,8 @@ interface ProductCardProps {
   product?: Product;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+// 🎯 التصحيح الجوهري: إضافة كلمة export مباشرة قبل const لتوحيد صيغة الاستدعاء ومنع الخطأ #130 كلياً
+export const ProductCard = ({ product }: ProductCardProps) => {
   const [productUrl, setProductUrl] = useState<string>('');
 
   useEffect(() => {
@@ -35,7 +36,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
     ? originalPrice - (originalPrice * (discountPercentage / 100))
     : originalPrice;
 
-  // 🎯 حل ثغرة أرشفة السيرفر: بناء رابط ديناميكي احتياطي يقرأه السيرفر وغوغل فوراً بدون انتظار المتصفح
   const baseDomain = typeof window !== 'undefined' ? window.location.origin : 'https://darallughat.com';
   const fallbackProductUrl = `${baseDomain}/products/${product.slug}`;
 
@@ -47,7 +47,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     "description": product.description || `اشتري ${product.name || 'هذا المنتج'} بأفضل سعر وتوصيل سريع من مكتبة دار اللغات بالعبور.`,
     "offers": {
       "@type": "Offer",
-      "url": productUrl || fallbackProductUrl, // استخدام الرابط الاحتياطي لغوغل
+      "url": productUrl || fallbackProductUrl,
       "priceCurrency": "EGP", 
       "price": discountedPrice.toFixed(2),
       "priceValidUntil": "2027-12-31",
@@ -65,14 +65,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
     } : {})
   };
 
-  // 🎯 صياغة نص بديل غني بالكلمات المفتاحية ومناسب لكل منتج بشكل ديناميكي
   const imageAltText = product.name 
     ? `كتاب أو لعبة ${product.name} - متجر مكتبة دار اللغات بالعبور`
     : 'أدوات مكتبية ومستلزمات مدرسية - مكتبة دار اللغات';
 
   return (
     <div className={styles.cardContainer}>
-      {/* حقن السكيما مباشرة لغوغل في السيرفر */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
@@ -86,7 +84,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 <span>نفذ المخزون</span>
               </div>
             )}
-            {/* 🎯 تعديل الـ alt ليكون ديناميكياً وعربياً بالكامل لأرشفة الصور */}
             <Image
               src={product.imageUrl || '/placeholder.jpg'}
               alt={imageAltText}
@@ -102,7 +99,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
             )}
           </div>
           <div className={styles.details}>
-            {/* عنوان المنتج في وسم h3 ثابت وواضح لعناكب الزحف */}
             <h3 className={styles.name}>{product.name || 'اسم المنتج غير متوفر'}</h3>
             
             {product.description && (
