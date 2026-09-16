@@ -12,17 +12,15 @@ import { cookies } from 'next/headers';
 import Script from 'next/script';
 import { Metadata } from 'next';
 import { cn } from "@/lib/utils";
-
-// 🎯 التصحيح الذهبي: استيراد dynamic بالشكل القياسي الصحيح من next/dynamic لمنع الخطأ #130
 import dynamic from 'next/dynamic';
 
-// 🎯 تحميل السلة بشكل ديناميكي آمن (Lazy Loading) للتخلص من ثقل الملفات وتسريع المتجر
 const SlideOutCart = dynamic(() => import('./components/SlideOutCart'), { ssr: false });
 
-// تعريف نوع dataLayer عالمياً لمنع خطأ TypeScript
 declare global {
   interface Window {
     dataLayer: any[];
+    fbq: any;
+    _fbq: any;
   }
 }
 
@@ -78,33 +76,46 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Facebook Pixel Script */}
+        {/* Facebook Pixel Code - Refactored for Next.js */}
         <Script
-          id="fb-pixel"
-          strategy="lazyOnload" 
+          id="fb-pixel-init"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
               {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
               n.callMethod.apply(n,arguments):n.queue.push(arguments)};
               if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-              n.queue=[];t=b.createElement(e);t.async=!0;
-              t.src=v;s=b.getElementsByTagName(e);
-              s.parentNode.insertBefore(t,s)}(window, document,'script',
-              'https://facebook.net');
-              fbq('init', '2031832027677972'); 
+              n.queue=[];}(window, document,'script');
+              
+              fbq('init', '2031832027677972');
               fbq('track', 'PageView');
             `,
           }}
         />
-        {/* Google tag (gtag.js) */}
         <Script
-          strategy="lazyOnload"
-          src="https://googletagmanager.com"
+          id="fb-pixel-script"
+          strategy="afterInteractive"
+          src="https://connect.facebook.net/en_US/fbevents.js"
+        />
+        <noscript>
+          <img 
+            height="1" 
+            width="1" 
+            style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=2031832027677972&ev=PageView&noscript=1"
+            alt="fb-pixel-noscript"
+          />
+        </noscript>
+
+        {/* Google Tag Manager - Refactored for Next.js */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-5B1BGCLTM8"
         />
         <Script
           id="gtag-init"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
