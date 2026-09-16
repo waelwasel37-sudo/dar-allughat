@@ -1,7 +1,7 @@
 'use client';
 
 import { Product } from '../lib/types';
-// 🎯 تصحيح الاستيراد: تحويل الاستيراد إلى Named Import بوضع الأقواس المتعرجة لحل عيب بناء الكروت التالف
+// 🎯 التصحيح الجوهري: تحويل الاستيراد إلى Named Import بوضع الأقواس المتعرجة لمنع انهيار الصفحة
 import { ProductCard } from './ProductCard';
 import styles from './ProductsView.module.css';
 
