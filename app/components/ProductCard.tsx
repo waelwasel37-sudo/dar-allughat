@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 import { Product } from '../lib/types';
 import styles from './ProductCard.module.css';
 import AddToCartButton from './AddToCartButton';
-import { FaStar, FaShareAlt } from 'react-icons/fa'; // إضافة أيقونة المشاركة
-import ShareButton from './ShareButton'; // استيراد زر المشاركة المصحح
+import { FaStar } from 'react-icons/fa';
+import ShareButton from './ShareButton';
 
 interface ProductCardProps {
   product?: Product;
@@ -27,7 +27,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
   }
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
-
   const originalPrice = product.price || 0;
   const discountPercentage = product.discount || 0;
   const hasDiscount = discountPercentage > 0 && originalPrice > 0;
@@ -36,15 +35,19 @@ const ProductCard = ({ product }: ProductCardProps) => {
     ? originalPrice - (originalPrice * (discountPercentage / 100))
     : originalPrice;
 
+  // 🎯 حل ثغرة أرشفة السيرفر: بناء رابط ديناميكي احتياطي يقرأه السيرفر وغوغل فوراً بدون انتظار المتصفح
+  const baseDomain = typeof window !== 'undefined' ? window.location.origin : 'https://darallughat.com';
+  const fallbackProductUrl = `${baseDomain}/products/${product.slug}`;
+
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Product",
-    "name": product.name || 'اسم المنتج غير متوفر',
-    "image": product.imageUrl || `${typeof window !== 'undefined' ? window.location.origin : ''}/placeholder.jpg`,
-    "description": product.description || `اشتري ${product.name} بأفضل سعر من مكتبات دار اللغات.`,
+    "name": product.name || 'منتج مكتبة دار اللغات',
+    "image": product.imageUrl || `${baseDomain}/placeholder.jpg`,
+    "description": product.description || `اشتري ${product.name || 'هذا المنتج'} بأفضل سعر وتوصيل سريع من مكتبة دار اللغات بالعبور.`,
     "offers": {
       "@type": "Offer",
-      "url": productUrl,
+      "url": productUrl || fallbackProductUrl, // استخدام الرابط الاحتياطي لغوغل
       "priceCurrency": "EGP", 
       "price": discountedPrice.toFixed(2),
       "priceValidUntil": "2027-12-31",
@@ -62,8 +65,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
     } : {})
   };
 
+  // 🎯 صياغة نص بديل غني بالكلمات المفتاحية ومناسب لكل منتج بشكل ديناميكي
+  const imageAltText = product.name 
+    ? `كتاب أو لعبة ${product.name} - متجر مكتبة دار اللغات بالعبور`
+    : 'أدوات مكتبية ومستلزمات مدرسية - مكتبة دار اللغات';
+
   return (
     <div className={styles.cardContainer}>
+      {/* حقن السكيما مباشرة لغوغل في السيرفر */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
@@ -77,9 +86,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 <span>نفذ المخزون</span>
               </div>
             )}
+            {/* 🎯 تعديل الـ alt ليكون ديناميكياً وعربياً بالكامل لأرشفة الصور */}
             <Image
               src={product.imageUrl || '/placeholder.jpg'}
-              alt={product.name || 'Product image'}
+              alt={imageAltText}
               width={240} 
               height={240}
               sizes="(max-width: 768px) 50vw, 240px" 
@@ -92,6 +102,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             )}
           </div>
           <div className={styles.details}>
+            {/* عنوان المنتج في وسم h3 ثابت وواضح لعناكب الزحف */}
             <h3 className={styles.name}>{product.name || 'اسم المنتج غير متوفر'}</h3>
             
             {product.description && (
@@ -139,18 +150,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </Link>
       
-      {/* 🌟 زر شارك واربح يوضع هنا خارج الرابط الأساسي */}
       {!isOutOfStock && (
          <div className={styles.shareEarnButtonWrapper}>
             <ShareButton 
                 title={product.name} 
                 text={`شاهد هذا المنتج المميز: ${product.name}`} 
-                url={productUrl} 
+                url={productUrl || fallbackProductUrl} 
             />
         </div>
       )}
     </div>
   );
 };
-
-export default ProductCard;

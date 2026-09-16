@@ -14,7 +14,7 @@ export default function ProductsView({ products, searchQuery }: ProductsViewProp
   if (searchQuery && products.length === 0) {
     return (
       <div className={styles.noResults}>
-        <p>لم يتم العثور على منتجات تطابق بحثك \"{searchQuery}\".</p>
+        <p>لم يتم العثور على منتجات تطابق بحثك "{searchQuery}".</p>
         <p>حاول البحث بكلمات أخرى أو تصفح الأقسام.</p>
       </div>
     );
@@ -29,6 +29,7 @@ export default function ProductsView({ products, searchQuery }: ProductsViewProp
   }
 
   return (
+    // حاوية عرض المنتجات المباشرة، غوغل سيقرأ كافة الـ Cards المحقونة هنا دفعة واحدة
     <div className={styles.grid}>
       {products.map((product) => (
         <ProductCard 

@@ -1,5 +1,3 @@
-/* app/page.module.css */
-
 .main {
   display: flex;
   flex-direction: column;
@@ -207,8 +205,7 @@
   }
 }
 
-/* 🌟 The Standard SEO-Friendly Visually Hidden Class */
-.seoIntroHidden {
+.visuallyHidden, .seoIntroHidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -218,4 +215,90 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+
+/* Services Section Styles */
+.servicesSection {
+  width: 100%;
+  background-color: var(--color-background-light);
+  padding: 4rem 2rem;
+  margin-top: 4rem;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.servicesTitle {
+  font-size: 2.5rem;
+  font-family: var(--font-headings);
+  color: var(--color-primary-dark);
+  margin-bottom: 2rem;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.serviceCard {
+  background: var(--color-white);
+  padding: 2.5rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.serviceCard:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.serviceIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.serviceCard h3 {
+  font-size: 1.5rem;
+  font-family: var(--font-headings);
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.serviceCard p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.seoFooterText {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* Responsive Adjustments for Services */
+@media (max-width: 768px) {
+  .servicesSection {
+    padding: 3rem 1rem;
+  }
+
+  .servicesTitle {
+    font-size: 2rem;
+  }
+
+  .serviceCard {
+    padding: 2rem;
+  }
 }

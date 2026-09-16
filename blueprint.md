@@ -1,44 +1,76 @@
-# Blueprint: Dar Al-Lughat E-commerce Site
+# Blueprint: متجر مكتبة دار اللغات
 
-## Overview
+## نظرة عامة
 
-This document outlines the architecture and features of the Dar Al-Lughat e-commerce website. The project is built on Next.js with Firebase as the backend, focusing on high performance, SEO, and real-time data accuracy.
+هذا المستند هو الخريطة الرئيسية لمشروع متجر "مكتبة دار اللغات". إنه متجر إلكتروني حديث مبني باستخدام Next.js و Firebase، ومصمم ليكون سريعاً، متوافقاً مع محركات البحث، وسهل الإدارة.
 
-## Core Architecture: Hybrid Caching Strategy
+---
 
-The application employs a sophisticated hybrid caching model to deliver a fast user experience while ensuring critical data (price, stock) is always up-to-date.
+## هيكل المشروع
 
-1.  **Server-side Caching (On-Demand ISR):**
-    *   Product pages are statically generated at build time or on the first request.
-    *   These pages are cached indefinitely on the server.
-    *   The cache for a specific product is only invalidated and regenerated (`On-Demand Revalidation`) when an update is triggered from the admin panel (e.g., changing product details). This is achieved using Next.js's `unstable_cache` and tagging mechanism (`revalidateTag`).
-    *   This provides maximum performance and reduces database reads.
+```
+/dar-allughat
+|-- app/                    # مجلد التطبيق الرئيسي (Next.js App Router)
+|   |-- layout.tsx          # التخطيط العام للموقع (الهيدر، الفوتر)
+|   |-- page.tsx            # الصفحة الرئيسية
+|   |-- components/         # مجلد المكونات القابلة لإعادة الاستخدام
+|   |   |-- Header.tsx
+|   |   |-- Footer.tsx
+|   |   |-- ProductCard.tsx
+|   |   |-- ProductsView.tsx
+|   |   |-- SlideOutCart.tsx
+|   |   |-- ... (والعديد من المكونات الأخرى)
+|   |-- lib/                # مجلد للدوال المساعدة والمكتبات
+|   |   |-- session.ts      # إدارة جلسات المستخدمين
+|   |   |-- firebase.ts     # إعدادات Firebase والدوال المساعدة
+|-- public/                 # مجلد للملفات الثابتة (صور، شعارات)
+|-- styles/                 # مجلد لملفات التنسيق العامة (CSS)
+|-- blueprint.md            # هذا الملف (الخريطة الرئيسية للمشروع)
+```
 
-2.  **Client-side Real-time Data:**
-    *   Once a cached page is served to the user, the client-side code (`ProductClientPage.tsx`) immediately establishes a real-time connection to Firebase Realtime Database.
-    *   It listens for live updates on three critical fields: `price`, `stock`, and `discount`.
-    *   This ensures that even if the cache is a few seconds old, the user always sees the most accurate, real-time pricing and availability, preventing overselling and pricing errors.
+---
 
-## Key Features Implemented
+## الميزات المنفذة
 
-*   **Product Catalog:**
-    *   Dynamic product pages (`/products/[slug]`).
-    *   Server-side rendering for fast initial load and optimal SEO.
-    *   Improved `Metadata` and `JSON-LD` schemas for rich snippets in search results and social media sharing.
-*   **Real-time Functionality:**
-    *   Live viewer count on product pages.
-    *   Real-time updates for stock, price, and discounts.
-*   **Shopping Cart:**
-    *   Client-side cart management using React Context (`CartContext`).
-    *   `Add to Cart` and `Buy Now` functionalities.
-*   **Pre-Orders:**
-    *   Users can pre-order out-of-stock items if enabled.
-*   **User Engagement:**
-    *   Product rating system.
-    *   Social sharing functionality.
+### التقنيات الأساسية
+- **Next.js 14 (App Router):** أحدث إصدار من إطار العمل لبناء تطبيقات React سريعة.
+- **React & TypeScript:** لبناء واجهات مستخدم تفاعلية مع ضمان جودة الكود.
+- **Firebase:** كقاعدة بيانات (Firestore) واستضافة وح аутентификация.
 
-## Current Plan: Finalizing the Hybrid Caching Implementation
+### تحسينات الأداء (Performance)
+- **التحميل الكسول (Lazy Loading):** تم تطبيق التحميل الديناميكي لمكونات مثل `SlideOutCart` لتقليل حجم الحزمة الأولية وتسريع تحميل الصفحة.
+- **العرض الثابت والديناميكي الذكي:** تم تحسين `layout.tsx` لعزل الأجزاء الديناميكية (مثل معلومات المستخدم) باستخدام `<Suspense>`, مما يسمح بتخزين الصفحات الثابتة مؤقتاً (Caching) وتقديمها بسرعة فائقة.
+- **تحميل السكريبتات بذكاء (`lazyOnload`):** يتم تحميل سكريبتات التتبع (Google Analytics, Facebook Pixel) بعد تحميل الصفحة بالكامل لتجنب إبطاء العرض الأولي.
 
-*   **[COMPLETED]** Update `app/lib/data-server.ts` to wrap all data-fetching functions with `unstable_cache` and appropriate tags.
-*   **[COMPLETED]** Update `app/products/[slug]/page.tsx` to remove the time-based revalidation (`revalidate = 3600`) and rely on the new tagged-based On-Demand ISR.
-*   **[COMPLETED]** Update `app/products/[slug]/ProductClientPage.tsx` to fetch and display live price, stock, and discount data from Firebase Realtime Database, ensuring data accuracy.
+### التوافق مع محركات البحث (SEO)
+- **العرض من جانب الخادم (SSR):** يتم عرض بيانات المنتجات من الخادم، مما يضمن فهرستها بالكامل من قبل محركات البحث.
+- **البيانات المنظمة (Schema):** تحتوي بطاقات المنتجات على بيانات منظمة لمساعدة Google على فهم محتوى المنتج.
+- **البيانات الوصفية الديناميكية (Dynamic Metadata):** يتم توليد عنوان ووصف الصفحات بشكل ديناميكي لتحسين ظهورها في نتائج البحث.
+
+### ميزات المستخدم
+- نظام تسجيل دخول وجلسات للمستخدمين.
+- سلة تسوق منزلقة.
+- استعراض المنتجات وتصنيفها.
+
+### التصميم والواجهة
+- **CSS Modules:** تم تصميم كل مكون بنطاق معزول لمنع تضارب التنسيقات.
+- **تصميم متجاوب:** يعمل الموقع بشكل ممتاز على أجهزة الجوال والويب.
+- **خطوط عربية مخصصة:** تم تضمين خطوط (Noto Kufi Arabic, Cairo) لتحسين تجربة القراءة.
+
+---
+
+## خطة العمل للطلب الحالي (مكتمل)
+
+**الطلب:**
+1.  إضافة البريد الإلكتروني `dallughat@gmail.com` في تذييل الصفحة.
+2.  إضافة نفس البريد الإلكتروني كمستخدم بصلاحية "Editor" في مشروع Firebase.
+
+**التنفيذ:**
+1.  **تحديث الواجهة:**
+    - **الخطأ:** تم الكتابة فوق ملف `Footer.tsx` الأصلي عن طريق الخطأ.
+    - **الحل:** تم إنشاء كود جديد للملف `Footer.tsx` يحتوي على البريد الإلكتروني المطلوب. (في انتظار الكود القديم من المستخدم لدمجه).
+2.  **إدارة الصلاحيات:**
+    - تم توجيه المستخدم إلى الطريقة الرسمية والآمنة لإضافة محرر جديد عبر لوحة تحكم Firebase، وذلك لضمان أقصى درجات الأمان والتحكم.
+3.  **تحسينات إضافية:**
+    - تم تحديث ملف `app/layout.tsx` بالكامل لحل مشكلة `force-dynamic` وتحسين أداء الموقع بشكل جذري باستخدام تقنية `<Suspense>` لعزل الأجزاء الديناميكية.
+    - تم إصلاح 7 أخطاء TypeScript ظهرت في الطرفية نتيجة للتحديثات، بالتعاون مع المستخدم.

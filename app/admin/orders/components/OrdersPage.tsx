@@ -171,10 +171,11 @@ const OrdersPage = () => {
     if (error) {
         return <div className={styles.error}>خطأ في تحميل الطلبات: {error}</div>;
     }
-
     return (
         <div className={styles.ordersContainer} dir="rtl">
-            <div className="no-print">
+            
+            {/* 🎯 لوحة التحكم: تختفي بالكامل أثناء الطباعة لحماية بون الشحن وعملية القياس */}
+            <div className={styles.noPrint}>
                 <div className={styles.headerContainer}>
                     <h1 className={styles.title}>سجل الطلبات الواردة</h1>
                     <button onClick={exportToExcel} className={styles.exportButton} disabled={orders.length === 0}>
@@ -264,39 +265,44 @@ const OrdersPage = () => {
                 )}
             </div>
 
+            {/* 🎯 بوليصة الشحن الحرارية المدمجة والمغلقة برمجياً بالكامل لتطبع في ورقة واحدة صغيرة */}
             {activePrintRequest && (
-                <div className="print-only text-black p-1 font-mono text-[11px] leading-tight w-full" dir="rtl">
-                    <div className="text-center space-y-0.5 border-b border-black pb-2 mb-2">
-                        <h2 className="text-sm font-bold tracking-wide">مكتبة دار اللغات</h2>
-                        <p className="text-[9px]">
-                            {activePrintRequest.source === 'POS' ? "إيصال: شراء من الفرع نقداً 🏪" : "بوليصة طرد شحن أونلاين 🌐"}
-                        </p>
-                        <p className="text-[9px] font-mono">التاريخ: {new Date().toLocaleDateString('ar-EG')}</p>
+                <div className={styles.printOnly} dir="rtl">
+                    <div className={styles.printHeader}>
+                        <h2>مكتبة دار اللغات</h2>
+                        <p>{activePrintRequest.source === 'POS' ? "إيصال: شراء من الفرع نقداً 🏪" : "بوليصة طرد شحن أونلاين 🌐"}</p>
+                        <p className={styles.printDate}>تاريخ التجهيز: {new Date(activePrintRequest.createdAt).toLocaleString('ar-EG')}</p>
+                        <p className={styles.printId}>رقم الطلب: #{activePrintRequest.id}</p>
                     </div>
 
-                    <div className="space-y-1 text-[10px] mb-2 border-b border-black pb-2">
-                        <p><strong>👤 اسم العميل:</strong> {activePrintRequest.shippingAddress?.recipientName || 'عميل مجهول'}</p>
-                        <p><strong>📞 هاتف المستلم:</strong> {activePrintRequest.shippingAddress?.phone || 'غير مسجل'}</p>
-                        <p><strong>📍 عنوان التوصيل:</strong> {activePrintRequest.source === 'POS' ? 'استلام مباشر من الفرع' : `${activePrintRequest.shippingAddress?.governorate || ''}، ${activePrintRequest.shippingAddress?.city || ''}، ${activePrintRequest.shippingAddress?.streetAddress || ''}`}</p>
-                        <p className="border-t border-dotted border-gray-400 pt-1 leading-tight text-[10px] font-bold text-gray-800">
-                            📦 محتويات الطرد:
-                        </p>
-                        <ul className="text-[9px] list-disc list-inside space-y-0.5 pl-1">
+                    <div className={styles.printSection}>
+                        <h4>👤 بيانات العميل والشحن:</h4>
+                        <p><strong>الاسم:</strong> {activePrintRequest.shippingAddress?.recipientName || 'عميل مجهول'}</p>
+                        <p><strong>الهاتف:</strong> {activePrintRequest.shippingAddress?.phone || 'لا يوجد'}</p>
+                        {activePrintRequest.source !== 'POS' && (
+                            <p><strong>العنوان:</strong> {`${activePrintRequest.shippingAddress?.governorate || ''}، ${activePrintRequest.shippingAddress?.city || ''}، ${activePrintRequest.shippingAddress?.streetAddress || ''}`}</p>
+                        )}
+                    </div>
+
+                    <div className={styles.printSection}>
+                        <p className="font-bold mb-1">📦 محتويات الطرد:</p>
+                        <ul className={styles.printItemsList}>
                             {activePrintRequest.items?.map((item, idx) => (
-                                <li key={idx}>{item.name} (x{item.quantity})</li>
+                                <li key={idx}>• {item.name} (x{item.quantity})</li>
                             ))}
                         </ul>
-                        <div className="border-t border-dotted border-gray-400 pt-1 flex justify-between font-extrabold text-[11px]">
+                        
+                        <div className={styles.printTotalRow}>
                             <span>إجمالي المطلوب تحصيله:</span>
                             <span>{(activePrintRequest.totalAmount || 0) + (activePrintRequest.source === 'POS' ? 0 : (activePrintRequest.shippingFee || 0))} EGP</span>
                         </div>
                     </div>
 
-                    <div className="mt-4 flex flex-col items-center justify-center pt-2">
-                        <div className="text-center font-mono text-xs tracking-widest border border-black px-2 py-1 bg-gray-50 rounded">
+                    <div className={styles.printBarcodeSection}>
+                        <div className={styles.printBarcode}>
                             *{activePrintRequest.id.substring(0, 8).toUpperCase()}*
                         </div>
-                        <p className="text-[8px] text-gray-700 mt-1">شحن سريع ومضمون - دار اللغات</p>
+                        <p className={styles.printFooterText}>شحن سريع ومضمون - دار اللغات</p>
                     </div>
                 </div>
             )}
