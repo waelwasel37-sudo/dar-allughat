@@ -2,14 +2,21 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from './Header.module.css';
-import Cart from './Cart';
-import ShareButton from './ShareButton';
 import { SITE_LINKS } from '@/app/lib/constants';
-import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaUserCircle, FaBars } from 'react-icons/fa';
+import { FaBars, FaUserCircle } from 'react-icons/fa';
 import { SessionData } from '@/app/lib/session';
+
+const Cart = dynamic(() => import('./Cart'), { ssr: false });
+const ShareButton = dynamic(() => import('./ShareButton'), { ssr: false });
+
+const FaFacebook = dynamic(() => import('react-icons/fa').then((mod) => mod.FaFacebook));
+const FaWhatsapp = dynamic(() => import('react-icons/fa').then((mod) => mod.FaWhatsapp));
+const FaTelegram = dynamic(() => import('react-icons/fa').then((mod) => mod.FaTelegram));
+const FaMapMarkerAlt = dynamic(() => import('react-icons/fa').then((mod) => mod.FaMapMarkerAlt));
 
 interface HeaderProps {
   session: SessionData;
@@ -60,7 +67,6 @@ const Header = ({ session }: HeaderProps) => {
 
   return (
     <header className={styles.headerWrapper}>
-      {/* SEO hidden h1 */}
       <h1 
         className="sr-only"
         style={{
@@ -75,10 +81,9 @@ const Header = ({ session }: HeaderProps) => {
           border: '0'
         }}
       >
-        مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية.
+        مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات المدرسية والسبلايز (Stationery & School Supplies).
       </h1>
 
-      {/* 1. Top Bar */}
       <div className={styles.topBar}>
         <div className={styles.topBarContainer}>
           <p className={styles.taxNumber}>الرقم الضريبي: 769499732</p>
@@ -92,13 +97,12 @@ const Header = ({ session }: HeaderProps) => {
         </div>
       </div>
 
-      {/* 2. Main Header */}
       <div className={styles.header}>
         <div className={styles.logo}>
           <Link href="/" onClick={closeMobileMenu}>
             <Image
               src="/images/logo-horizontal.png1.png" 
-              alt="شعار مكتبة دار اللغات"
+              alt="شعار متجر مكتبة دار اللغات والسبلايز - Stationery & School Supplies"
               width={256}
               height={64}
               priority={true}

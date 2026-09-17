@@ -1,8 +1,8 @@
 'use client';
 
 import { Product } from '../lib/types';
-// 🎯 التصحيح الجوهري: تحويل الاستيراد إلى Named Import بوضع الأقواس المتعرجة لمنع انهيار الصفحة
-import { ProductCard } from './ProductCard';
+// 🎯 التصحيح الجوهري: إضافة الأقواس المتعرجة {} لتتوافق مع الـ Named Export وتأمين البناء بنسبة 100%
+import { ProductCard } from './ProductCard'; 
 import styles from './ProductsView.module.css';
 
 interface ProductsViewProps {
@@ -12,6 +12,7 @@ interface ProductsViewProps {
 
 export default function ProductsView({ products, searchQuery }: ProductsViewProps) {
 
+  // 1. حالة عدم العثور على نتائج أثناء استخدام خانة البحث
   if (searchQuery && products.length === 0) {
     return (
       <div className={styles.noResults}>
@@ -21,6 +22,7 @@ export default function ProductsView({ products, searchQuery }: ProductsViewProp
     );
   }
 
+  // 2. حالة خلو القسم الحالي من أي منتجات معروضة
   if (products.length === 0) {
       return (
       <div className={styles.noResults}>
@@ -29,12 +31,15 @@ export default function ProductsView({ products, searchQuery }: ProductsViewProp
     );
   }
 
+  // 3. شبكة المنتجات الرئيسية وعرض صفين كاملين بسرعة الصاروخ
   return (
     <div className={styles.grid}>
-      {products.map((product) => (
+      {/* 🚀 تمرير الـ index لتحديد المنتجات الستة الأولى الحارسة لسرعة الـ LCP */}
+      {products.map((product, index) => (
         <ProductCard 
           key={product.id} 
           product={product} 
+          isPriority={index < 6} // 🔥 تفعيل الأولوية المشروطة لأول 6 كتب في طابور العرض
         />
       ))}
     </div>

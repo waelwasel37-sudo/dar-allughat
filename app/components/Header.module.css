@@ -175,33 +175,33 @@
         max-width: 160px !important; /* وضع حد أقصى لعرض اللوجو على الشاشات الضيقة */
         display: block;
     }
+    
     .nav {
         flex-direction: column;
         position: fixed;
-        top: 0;
-        left: 0; /* التزام جهة اليسار بدقة */
+        
+        /* 🎯 التعديل المحكم: قائمة أصغر وأنعم للموبايل */
+        top: 88px; /* قيمة دقيقة جداً لتبدأ بعد الهيدر والشريط العلوي معاً */
+        left: 0;
         right: auto;
-        width: 75vw;
-        max-width: 320px;
-        height: 100vh;
+        width: 260px; /* عرض أصغر، يترك مساحة أكبر للمحتوى */
+        height: calc(100vh - 88px); /* حساب الارتفاع بدقة */
         background-color: var(--color-background);
-        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.15); 
-        padding: 2rem 1.5rem;
+        box-shadow: 3px 0 12px rgba(0, 0, 0, 0.12); /* ظل أنعم وأكثر حداثة */
+        padding: 1.5rem 1.25rem; /* حشو داخلي متوازن */
         z-index: 9999;
         align-items: flex-start;
-        gap: 1.5rem;
+        gap: 1.2rem; /* تقليل المسافة بين الروابط لتكون القائمة مضغوطة أكثر */
         display: flex; 
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
         
-        /* ==========================================================================
-           🎯 الحل السحري المشترك: نسف الهامش والغطاء الشفاف من اليمين واليسار معاً
-           ========================================================================== */
-        transform: translateX(-100%); /* طرد القائمة خارج الشاشة تماماً جهة اليسار */
-        visibility: hidden; /* إخفاء الطبقة الشفافة كلياً لمنع ظهورها فوق الكلمات والمنتجات يميناً ويساراً */
-        transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform 0.25s ease-out, visibility 0.25s ease-out; /* حركة أسرع وأنعم */
     }
 
     .nav.mobileMenu {
-        /* إظهار القائمة بشكل سليم فقط عند فتحها يدوياً */
         transform: translateX(0);
         visibility: visible; 
     }

@@ -11,10 +11,11 @@ import ShareButton from './ShareButton';
 
 interface ProductCardProps {
   product?: Product;
+  isPriority?: boolean; // 🚀 قنص خاصية الأولوية المشروطة المستقبلة من الأب
 }
 
-// 🎯 التصحيح الجوهري: إضافة كلمة export مباشرة قبل const لتوحيد صيغة الاستدعاء ومنع الخطأ #130 كلياً
-export const ProductCard = ({ product }: ProductCardProps) => {
+// 🎯 Named Export الموثق والآمن تماماً لمنع انهيار الصفحة
+export const ProductCard = ({ product, isPriority = false }: ProductCardProps) => {
   const [productUrl, setProductUrl] = useState<string>('');
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const baseDomain = typeof window !== 'undefined' ? window.location.origin : 'https://darallughat.com';
   const fallbackProductUrl = `${baseDomain}/products/${product.slug}`;
 
+  // 🧠 الـ Schema الذكية لتغذية جوجل ميرشنت وحسم عطل المزامنة قسرياً
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -89,6 +91,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               alt={imageAltText}
               width={240} 
               height={240}
+              priority={isPriority} // 🔥 نسف الـ Lazy قسرياً لأول 6 منتجات فوراً
+              placeholder="blur" // إظهار التمكين الضبابي لمنع اهتزاز التصميم وسحق الـ CLS
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNcvHjpfwAGMAJ5455cNgAAAABJRU5ErkJggg=="
               sizes="(max-width: 768px) 50vw, 240px" 
               className={`${styles.image} ${isOutOfStock ? styles.outOfStockImage : ''}`}
             />

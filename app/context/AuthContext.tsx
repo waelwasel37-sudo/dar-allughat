@@ -3,11 +3,12 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { onAuthStateChanged, signOut, User, getRedirectResult } from 'firebase/auth';
-import { auth } from '../lib/firebase-client'; // 🎯 تصحيح المسار
+import { auth } from '../lib/firebase-client'; 
 
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
+  isEditor: boolean; // إضافة صلاحية المحرر للكود
   loading: boolean;
   logout: () => Promise<void>;
 }
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isEditor, setIsEditor] = useState(false); // تتبع حالة المحررين الجداد
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
@@ -38,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error processing Firebase redirect result:", error);
     });
 
-    // 2️⃣ تشغيل مستمع الهوية المباشر
+    // 2️⃣ تشغيل مستمع الهوية المباشر وحقن الصلاحيات بالمليم
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
@@ -52,11 +54,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
 
           if (response.ok) {
+              const userEmail = currentUser.email?.toLowerCase() || '';
+              
+              // 👑 المالك الأساسي والوحيد للمشروع (Owner)
               const ADMIN_EMAIL = 'waelwasel37@gmail.com';
-              const userIsAdmin = currentUser.email?.toLowerCase() === ADMIN_EMAIL;
+              const userIsAdmin = userEmail === ADMIN_EMAIL;
               setIsAdmin(userIsAdmin);
 
-              if (userIsAdmin && pathname === '/login') {
+              // 🛡️ قائمة الموظفين والمحررين المعتمدين والمحميين جوه الكود (Editors)
+              const ALLOWED_EDITORS = [
+                'dallughat@gmail.com',
+                'bondka111@gmail.com'
+              ];
+              const userIsEditor = userIsAdmin || ALLOWED_EDITORS.includes(userEmail);
+              setIsEditor(userIsEditor);
+
+              // إذا كان المستخدم آدمن أو محرر معتمد يحاول الدخول لصفحة الـ Login يتم تحويله للوحة التحكم
+              if (userIsEditor && pathname === '/login') {
                   window.location.replace('/admin');
               }
           } else {
@@ -74,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         setUser(null);
         setIsAdmin(false);
+        setIsEditor(false);
 
         if (pathname.startsWith('/admin')) {
           window.location.href = '/login';
@@ -82,7 +97,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     });
 
-    // 🎯 تنظيف متزامن فوري وسليم للذاكرة
     return () => unsubscribe();
   }, [pathname, triggerServerLogout]);
 
@@ -106,9 +120,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const contextValue = useMemo(() => ({
     user,
     isAdmin,
+    isEditor,
     loading,
     logout
-  }), [user, isAdmin, loading, logout]);
+  }), [user, isAdmin, isEditor, loading, logout]);
 
   return (
     <AuthContext.Provider value={contextValue}>
