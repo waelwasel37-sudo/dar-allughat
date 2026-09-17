@@ -1,18 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useCart } from '../context/CartContext';
 import styles from './ThankYou.module.css';
 import { FaCheckCircle, FaWhatsapp, FaHome } from 'react-icons/fa';
+import GoogleReviewsOptIn from '../components/GoogleReviewsOptIn';
 
-export default function ThankYouPage() {
+const ThankYouContent = () => {
   const { clearCart } = useCart();
+  const searchParams = useSearchParams();
+
+  // قراءة بيانات الطلب من الرابط
+  const orderId = searchParams.get('orderId');
+  const email = searchParams.get('email');
+  const country = searchParams.get('country');
+  const deliveryDate = searchParams.get('deliveryDate');
 
   useEffect(() => {
-    // تفريغ السلة فور وصول العميل لصفحة شكراً لك
     clearCart();
-  }, []); // مصفوفة فارغة لمنع التكرار اللانهائي
+  }, [clearCart]);
 
   return (
     <div className={styles.container}>
@@ -27,7 +35,7 @@ export default function ThankYouPage() {
         </p>
         <div className={styles.buttonContainer}>
           <a 
-            href="https://wa.me/201220396597" // رابط واتساب الدولي الصحيح
+            href="https://wa.me/201220396597"
             target="_blank" 
             rel="noopener noreferrer" 
             className={`${styles.button} ${styles.whatsappButton}`}>
@@ -38,6 +46,25 @@ export default function ThankYouPage() {
           </Link>
         </div>
       </div>
+      
+      {/* التأكد من وجود البيانات قبل عرض نافذة جوجل */}
+      {orderId && email && country && deliveryDate && (
+        <GoogleReviewsOptIn 
+          orderId={orderId}
+          customerEmail={email}
+          deliveryCountry={country}
+          estimatedDeliveryDate={deliveryDate}
+        />
+      )}
     </div>
+  );
+}
+
+// استخدام Suspense لضمان عمل useSearchParams بشكل صحيح
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={<div>جارٍ تحميل صفحة الشكر...</div>}>
+      <ThankYouContent />
+    </Suspense>
   );
 }

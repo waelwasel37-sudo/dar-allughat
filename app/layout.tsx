@@ -13,13 +13,19 @@ import Script from 'next/script';
 import { Metadata } from 'next';
 import { cn } from "@/lib/utils";
 import dynamic from 'next/dynamic';
+import GoogleMerchantBadge from './components/GoogleMerchantBadge'; // <-- 1. استيراد المكون
 
 const SlideOutCart = dynamic(() => import('./components/SlideOutCart'), { ssr: false });
 
+// 2. تحديث الواجهة لتعريف كود جوجل
 declare global {
   interface Window {
     dataLayer: any[];
     fbq: (...args: any[]) => void;
+    merchantwidget?: {
+        start: (config: { merchant_id: number; position: string; }) => void;
+    };
+    gapi?: any;
   }
 }
 
@@ -45,7 +51,7 @@ export const metadata: Metadata = {
     },
     openGraph: {
       title: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
-      description: 'مرحباً بكم في مكتبة دار اللغات في مدينة العبور. نوفر لأبنائكم تشكيلة متكاملة من كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وقصص أطفال.',
+      description: 'مرحباً بكم في مكتبة دار اللغات في مدينة العبور. نوفر لأبنائكم تشكيلة متكاملة من كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وقصص أطفال وألعاب تنمية مهارات أطفال منتسوري بأسعار تنافسية.',
       siteName: 'مكتبة دار اللغات',
       type: 'website',
       locale: 'ar_EG',
@@ -78,7 +84,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl" className={cn(noto.variable, cairo.variable, "font-sans", GeistSans.variable)}>
       <head>
-        {/* Google Tag Manager - Build-Safe Version */}
         {gaId && (
             <>
                 <Script
@@ -100,7 +105,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </>
         )}
 
-        {/* Facebook Pixel - Build-Safe Version using dangerouslySetInnerHTML */}
         {pixelId && (
             <>
                 <Script
@@ -144,6 +148,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <SlideOutCart />
                   <RelatedProductsBar />
                   <Footer />
+                  <GoogleMerchantBadge /> {/* <-- 3. إضافة المكون هنا */}
                 </>
               )}
             </SessionWrapper>

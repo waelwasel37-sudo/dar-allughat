@@ -1,31 +1,31 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
 .pnp.js
 
-# testing
+# Testing
 /coverage
 
-# next.js
+# Next.js build output
 /.next/
 /out/
 
-# production
+# Production
 /build
 
-# misc
+# Miscellaneous
 .DS_Store
 *.pem
 
-# debug
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-firestore-debug.log*
+firestore-debug.log
 
-# local env files
+# Local Env Files
 .env
 .env.production
 .env.local
@@ -33,14 +33,14 @@ firestore-debug.log*
 .env.test.local
 .env.production.local
 
-# vercel
+# Firebase & Google Cloud Service Accounts Keys (🛡️ القفل الحديدي)
+*-service-account-key.json
+*serviceAccountKey.json
+*service-account.json
+*.json
+
+# Vercel
 .vercel
 
-# - firebase
-*.sqlite
-
-# Firebase Keys (المفاتيح الحساسة)
-*service-account*.json
-*serviceAccountKey*.json
-firebase-service-account.json
-**/temp_service_account.json
+# TypeScript
+*.tsbuildinfo
