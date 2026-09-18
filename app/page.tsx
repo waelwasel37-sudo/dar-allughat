@@ -31,7 +31,7 @@ export default async function Home() {
     <main className={styles.main}>
       
       {/* عنوان الـ H1 الرئيسي للموقع مخفي برمجياً بطريقة صديقة وآمنة تماماً لـ غوغل */}
-      <h1 className={styles.visuallyHidden}>مكتبة دار اللغات بالعبور - كتب خارجية وألعاب منتسوري ومستلزمات مدرسية</h1>
+      <h1 className={styles.visuallyHidden}>مكتبة دار اللغات بالعبور - كتب خارجية وألعاب منتسوري ومستلزمات مدرسية وسبلايز</h1>
 
       {/* قسم البنر الترحيبي الرئيسي */}
       <Hero />
@@ -41,31 +41,10 @@ export default async function Home() {
         <SearchAndFilter categories={categories || []} />
       </Suspense>
       
-      {/* عرض المنتجات - تم تمرير كافة المنتجات المستدعاة من السيرفر دفعة واحدة للأرشفة الفورية */}
+      {/* عرض المنتجات - تم تمرير كافة المنتجات المستدعاة من السيرفر دفعة واحدة للأرشفة الفورية للـ 6 منتجات الأولى */}
       <HomeProductsView initialProducts={initialProducts || []} categories={categories || []} />
 
-      {/* قسم الخدمات المتميزة والبطاقات التسويقية الغنية بالكلمات الدلالية في أسفل الصفحة */}
-      <section className={styles.servicesSection}>
-        <div className={styles.container}>
-          <h2 className={styles.servicesTitle}>خدمات مكتبة دار اللغات الخاصة</h2>
-          <div className={styles.servicesGrid}>
-            <div className={styles.serviceCard}>
-              <div className={styles.serviceIcon}>📋</div>
-              <h3>ارفع قائمة مدرستك</h3>
-              <p>وفّر وقتك وجهدك؛ ارفع لنا قائمة أدوات وكتب طفلك المدرسية وسنقوم بتجهيزها لك بالكامل فوراً!</p>
-            </div>
-            <div className={styles.serviceCard}>
-              <div className={styles.serviceIcon}>🏢</div>
-              <h3>توريدات الشركات والمؤسسات</h3>
-              <p>نلبي كافة احتياجات الشركات، المصانع، والمؤسسات من الأدوات المكتبية والتجهيزات بأفضل الأسعار المتاحة.</p>
-            </div>
-          </div>
-          
-          <p className={styles.seoFooterText}>
-            تفخر مكتبة دار اللغات بمدينة العبور بتقديم حلول تعليمية متكاملة تشمل كتب تأسيس الأطفال، كتب مستوى رفيع لغات، وقسم خاص لـ كتب مرتجع بأسعار اقتصادية تناسب الجميع.
-          </p>
-        </div>
-      </section>
+      {/* ✂️ تم قنص وبتر قسم الـ servicesSection المكرر من هنا كلياً لحسم عطل التداخل البصري وتخفيف حجم الصفحة الافتتاحية */}
 
     </main>
   );

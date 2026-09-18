@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import dynamic from 'next/dynamic'; // السلاح السري للبتر والـ Code Splitting
+import dynamic from 'next/dynamic'; // البتر البرمجي لتخفيف الأداء وسحق الـ TBT
 import styles from './Footer.module.css';
 import { SITE_LINKS } from '@/app/lib/constants'; 
 
-// 🚀 البتر البرمجي: تحميل الأيقونات ديناميكياً لتأمين سرعة أول شاشة (TBT < 200ms)
+// تحميل الأيقونات ديناميكياً لتسريع الصفحة الافتتاحية الأولى أمام عناكب جوجل
 const FaFacebook = dynamic(() => import('react-icons/fa').then((mod) => mod.FaFacebook));
 const FaTelegram = dynamic(() => import('react-icons/fa').then((mod) => mod.FaTelegram));
 const FaWhatsapp = dynamic(() => import('react-icons/fa').then((mod) => mod.FaWhatsapp));
@@ -19,43 +19,50 @@ const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.container}>
         
-        {/* 1. قسم الخدمات العلوية للـ Footer */}
-        <div className={styles.servicesSection} style={{ marginBottom: '40px', borderBottom: '1px solid var(--color-border-light, #e9ecef)', paddingBottom: '30px' }}>
-          <h2 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '25px', color: 'var(--color-text-primary, #343a40)' }}>خدمات مكتبة دار اللغات</h2>
-          <div className={styles.grid}>
-            
-            {/* خدمة القوائم المدرسية محقونة بالسبلايز */}
-            <div className={styles.serviceBox}>
-              <h4 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-primary, #007bff)', marginBottom: '10px' }}>📋 ارفع قائمة مدرستك والسبلايز</h4>
-              <p style={{ fontSize: '15px', lineHeight: '1.6' }}>وفّر وقتك وجهدك؛ ارفع لنا قائمة أدوات وكتب طفلك المدرسية والسبلايز (School Supplies) وسنقوم بتجهيزها لك بالكامل فوراً!</p>
-            </div>
-
-            {/* توريدات الشركات */}
-            <div className={styles.serviceBox}>
-              <h4 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-primary, #007bff)', marginBottom: '10px' }}>🏢 توريدات الشركات والمؤسسات</h4>
-              <p style={{ fontSize: '15px', lineHeight: '1.6' }}>نلبي كافة احتياجات الشركات، المصانع، والمؤسسات من الأدوات المكتبية والتجهيزات بأفضل الأسعار المتاحة.</p>
-            </div>
-
-          </div>
-        </div>
-
-        {/* 2. شبكة الأقمدة الرئيسية والمعلومات القانونية */}
+        {/* شبكة الأعمدة الرئيسية والنظيفة تماماً وبدون أي تكرار أو نسخ قديمة */}
         <div className={styles.grid}>
           
+          {/* العمود الأول: اسم المشروع والتعريف المالي والتسويقي المعقم */}
           <div className={styles.column}>
-            {/* 👑 اسم المشروع الصافي والنظيف بدون تكرار */}
+            {/* ✅ تثبيت الاسم الرسمي النظيف والموحد بدون أي زيادات */}
             <h3 className={styles.columnTitle}>مكتبة دار اللغات</h3>
-            {/* حقن السبلايز باللغتين وتفجير الفهرسة */}
+            
+            {/* ✅ حقن السبلايز بذكاء للـ SEO في سطر تفخر */}
             <p className={styles.aboutText}>
               تفخر مكتبة دار اللغات بمدينة العبور بتقديم حلول تعليمية متكاملة تشمل كتب تأسيس الأطفال، كتب مستوى رفيع لغات، وكافة مستلزمات السبلايز (School Supplies)، بالإضافة إلى قسم خاص لـ كتب مرتجع بأسعار اقتصادية تناسب الجميع.
             </p>
-            <div className={styles.legalInfo}>
-                {/* 🎯 تعديل اتجاه الأرقام بالمليم ليظهر الترتيب الضريبي من الشمال لليمين بشكل سليم */}
-                <p dir="ltr" style={{ textAlign: 'right' }}>الرقم الضريبي: 769-499-732</p>
-                <p>السجل التجاري: 100160</p>
+            
+            {/* ✅ دمج خدمة القوائم المدرسية والسبلايز هنا بنظافة وبدون تكرار عناوين */}
+            <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px dashed var(--color-border-light, #e9ecef)' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--color-primary, #007bff)', marginBottom: '5px' }}>
+                📋 ارفع قائمة مدرستك والسبلايز
+              </h4>
+              <p style={{ fontSize: '14px', lineHeight: '1.5', margin: '0' }}>
+                وفّر وقتك وجهدك؛ ارفع لنا قائمة أدوات وكتب طفلك المدرسية والسبلايز (School Supplies) وسنقوم بتجهيزها لك بالكامل فوراً!
+              </p>
+            </div>
+
+            {/* ✅ دمج خدمة توريدات الشركات والمؤسسات بنظافة وعزل تسييبي */}
+            <div style={{ marginTop: '15px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--color-primary, #007bff)', marginBottom: '5px' }}>
+                🏢 توريدات الشركات والمؤسسات
+              </h4>
+              <p style={{ fontSize: '14px', lineHeight: '1.5', margin: '0' }}>
+                نلبي كافة احتياجات الشركات، المصانع، والمؤسسات من الأدوات المكتبية والتجهيزات بأفضل الأسعار المتاحة.
+              </p>
+            </div>
+
+            {/* ✅ البيانات القانونية الموثقة بالرقم الضريبي الصحيح الصافي 100% */}
+            <div className={styles.legalInfo} style={{ marginTop: '20px' }}>
+                {/* 🎯 حماية الأرقام: استخدام dir="ltr" الموحد لمنع المتصفح من عكس ترتيب الرقم الضريبي كلياً */}
+                <p dir="ltr" style={{ textAlign: 'right', margin: '5px 0', fontWeight: 'bold' }}>
+                  الرقم الضريبي: 769499732
+                </p>
+                <p style={{ margin: '5px 0' }}>السجل التجاري: 100160</p>
             </div>
           </div>
 
+          {/* العمود الثاني: الروابط السريعة المبتورة للخفة */}
           <div className={styles.column}>
             <h3 className={styles.columnTitle}>روابط سريعة</h3>
             <ul className={styles.linkList}>
@@ -66,6 +73,7 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* العمود الثالث: قنوات التواصل والربط الجغرافي بالعبور */}
           <div className={styles.column}>
             <h3 className={styles.columnTitle}>تواصل معنا - Contact Us</h3>
             <ul className={styles.contactList}>
@@ -99,9 +107,9 @@ const Footer = () => {
 
         </div>
 
-        {/* 3. حقوق الملكية وشارة الـ Supplies */}
+        {/* ✅ السطر الأخير المعقم تماماً: مسح الكلمات الإنجليزية بناءً على طلبك الصارم وثبات اسم مكتبة دار اللغات فقط */}
         <div className={styles.copyright}>
-          <p>&copy; {currentYear} مكتبة دار اللغات والسبلايز - Stationery & School Supplies. جميع الحقوق محفوظة.</p>
+          <p>&copy; {currentYear} مكتبة دار اللغات. جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </footer>
