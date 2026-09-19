@@ -2,12 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext'; // 👈 تم التصحيح
-import { Product, OrderItem } from '../../lib/types'; // 👈 تم التصحيح
+import { useAuth } from '../../context/AuthContext'; 
+import { Product, OrderItem } from '../../lib/types'; 
 import { FaBarcode, FaPrint, FaTrash, FaSearch, FaSpinner, FaPlus, FaMinus, FaCashRegister, FaFileExcel, FaPercentage } from 'react-icons/fa';
-// 📊 استيراد مكتبة SheetJS لتوليد ملفات الإكسيل تلقائياً
 import * as XLSX from 'xlsx';
-// 📱 مكتبة توليد الـ QR Code لتحويل الرابط إلى رمز استجابة سريع
 import QRCode from 'qrcode';
 
 export default function POSPage() {
@@ -47,9 +45,9 @@ export default function POSPage() {
     useEffect(() => {
         const generateStoreQR = async () => {
             try {
-                const storeUrl = 'https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app/';
+                const storeUrl = 'https://hosted.app';
                 const url = await QRCode.toDataURL(storeUrl, {
-                    width: 90, // حجم مضغوط يناسب الإيصال الحراري تماماً
+                    width: 90, 
                     margin: 1,
                     color: { dark: '#000000', light: '#ffffff' }
                 });
@@ -60,7 +58,8 @@ export default function POSPage() {
         };
         generateStoreQR();
     }, []);
-    // 🌟 ميزة الـ Debounce المضافة بناءً على مقترحك لتأخير الفلترة الفائقة للأداء
+
+    // 🌟 ميزة الـ Debounce المضافة لتأخير الفلترة الفائقة للأداء
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearchQuery(searchQuery);
@@ -70,7 +69,6 @@ export default function POSPage() {
             clearTimeout(handler);
         };
     }, [searchQuery]);
-
     // 2. جلب المخزن كاملاً مرة واحدة عند الفتح (توفيراً لعمليات قراءة Firebase Blaze)
     useEffect(() => {
         async function loadProducts() {
@@ -139,6 +137,7 @@ export default function POSPage() {
             setTimeout(() => setErrorMessage(null), 4000);
         }
     };
+
     // 4. دالات التحكم في سلة المشتريات والكميات مع فحص حظر المخزون النافذ دائمًا
     const addToCart = (product: Product) => {
         // 🛡️ جدار حظر المخزون النافذ: منع البيع فوراً لو كانت الكمية 0
@@ -166,14 +165,13 @@ export default function POSPage() {
             return [...prevCart, { ...product, quantity: 1 }];
         });
     };
-
     const updateQuantity = (id: string, delta: number) => {
         setCart(prevCart => 
             prevCart.map(item => {
                 if (item.id === id) {
                     const newQty = item.quantity + delta;
                     const maxStock = item.stock ?? 0;
-                    // حظر الزيادة اليدوية لو تخطت المتاح بالمخزن لمنع البيع بالسالب
+                    // hظر الزيادة اليدوية لو تخطت المتاح بالمخزن لمنع البيع بالسالب
                     if (delta > 0 && newQty > maxStock) {
                         setErrorMessage(`⚠️ الحد الأقصى المتاح في المخزن لهذا المنتج هو ${maxStock} قطع.`);
                         setTimeout(() => setErrorMessage(null), 3000);
@@ -212,6 +210,7 @@ export default function POSPage() {
             return sum + (originalTotal - finalTotal);
         }, 0);
     };
+
     // تصفية المنتجات للبحث اليدوي السريع القائم على الـ Debounced المقترح للأداء الفائق
     const filteredProducts = allProducts.filter(product => 
         product.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
@@ -287,22 +286,19 @@ export default function POSPage() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        // 🌟 حقن حزام الأمان والتأكد من إرسال الـ Token الخاص بالأدمن لغلق الثغرة
                         ...(token && { 'Authorization': `Bearer ${token}` })
                     },
-                    body: JSON.stringify({ 
-                        tags: ['products-list'] 
-                    }), 
+                    body: JSON.stringify({ tags: ['products-list'] }), 
                 });
                 console.log('✅ تم تحديث مخزن المتجر الإلكتروني بأمان كامل!');
             } catch (revalidateError) {
-                console.error('فشل إرسال إشارة التحديث الدوري الآمن لكاش الأونلاين:', revalidateError);
+                console.error('فشل إرسال إشارة التحديث الدوري لكاش الأونلاين:', revalidateError);
             }
 
             setSuccessMessage('تم تسجيل المبيعات بنجاح وتحديث مخزن المتجر الإلكتروني حياً!');
             
             setTimeout(() => {
-                window.print(); // تفعيل الطباعة الحرارية المصلحة
+                window.print(); 
                 setCart([]);
                 setSuccessMessage(null);
             }, 500);
@@ -334,10 +330,35 @@ export default function POSPage() {
             </div>
         );
     }
-
     return (
         <div className="min-h-screen bg-gray-100 p-4 font-sans text-right" dir="rtl">
-            {/* 🛡️ جدار حظر طباعة شاشات الكمبيوتر - محاط بـ no-print لمنع تسرب اسم وائل أو السلة للورقة الحرارية */}
+            
+            {/* 🛡️ حقن نظام الحماية الخرساني الصارم عبر الـ CSS التقليدي لضمان إجبار الطابعة على صفحة واحدة وبتر الهوامش والرأس والذيل */}
+            <style dangerouslySetInnerHTML={{__html: `
+                @media print {
+                    .no-print { display: none !important; }
+                    .print-only { display: block !important; }
+                    body { 
+                        background: white !important; 
+                        color: black !important; 
+                        padding: 0 !important; 
+                        margin: 0 !important; 
+                        width: 80mm !important; 
+                    }
+                    @page { 
+                        size: 80mm auto; 
+                        margin: 0mm !important; /* 🎯 تصفير الهوامش قسرياً ينسف روابط المتصفح وأرقام الصفحات 1 و 2 و 3 نهائياً */
+                    }
+                    .print-card-wrapper {
+                        page-break-inside: avoid !important;
+                    }
+                }
+                @media screen {
+                    .print-only { display: none !important; }
+                }
+            `}} />
+
+            {/* شاشة العرض الرقمية للكاشير (تختفي تماماً أثناء الطباعة بفضل الـ no-print) */}
             <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
                 
                 {/* الجزء الأيمن: إدارة الفاتورة وسلة المبيعات والتقارير */}
@@ -349,7 +370,7 @@ export default function POSPage() {
                         </div>
                         <button
                             onClick={exportToExcel}
-                            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-sm transition-all active:scale-95"
+                            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-sm"
                         >
                             <FaFileExcel />
                             <span>تصدير Excel ({posOrdersLog.length})</span>
@@ -363,6 +384,7 @@ export default function POSPage() {
                         <FaBarcode className="text-lg animate-pulse" />
                         <span>النظام مستعد ومؤمن ضد المنتجات النافذة. امسح الباركود الآن لتنزيل المنتج بالسلة.</span>
                     </div>
+
                     {/* قائمة الأصناف داخل الفاتورة على الشاشة */}
                     <div className="flex-1 overflow-y-auto space-y-3 pl-1">
                         {cart.length === 0 ? (
@@ -416,15 +438,14 @@ export default function POSPage() {
                         <button
                             onClick={handleCheckoutAndPrint}
                             disabled={isSubmittingOrder || cart.length === 0}
-                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-base font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all"
+                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-base font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 shadow-md"
                         >
                             {isSubmittingOrder ? <FaSpinner className="animate-spin text-lg" /> : <FaPrint className="text-lg" />}
                             {isSubmittingOrder ? 'جاري حفظ الفاتورة وتحديث المخزن...' : 'إنهاء الفاتورة وطباعة 🖨️'}
                         </button>
                     </div>
                 </div>
-
-                {/* الجزء الأيسر: ميزة البحث اليدوي السريع واختيار المنتجات يدوياً */}
+                {/* الجزء الأيسر: ميزة البحث واختيار الكتب يدوياً */}
                 <div className="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[calc(100vh-2rem)]">
                     <div className="relative mb-6">
                         <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
@@ -435,11 +456,10 @@ export default function POSPage() {
                             placeholder="البحث اليدوي السريع باسم الكتاب، المنتج، أو الفئة..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full border border-gray-300 rounded-xl py-3 pr-10 pl-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all"
+                            className="w-full border border-gray-300 rounded-xl py-3 pr-10 pl-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                         />
                     </div>
 
-                    {/* شبكة عرض المنتجات المفلوترة للاختيار السريع بنقرة زر */}
                     <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-4 pl-1">
                         {filteredProducts.length === 0 ? (
                             <p className="col-span-full text-center text-gray-400 py-12 text-sm">لم يتم العثور على منتجات مطابقة للبحث اليدوي</p>
@@ -451,10 +471,10 @@ export default function POSPage() {
                                     <button
                                         key={product.id}
                                         onClick={() => addToCart(product)}
-                                        className="p-3 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-xl flex flex-col justify-between text-right transition-all group shadow-sm active:scale-95 relative overflow-hidden"
+                                        className="p-3 bg-gray-50 hover:bg-blue-50 border border-gray-200 rounded-xl flex flex-col justify-between text-right relative overflow-hidden shadow-sm active:scale-95 group"
                                     >
                                         {hasDiscount && (
-                                            <span className="absolute top-0 left-0 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-br-lg flex items-center gap-0.5">
+                                            <span className="absolute top-0 left-0 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-br-lg">
                                                 خصم {product.discount}%
                                             </span>
                                         )}
@@ -462,7 +482,7 @@ export default function POSPage() {
                                             <h3 className="font-bold text-gray-800 text-xs sm:text-sm line-clamp-2 group-hover:text-blue-700 min-h-[2rem]">{product.name}</h3>
                                             <span className="inline-block bg-white text-gray-500 px-2 py-0.5 rounded border text-[10px] mt-1 font-medium">{product.category}</span>
                                         </div>
-                                        <div className="w-full flex justify-between items-center mt-2 border-t pt-2 border-gray-200 group-hover:border-blue-200">
+                                        <div className="w-full flex justify-between items-center mt-2 border-t pt-2 border-gray-200">
                                             <span className="text-xs text-gray-400 font-mono block">المخزن: {product.stock ?? 0}</span>
                                             <div className="flex flex-col items-end">
                                                 <span className="font-bold text-xs sm:text-sm text-blue-600 font-mono">{finalPrice} EGP</span>
@@ -476,92 +496,76 @@ export default function POSPage() {
                     </div>
                 </div>
             </div>
+
             {/* ========================================================================= */}
-            {/* 🖨️ هيكل الفاتورة المخصصة للطباعة الورقية الفورية (مضغوطة لورقة واحدة فقط) */}
+            {/* 🖨️ هيكل الفاتورة المخصصة والمحكومة للطباعة الحرارية في ورقة واحدة صلبة */}
             {/* ========================================================================= */}
-            <div className="print-only text-black p-1 font-mono w-full text-[11px] leading-tight" dir="rtl">
+            <div className="print-only print-card-wrapper text-black font-mono w-full text-[11px] leading-tight max-w-[80mm] mx-auto" dir="rtl" style={{ padding: '12px 4px' }}>
                 
-                {/* رأس الفاتورة المصلح: الـ QR code والشعار والاسم بالأعلى تماماً */}
-                <div className="text-center space-y-0.5 border-b border-black pb-2 mb-2">
-                    {/* مربع الـ QR Code الذكي المحول للمشروع بنجاح */}
+                {/* 🎯 فرز فواصل الرأس: مسافات وعزل يمنع التصاق العناوين بجدول المنتجات */}
+                <div className="text-center space-y-1 pb-3 mb-4" style={{ borderBottom: '1px dashed #000000', paddingBottom: '14px' }}>
                     {qrCodeDataUrl && (
-                        <div className="flex justify-center mb-1">
-                            <img src={qrCodeDataUrl} alt="Store QR Code" className="w-16 h-16 object-contain" />
+                        <div className="flex justify-center mb-2">
+                            <img src={qrCodeDataUrl} alt="Store QR Code" className="w-20 h-20 object-contain" />
                         </div>
                     )}
-                    <h2 className="text-sm font-bold tracking-wide">مكتبة دار اللغات</h2>
-                    <p className="text-[9px]">فاتورة مبيعات نقدية مبسطة (POS)</p>
-                    <p className="text-[9px] font-mono">التاريخ: {new Date().toLocaleString('ar-EG')}</p>
+                    <h2 className="text-sm font-bold tracking-wide" style={{ margin: '4px 0 2px 0' }}>مكتبة دار اللغات</h2>
+                    <p className="text-[10px] font-bold" style={{ margin: '0' }}>مدينة العبور - المحل رقم 47 تمليك</p>
+                    <p className="text-[9px]" style={{ margin: '2px 0' }}>فاتورة مبيعات نقدية مبسطة (POS)</p>
+                    <p className="text-[9px] font-mono" style={{ margin: '0' }}>التاريخ: {new Date().toLocaleString('ar-EG')}</p>
                 </div>
 
-                {/* جدول الأصناف والكميات بالأسعار المخصومة والنهائية */}
-                <table className="w-full text-[10px] text-right mb-2 border-b border-black pb-1">
+                {/* جدول الأصناف والكميات المحاذاة والمحكومة ومغلق بالكامل */}
+                <table className="w-full text-[10px] text-right mb-4" style={{ borderBottom: '1px dashed #000000', paddingBottom: '12px' }}>
                     <thead>
-                        <tr className="border-b border-black font-bold">
-                            <th className="pb-0.5 text-right w-3/5">الصنف</th>
-                            <th className="pb-0.5 text-center w-1/5">الكمية</th>
-                            <th className="pb-0.5 text-left w-2/5">السعر</th>
+                        <tr style={{ borderBottom: '1px solid #000000', fontWeight: 'bold' }}>
+                            <th className="pb-1 text-right" style={{ width: '55%', paddingBottom: '6px' }}>الصنف</th>
+                            <th className="pb-1 text-center" style={{ width: '15%', paddingBottom: '6px' }}>الكمية</th>
+                            <th className="pb-1 text-left" style={{ width: '30%', paddingBottom: '6px' }}>السعر</th>
                         </tr>
                     </thead>
                     <tbody>
                         {cart.map(item => {
                             const finalItemPrice = getProductFinalPrice(item);
                             return (
-                                <tr key={item.id} className="border-b border-gray-200">
-                                    <td className="py-0.5 font-medium text-[10px] leading-tight break-words">{item.name}</td>
-                                    <td className="py-0.5 text-center font-mono">{item.quantity}</td>
-                                    <td className="py-0.5 text-left font-mono">{finalItemPrice * item.quantity} EGP</td>
+                                <tr key={item.id}>
+                                    <td className="py-1 font-medium text-[10px] leading-tight break-words" style={{ paddingTop: '5px', paddingBottom: '6px' }}>{item.name}</td>
+                                    <td className="py-1 text-center font-mono" style={{ paddingTop: '5px', paddingBottom: '6px' }}>{item.quantity}</td>
+                                    <td className="py-1 text-left font-mono" style={{ paddingTop: '5px', paddingBottom: '6px' }}>{finalItemPrice * item.quantity} EGP</td>
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
 
-                {/* الحسابات المالية الإجمالية والوفر من الخصومات داخل المحل */}
-                <div className="space-y-0.5 text-[10px] mb-2 border-b border-black pb-1">
+                {/* 🎯 فرز فواصل الحسابات المالية: عزل كامل يمنع التداخل مع المنتجات أو التوثيق */}
+                <div className="space-y-1 text-[10px] mb-4 pb-2" style={{ borderBottom: '1px dashed #000000', paddingTop: '4px', paddingBottom: '12px' }}>
                     {getCartTotalSavings() > 0 && (
-                        <div className="flex justify-between font-bold text-gray-700">
-                            <span>إجمالي الخصم الممنوح:</span>
+                        <div className="flex justify-between font-bold text-gray-700" style={{ margin: '2px 0' }}>
+                            <span>إجمالي الخصم Mمنوح:</span>
                             <span className="font-mono">-{getCartTotalSavings()} EGP</span>
                         </div>
                     )}
-                    <div className="flex justify-between font-extrabold text-sm border-t border-dotted border-gray-400 pt-0.5">
+                    <div className="flex justify-between font-extrabold text-sm pt-1" style={{ borderTop: '1px dotted #000000', marginTop: '4px', paddingTop: '6px' }}>
                         <span>الصافي الإجمالي:</span>
-                        <span className="font-mono">{getCartTotal()} EGP</span>
+                        <span className="font-mono text-base">{getCartTotal()} EGP</span>
                     </div>
-                    <div className="flex justify-between text-[9px] pt-1">
+                    <div className="flex justify-between text-[9px] pt-1" style={{ margin: '2px 0' }}>
                         <span>طريقة السداد:</span>
                         <span>نقداً (Cash) - مدفوعة ✅</span>
                     </div>
                 </div>
 
-                {/* التوثيق القانوني الرسمي المستخرج من بيانات متجرك الفعلي */}
-                <div className="text-center text-[9px] space-y-0.5 border-t border-dotted border-gray-400 pt-2 pb-1 text-gray-700">
-                    <p className="font-semibold">السجل التجاري: 100160</p>
-                    <p className="font-semibold">الرقم الضريبي: 769499732</p>
-                    <p className="text-[8px] font-medium mt-1">شكراً لزيارتكم وثقتكم بمكتبة دار اللغات!</p>
+                {/* 🎯 فرز فواصل الذيل القانوني: عزل التوثيق الضريبي والسجل لمنع التصاقه بأرقام الفاتورة */}
+                <div className="text-center text-[9px] space-y-1 pt-3 text-gray-700" style={{ marginTop: '14px' }}>
+                    <p className="font-semibold" style={{ margin: '1px 0' }}>السجل التجاري: 100160</p>
+                    <p className="font-semibold" style={{ margin: '1px 0' }}>الرقم الضريبي: 769499732</p>
+                    <p className="text-[10px] font-bold text-black" style={{ marginTop: '10px', marginBottom: '2px' }}>شكراً لزيارتكم وثقتكم بمكتبة دار اللغات بالعبور!</p>
+                    <p style={{ margin: '0' }}>للمتابعة عبر واتساب: 01220396597</p>
+                    <p className="text-[8px] text-gray-400 font-mono" style={{ marginTop: '6px' }}>Powered by Next.js & Firebase (Cost: 0 EGP)</p>
                 </div>
             </div>
 
-            {/* ستايل الميديا كويري الصارم لحظر تداخل شاشات الكمبيوتر وضغط الورق للماكينات الحرارية (80mm) */}
-            <style jsx global>{`
-                @media print {
-                    .no-print { display: none !important; }
-                    .print-only { display: block !important; }
-                    body { 
-                        background: white !important; 
-                        padding: 0 !important; 
-                        margin: 0 !important; 
-                        width: 80mm !important; 
-                    }
-                    @page {
-                        margin: 2mm !important; 
-                    }
-                }
-                @media screen {
-                    .print-only { display: none !important; }
-                }
-            `}</style>
         </div>
     );
 }
