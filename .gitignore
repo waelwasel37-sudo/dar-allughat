@@ -44,3 +44,5 @@ firestore-debug.log
 
 # TypeScript
 *.tsbuildinfo
+
+!package.json
