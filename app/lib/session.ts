@@ -15,19 +15,9 @@ const ALLOWED_ADMIN_EMAILS = [
 ].map(email => email.toLowerCase());
 
 // 3. 🎯 الأمان: جلب كلمة المرور مباشرة من السر الذي أنشأته في Google Secret Manager
-const SECRET_COOKIE_PASSWORD = process.env.SECRET_COOKIE_PASSWORD;
-
-// 4. فحص أمان حاسم: التأكد من أن السر موجود
-if (!SECRET_COOKIE_PASSWORD) {
-  throw new Error(
-    'SECRET_COOKIE_PASSWORD environment variable is not loaded from Secret Manager. Check your backend configuration.'
-  );
-}
-
-// 5. إعدادات الجلسة الآمنة
 export const sessionOptions = {
-  password: SECRET_COOKIE_PASSWORD, // استخدام السر الحقيقي من Google Cloud
-  cookieName: 'dar-allughat-session',
+  password: process.env.SECRET_COOKIE_PASSWORD || '',
+cookieName: 'dar-allughat-session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
@@ -38,8 +28,9 @@ export const sessionOptions = {
 // 6. دالة الحصول على الجلسة مع منطق الصلاحيات الذكي
 export async function getSession() {
   try {
+    if (!process.env.SECRET_COOKIE_PASSWORD) { throw new Error("SECRET_COOKIE_PASSWORD is missing"); }
     const cookieStore = await cookies();
-    const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
+    const session = await getIronSession<SessionData>(cookieStore, { ...sessionOptions, password: process.env.SECRET_COOKIE_PASSWORD });
 
     if (session.isLoggedIn && session.email) {
       session.isAdmin = ALLOWED_ADMIN_EMAILS.includes(session.email.toLowerCase());
