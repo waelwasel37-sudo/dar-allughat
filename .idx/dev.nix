@@ -2,21 +2,21 @@
 # It specifies the tools and packages that should be available in your workspace.
 { pkgs, ... }: {
 
-  # Use the stable-23.11 Nixpkgs channel as requested by the developer.
-  channel = "stable-23.11";
+  # Use the stable-24.05 Nixpkgs channel to get newer packages.
+  channel = "stable-24.05";
 
   # A list of packages to install.
   # Packages are separated by spaces, not commas.
   packages = [
-    # Changed to nodejs_20 because nodejs_22 is missing in this old 2023 channel.
-    pkgs.nodejs_20
+    # Updated to nodejs_22 to meet dependency requirements.
+    pkgs.nodejs_22
 
     # Provides the Firebase CLI for deploying your project and running emulators.
     pkgs.firebase-tools
 
     # The Java Development Kit is sometimes required by the Firebase emulators.
     pkgs.jdk
-    
+
     # Provides the curl command.
     pkgs.curl
   ];
