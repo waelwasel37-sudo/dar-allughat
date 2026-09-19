@@ -1,0 +1,48 @@
+/* app/components/SearchBar.module.css */
+
+/* The main container that holds the icon and the input */
+.searchContainer {
+  position: relative;
+  width: 100%;
+  max-width: 450px; /* Adjust width as needed */
+}
+
+/* The search icon placed inside the input field */
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 1rem; /* Position from the left */
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  pointer-events: none; /* Make it non-interactive */
+}
+
+/* The search input field, now with padding to accommodate the icon */
+.searchInput {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-white);
+  padding: 0.75rem 1rem 0.75rem 2.75rem; /* Left padding for the icon */
+  font-size: 1rem;
+  color: var(--color-text-base);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.searchInput:focus {
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-glow-secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .searchContainer {
+    max-width: 100%; /* Take full width on smaller screens */
+  }
+}

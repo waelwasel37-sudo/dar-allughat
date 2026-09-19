@@ -1,0 +1,111 @@
+/* app/admin/Admin.module.css */
+
+.container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  min-height: 80vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+}
+
+.title {
+  font-size: 2.8rem;
+  color: #333;
+  font-weight: 800;
+}
+
+.authControls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.welcomeMessage {
+    font-size: 1rem;
+    color: #555;
+}
+
+.logoutButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #e74c3c; /* Red color for logout */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logoutButton:hover {
+    background-color: #c0392b;
+}
+
+.description {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.cardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  justify-content: center;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #3498db;
+}
+
+.card p {
+  font-size: 1rem;
+  color: #777;
+}
+
+/* Special style for the new Orders card */
+.ordersCard h2 {
+    color: #2ecc71; /* A vibrant green */
+}
+
+/* Special style for the new Blog card */
+.blogCard h2 {
+    color: #f39c12; /* A warm orange */
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    font-size: 1.5rem;
+    color: #555;
+}

@@ -1,0 +1,170 @@
+/* app/admin/blog/PostEditor.module.css */
+
+.form {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.formGroup {
+    margin-bottom: 1.75rem;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+/* New Style: Container for label and AI button */
+.labelContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.labelContainer label {
+    margin-bottom: 0; /* Remove bottom margin from label inside this container */
+}
+
+/* New Style: AI generation button */
+.aiButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4f46e5; /* Indigo */
+    background-color: #e0e7ff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.aiButton:hover {
+    background-color: #c7d2fe;
+}
+
+.aiButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* New Style: Spinner animation */
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.formGroup input[type="text"],
+.formGroup textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.formGroup input[type="text"]:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.formGroup input[readOnly] {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+.formGroup small {
+    margin-top: 0.5rem;
+    display: block;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.fileUploadGroup input[type="file"] {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+}
+
+.previewImage {
+    max-width: 250px;
+    height: auto;
+    margin-top: 1rem;
+    border-radius: 8px;
+    border: 2px dashed #e5e7eb;
+    padding: 0.5rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.saveButton, .cancelButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.saveButton {
+    color: #fff;
+    background-color: #10b981; /* Green */
+}
+
+.saveButton:disabled {
+    background-color: #6ee7b7;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.cancelButton {
+    color: #374151;
+    background-color: #e5e7eb;
+}
+
+.cancelButton:hover {
+    background-color: #d1d5db;
+}
+
+.errorBanner {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.progressContainer {
+    margin-top: 1rem;
+}
+
+.progressBar {
+    width: 100%;
+}

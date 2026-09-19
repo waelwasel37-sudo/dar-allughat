@@ -1,0 +1,235 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cartDrawer {
+  position: fixed;
+  top: 12.5vh; 
+  right: -100vw; 
+  width: 75vw;   
+  max-width: 360px; 
+  height: 75vh; 
+  background-color: var(--color-background);
+  box-shadow: var(--shadow-xl);
+  z-index: 1050;
+  transition: right 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg); 
+}
+
+.cartDrawer.open {
+  right: 0;
+}
+
+@media (min-width: 480px) {
+  .cartDrawer {
+    width: 360px;
+    right: -390px;
+  }
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0; /* منع الهيدر من التقلص */
+}
+
+.drawerHeader h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: var(--color-primary);
+}
+
+.cartContent {
+  padding: 1rem;
+  overflow-y: auto; /* السماح بالتمرير هنا إذا لزم الأمر */
+}
+
+.emptyCart {
+    text-align: center;
+    padding-top: 50px;
+}
+
+.continueShoppingButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1rem;
+    color: var(--color-secondary); 
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cartItem {
+  display: flex;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.cartItemImage {
+  object-fit: cover;
+  border-radius: var(--border-radius-md);
+}
+
+.cartItemDetails {
+  flex-grow: 1;
+  margin-right: 1rem;
+  text-align: right;
+}
+
+.cartItemName {
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--color-text-base);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.finalPrice {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.subtotal {
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+.cartItemQuantity {
+  display: flex;
+  align-items: center;
+}
+
+.cartItemQuantity button {
+  background-color: #f8f9fa;
+  border: 1px solid var(--color-border);
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.cartItemQuantity span {
+  padding: 0 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.removeItemButton {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+/* 🎯 تم تعديل هذا القسم ليحتوي على التمرير ويحتل المساحة المتبقية */
+.cartSummary {
+  padding: 1.2rem;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-accent);
+  overflow-y: auto; /* ✅ الأهم: السماح بالتمرير العمودي عند الحاجة */
+  flex-grow: 1; /* ✅ السماح لهذا القسم بالتمدد ليملأ المساحة المتاحة */
+}
+
+
+.cartTotal {
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: var(--color-primary);
+}
+
+.whatsappButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  background-color: #25D366;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.25);
+}
+
+.whatsappButton:hover {
+  background-color: #20b856;
+}
+
+.disabledButton {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.validationMessage {
+  color: #d9534f;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.clearCartButton {
+    width: 100%;
+    margin-top: 0.6rem;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.clearCartButton:hover {
+  background-color: #f1f1f1;
+}

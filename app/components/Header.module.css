@@ -1,0 +1,234 @@
+
+/* ==========================================================================
+   2. الغلاف الرئيسي للهيدر
+   ========================================================================== */
+.headerWrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-md); 
+  direction: rtl;
+}
+
+/* ==========================================================================
+   3. الشريط العلوي الجديد
+   ========================================================================== */
+.topBar {
+  background-color: var(--color-primary); 
+  color: var(--color-white);
+  padding: 0.5rem 2rem;
+}
+
+.topBarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.taxNumber {
+  font-size: 0.85rem;
+  font-weight: 700; /* 🎯 تحسين وضوح وقراءة الخط للرقم الضريبي */
+  margin: 0;
+  color: #FFFFFF !important; /* 🎯 ضمان أن اللون أبيض ناصع دائماً */
+
+}
+
+/* ==========================================================================
+   4. الهيدر الرئيسي (الشعار، القائمة، الخ)
+   ========================================================================== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--color-background); 
+    transition: background-color 0.3s ease;
+}
+
+.logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.logo a {
+    display: inline-block;
+    max-width: 100%;
+}
+
+/* 🎯 إصلاح حاسم للأداء: ضبط الشعار لمنع الـ Layout Shift وتحسين تقييم LCP */
+.logo img {
+    height: 64px !important; /* مطابقة أبعاد مكون الصورة لـ Next.js */
+    width: 256px !important;
+    display: block;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav a,
+.notificationLink {
+    text-decoration: none;
+    color: var(--color-text-base); 
+    font-weight: 500;
+    position: relative;
+    transition: color 0.2s ease; /* تقليل الوقت لتسريع تفاعل المتصفح */
+}
+
+.nav a:hover {
+    color: var(--color-secondary); 
+}
+
+/* أيقونات التواصل الاجتماعي في الشريط العلوي */
+.socialLinks {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.socialLinks a {
+    color: #fff;
+    font-size: 1.1rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.socialLinks a:hover {
+    transform: scale(1.15) translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.facebookIcon { background-color: #1877F2; }
+.whatsappIcon { background-color: #25D366; }
+.telegramIcon { background-color: #0088CC; }
+.mapIcon { background-color: #DB4437; }
+
+.actionsContainer, .userSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* زر الدخول المحدث */
+.loginButton {
+  background-color: var(--color-primary);
+  color: var(--color-white) !important; 
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  font-weight: 700;
+  text-decoration: none !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.loginButton:hover {
+  background-color: var(--color-primary-dark);
+  color: var(--color-white) !important;
+  transform: translateY(-2px);
+  text-decoration: none !important;
+}
+
+/* --- التنسيقات الخاصة بالموبايل --- */
+.mobileOnlyActions {
+  display: none;
+}
+
+.menuButton {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .topBar {
+      padding: 0.5rem 1rem;
+    }
+    .taxNumber {
+      font-size: 0.75rem;
+    }
+    .socialLinks a {
+      font-size: 1rem;
+      width: 28px;
+      height: 28px;
+    }
+    .header {
+      padding: 0.75rem 1rem;
+    }
+    /* 🎯 التصحيح السحري: تصغير حجم الشعار على الموبايل ليوفر مساحة للثلاث شرط ويمنع هامش اليسار */
+    .logo img {
+        height: 40px !important;  /* تصغير الارتفاع من 64px لـ 40px ليصبح متناسقاً على الهاتف */
+        width: auto !important;   /* جعل العرض يتكيف تلقائياً لمنع تمطيط الصورة */
+        max-width: 160px !important; /* وضع حد أقصى لعرض اللوجو على الشاشات الضيقة */
+        display: block;
+    }
+    
+    .nav {
+        flex-direction: column;
+        position: fixed;
+        
+        /* 🎯 التعديل المحكم: قائمة أصغر وأنعم للموبايل */
+        top: 88px; /* قيمة دقيقة جداً لتبدأ بعد الهيدر والشريط العلوي معاً */
+        left: 0;
+        right: auto;
+        width: 260px; /* عرض أصغر، يترك مساحة أكبر للمحتوى */
+        height: calc(100vh - 88px); /* حساب الارتفاع بدقة */
+        background-color: var(--color-background);
+        box-shadow: 3px 0 12px rgba(0, 0, 0, 0.12); /* ظل أنعم وأكثر حداثة */
+        padding: 1.5rem 1.25rem; /* حشو داخلي متوازن */
+        z-index: 9999;
+        align-items: flex-start;
+        gap: 1.2rem; /* تقليل المسافة بين الروابط لتكون القائمة مضغوطة أكثر */
+        display: flex; 
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform 0.25s ease-out, visibility 0.25s ease-out; /* حركة أسرع وأنعم */
+    }
+
+    .nav.mobileMenu {
+        transform: translateX(0);
+        visibility: visible; 
+    }
+
+    .menuButton {
+        display: block;
+        z-index: 10000;
+        
+        /* 🎯 التصحيح السحري: منع زر الثلاث شرط من الخروج خارج الشاشة وتصفير هامش اليسار */
+        margin: 0 !important; /* إلغاء أي هوامش خارجية زائدة */
+        padding: 4px 8px !important; /* مسافة داخلية صغيرة ومحكومة للضغط */
+        font-size: 1.6rem !important; /* حجم متناسق للأيقونة دون تضخم */
+        line-height: 1 !important;
+        overflow: hidden !important; /* منع أي بروز لخطوط الأيقونة */
+        
+        /* محاذاة مرنة تضمن بقاء الزر داخل حدود الهيدر بالضبط */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobileOnlyActions {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border);
+    }
+}

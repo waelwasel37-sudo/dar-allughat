@@ -1,0 +1,43 @@
+/* ProductsView.module.css */
+.grid {
+  display: grid;
+  /* الموبايل: منتجين بجانب بعضهما */
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 12px;
+  padding: 16px 10px; /* زيادة مسافة بسيطة من الأعلى والأسفل */
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    /* التابلت: 3 منتجات */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    /* الكمبيوتر: 4 أو 5 منتجات حسب رغبتك */
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1200px; /* تحديد عرض أقصى لراحة العين */
+    margin: 0 auto; /* توسيط الشبكة في الشاشة الكبيرة */
+  }
+}
+
+.noResults {
+  text-align: center;
+  padding: 60px 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.noResults p {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}

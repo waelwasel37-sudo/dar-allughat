@@ -1,0 +1,139 @@
+# apphosting.yaml
+# إصدار مواصفات الاستضافة المستقر لمتجر دار اللغات
+version: 1
+
+# تم التحديث لإصلاح تحذيرات الحزم ومطابقة بيئتك المحلية المتوافقة مع الحزم الجديدة
+runtime: nodejs22
+
+# 🛠️ خطوة البناء: تثبيت الحزم وبناء النسخة النهائية من المتجر
+build:
+  run: npm install && npm run build
+
+# 🚀 خطوة التشغيل: تشغيل خادم Next.js مع الإعدادات الأمثل
+run:
+  command: npm run start
+  cpu: 1
+  memoryMiB: 1024
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 80
+
+# 🔐 متغيرات البيئة والأسرار: مسارات كاملة ومشفرة لمنع تسريب المفتاح في السجلات
+env:
+  # 🎯 الصيغة الكاملة والآمنة المربوطة برقم مشروعك في Google Cloud Secret Manager
+  - variable: SECRET_COOKIE_PASSWORD
+    secret: projects/118615668327/secrets/SECRET_COOKIE_PASSWORD/versions/latest
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # الربط الصحيح لأسرار الـ Admin SDK بالمعرّف النصي للمشروع لمنع أخطاء الـ Build
+  - variable: FIREBASE_PROJECT_ID
+    secret: projects/dar-allughat-97483992-fc6c5/secrets/FIREBASE_PROJECT_ID/versions/latest
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: FIREBASE_CLIENT_EMAIL
+    secret: projects/dar-allughat-97483992-fc6c5/secrets/FIREBASE_CLIENT_EMAIL/versions/latest
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: FIREBASE_PRIVATE_KEY
+    secret: projects/dar-allughat-97483992-fc6c5/secrets/FIREBASE_PRIVATE_KEY/versions/latest
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # ✨ تم التصحيح الجذري: توجيه المسار إلى معرف مشروع الفايربيس الصحيح حيث يتواجد السر فعلياً وحل تعليق السيرفر
+  - variable: GEMINI_API_KEY
+    secret: projects/dar-allughat-97483992-fc6c5/secrets/GEMINI_API_KEY/versions/latest
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # المتغيرات العامة للمتجر المحدثة والمطابقة 100% للقيم المرسلة وحسابات المتصفح
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyCX0RCPBcg0_eL28snWBn0bNfDf8ACWzWM"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "dar-allughat-97483992-fc6c5"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "dar-allughat-97483992-fc6c5.firebasestorage.app"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "118615668327"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:118615668327:web:394407c7f6ab1e801a06c2"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: "G-5B1BGCLTM8"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: FIREBASE_STORAGE_BUCKET
+    value: "dar-allughat-97483992-fc6c5.firebasestorage.app"
+    availability:
+      - BUILD
+      - RUNTIME
+  
+  # إعادة رابط نطاق المتجر الرسمي لضمان سلامة الـ Sitemap وجوجل ميرشنت
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: "https://dar-allughat-com--dar-allughat-97483992-fc6c5.us-central1.hosted.app"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_META_PIXEL_ID
+    value: "2031832027677972"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    value: "AIzaSyBazLf9qCoXwrjx77SiH8Qs1MeGOLdtoGI"
+    availability:
+      - BUILD
+      - RUNTIME
+
+# 🌐 ترويسات الاستجابة: إضافة طبقات أمان وتوافق تسجيل الدخول بجوجل
+headers:
+  - path: "/**"
+    headers:
+      - key: "Strict-Transport-Security"
+        value: "max-age=31536000; includeSubDomains; preload"
+      - key: "X-Content-Type-Options"
+        value: "nosniff"
+      - key: "X-Frame-Options"
+        value: "SAMEORIGIN"
+      - key: "X-XSS-Protection"
+        value: "1; mode=block"
+      - key: "Referrer-Policy"
+        value: "strict-origin-when-cross-origin"
+      - key: "Cross-Origin-Opener-Policy"
+        value: "same-origin-allow-popups"

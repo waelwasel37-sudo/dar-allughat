@@ -1,0 +1,137 @@
+.footer {
+    background-color: var(--color-background-secondary, #f8f9fa);
+    color: var(--color-text-secondary, #6c757d);
+    padding: 60px 0;
+    margin-top: auto;
+    border-top: 1px solid var(--color-border-light, #e9ecef);
+    clip-path: polygon(0 2%, 100% 0, 100% 100%, 0% 100%);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.columnTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text-primary, #343a40);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.columnTitle::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: 0;
+    width: 40px;
+    height: 3px;
+    background-color: var(--color-primary, #007bff);
+}
+
+.aboutText {
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.legalInfo {
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary, #495057);
+    line-height: 1.6;
+}
+
+.linkList, .contactList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.linkList li a, .contactLink {
+    color: var(--color-text-secondary, #6c757d);
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+}
+
+.linkList li a:hover, .contactLink:hover {
+    color: var(--color-primary, #007bff);
+}
+
+.linkList li a:hover {
+    transform: translateX(5px);
+}
+
+.contactItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.contactIcon {
+    color: var(--color-primary, #007bff);
+    margin-left: 12px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.socialIcons {
+    margin-top: 25px;
+    display: flex;
+    gap: 20px;
+}
+
+.socialIcons a {
+    font-size: 24px;
+    color: var(--color-text-secondary, #6c757d);
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+}
+
+.socialIcons a:hover {
+    color: var(--color-primary-dark, #0056b3);
+    transform: translateY(-3px);
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid var(--color-border-light, #e9ecef);
+    font-size: 14px;
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        text-align: center;
+    }
+
+    .columnTitle::after {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .contactItem {
+        justify-content: center;
+    }
+
+    .socialIcons {
+        justify-content: center;
+    }
+
+    .linkList li a:hover {
+        transform: none;
+    }
+}

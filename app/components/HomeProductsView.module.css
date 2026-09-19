@@ -1,0 +1,92 @@
+.categorySection {
+  margin-bottom: 3rem; 
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.categoryTitle {
+  font-size: 2rem; /* تم تكبير الخط لزيادة الوضوح للكمبيوتر */
+  font-weight: 900;
+  color: var(--color-primary);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.emptyCategoryMessage {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  background-color: var(--color-accent);
+  border-radius: var(--border-radius-lg);
+}
+
+/* 🎯  Styles for the new Load More button */
+.loadMoreContainer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.loadMoreButton {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.2s ease; /* ضبط مسار تسريع المتصفح */
+  box-shadow: var(--shadow-md);
+}
+
+.loadMoreButton:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ==========================================================================
+   📱 شاشات الموبايل: توسيع مساحة العرض واستغلال الشاشة بالكامل مع هامش أمان صغير جداً
+   ========================================================================== */
+@media (max-width: 768px) {
+  .categorySection {
+    margin-bottom: 1.5rem; 
+    padding-bottom: 1rem;
+    width: 100% !important; /* إجبار القسم على التمدد ليأخذ كامل عرض شاشة الهاتف */
+    max-width: 100% !important;
+    /* 🎯 التصحيح السحري: تصغير هامش الأمان لـ 8 بكسل فقط ليصبح المحتوى على قد الشاشة بالظبط */
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    box-sizing: border-box; 
+  }
+
+  .categoryTitle {
+    font-size: 1.3rem; /* تصغير متناسق للعنوان ليناسب التمدد الجديد */
+    margin-bottom: 1rem;
+    padding-right: 4px; /* هامش بسيط جداً للعنوان يميناً */
+    gap: 0.5rem;
+  }
+
+  .emptyCategoryMessage {
+    padding: 1.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .loadMoreContainer {
+    margin-top: 1.2rem;
+    padding-bottom: 1rem;
+  }
+
+  .loadMoreButton {
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem; 
+  }
+  
+  .loadMoreButton:hover {
+    transform: none; 
+  } 
+} 

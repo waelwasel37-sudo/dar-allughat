@@ -1,0 +1,63 @@
+/* 🎯 تم إعادة تصميم النموذج ليتكامل بسلاسة داخل السلة المنزلقة */
+
+.formContainer {
+    /* تمت إزالة الخلفية والحدود والهوامش لتندمج مع حاوية الملخص */
+    padding: 16px 0 0 0; /* تقليل الحشو العلوي وإلغاء الباقي */
+}
+
+.formHeader {
+    /* هذا لم يعد مستخدماً، يمكن حذفه لاحقاً */
+    display: none;
+}
+
+.inputGroup {
+    margin-bottom: 14px; /* تقليل المسافة بين الحقول */
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 6px; /* تقليل المسافة بين العنوان والحقل */
+    font-weight: 600; /* وزن أثقل للوضوح */
+    color: var(--color-text-base);
+    font-size: 0.9rem; /* تصغير حجم الخط قليلاً */
+}
+
+.input {
+    width: 100%;
+    padding: 10px 12px; /* تقليل الحشو الداخلي للحقول */
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: var(--color-background);
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(10, 46, 84, 0.15);
+}
+
+.note {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.8rem; /* تصغير خط الملاحظات */
+    color: var(--color-text-muted);
+}
+
+/* تم الإبقاء على هذه الفئات كما هي في حال الحاجة إليها */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #555;
+}
+
+.error {
+    padding: 20px;
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #c62828;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
