@@ -153,6 +153,7 @@
     cursor: pointer;
 }
 
+
 @media (max-width: 768px) {
     .topBar {
       padding: 0.5rem 1rem;
@@ -181,24 +182,22 @@
         position: fixed;
         
         /* 🎯 التعديل المحكم: قائمة أصغر وأنعم للموبايل */
-        top: 88px; /* قيمة دقيقة جداً لتبدأ بعد الهيدر والشريط العلوي معاً */
+        top: 0; /* يبدأ من أعلى الشاشة */
         left: 0;
         right: auto;
-        width: 260px; /* عرض أصغر، يترك مساحة أكبر للمحتوى */
-        height: calc(100vh - 88px); /* حساب الارتفاع بدقة */
+        width: 280px; /* عرض مناسب يترك مساحة كافية */
+        height: 100vh; /* يملأ ارتفاع الشاشة بالكامل */
         background-color: var(--color-background);
-        box-shadow: 3px 0 12px rgba(0, 0, 0, 0.12); /* ظل أنعم وأكثر حداثة */
-        padding: 1.5rem 1.25rem; /* حشو داخلي متوازن */
-        z-index: 9999;
+        box-shadow: 3px 0 12px rgba(0, 0, 0, 0.15); /* ظل أوضح قليلاً */
+        padding: 1.5rem; 
+        z-index: 9999; /* يجب أن يكون فوق طبقة العزل */
         align-items: flex-start;
-        gap: 1.2rem; /* تقليل المسافة بين الروابط لتكون القائمة مضغوطة أكثر */
+        gap: 1.2rem; 
         display: flex; 
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
         
         transform: translateX(-100%);
         visibility: hidden;
-        transition: transform 0.25s ease-out, visibility 0.25s ease-out; /* حركة أسرع وأنعم */
+        transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0.3s; /* حركة احترافية */
     }
 
     .nav.mobileMenu {
@@ -206,21 +205,66 @@
         visibility: visible; 
     }
 
+    /* 🎯 بداية التعديلات والإضافات الجديدة هنا */
+
+    /* 1. طبقة العزل الخلفية (Overlay) */
+    .mobileMenuOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6); /* لون داكن شبه شفاف */
+        z-index: 9998; /* أقل من القائمة نفسها لتبقى القائمة في الأمام */
+        backdrop-filter: blur(4px); /* تأثير بلور أنيق للخلفية */
+        transition: opacity 0.25s ease-out;
+        opacity: 1;
+    }
+
+    /* 2. زر إغلاق القائمة من الداخل */
+    .closeMenuButton {
+        display: flex; /* يظهر فقط في نسخة الموبايل */
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background-color: var(--color-gray-200);
+        border: none;
+        color: var(--color-text-base);
+        padding: 0.75rem;
+        width: 100%;
+        border-radius: var(--border-radius-md);
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 1rem; /* لإعطاء مساحة قبل الروابط */
+    }
+
+    .closeMenuButton:hover {
+        background-color: var(--color-gray-300);
+    }
+
+    /* 3. تعديل بسيط على زر فتح القائمة لضمان ظهوره */
     .menuButton {
         display: block;
-        z-index: 10000;
-        
-        /* 🎯 التصحيح السحري: منع زر الثلاث شرط من الخروج خارج الشاشة وتصفير هامش اليسار */
-        margin: 0 !important; /* إلغاء أي هوامش خارجية زائدة */
-        padding: 4px 8px !important; /* مسافة داخلية صغيرة ومحكومة للضغط */
-        font-size: 1.6rem !important; /* حجم متناسق للأيقونة دون تضخم */
+        z-index: 10000; /* يجب أن يكون الأعلى ليظل قابلاً للنقر دائمًا */
+        margin: 0 !important;
+        padding: 4px 8px !important;
+        font-size: 1.6rem !important;
         line-height: 1 !important;
-        overflow: hidden !important; /* منع أي بروز لخطوط الأيقونة */
-        
-        /* محاذاة مرنة تضمن بقاء الزر داخل حدود الهيدر بالضبط */
+        overflow: hidden !important;
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    /* نخفي زر الإغلاق على الشاشات الكبيرة */
+    .closeMenuButton {
+        display: none;
+    }
+
+    /* نظهر زر الإغلاق فقط داخل القائمة المفتوحة على الموبايل */
+    .nav.mobileMenu .closeMenuButton {
+        display: flex;
     }
 
     .mobileOnlyActions {
@@ -231,4 +275,6 @@
         padding-top: 1rem;
         border-top: 1px solid var(--color-border);
     }
+
+    /* 🎯 نهاية التعديلات */
 }

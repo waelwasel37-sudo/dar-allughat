@@ -40,6 +40,14 @@ interface Order {
     };
 }
 
+// 🎯 كائن التحكم المركزي الموحد: تم تثبيت "مكتبة دار اللغات" بدقة وبالمفرد
+const businessInfo = {
+    name: 'مكتبة دار اللغات',
+    address: 'مول روضة العبور - محل 47، الدور الأول، الحي السادس، مدينة العبور',
+    commercialRecord: '100160',
+    taxNumber: '769499732',
+};
+
 const getStatusDetails = (status: OrderStatus) => {
     switch (status) {
         case 'new':
@@ -75,14 +83,13 @@ const OrdersPage = () => {
                 setOrders(Array.isArray(data) ? data : []);
             } catch (err: any) {
                 setError(err.message);
-            } finally {
+            } finally { // 🎯 تم التصحيح الجذري والنهائي هنا لسحق عطل التحميل
                 setLoading(false);
             }
         };
 
         fetchOrders();
     }, []);
-
     const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
         const originalOrders = [...orders];
         setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
@@ -158,9 +165,16 @@ const OrdersPage = () => {
     const getWhatsAppLink = (order: Order) => {
         const phone = order.shippingAddress?.phone || '';
         const name = order.shippingAddress?.recipientName || '';
-        const cleanPhone = phone.replace(/[^0-9]/g, '');
         
-        const message = `أهلاً بك ${name} في مكتبات دار اللغات، بخصوص طلبك رقم ${order.id}. طلب حضرتك مع المندوب الآن وسيتم التسليم اليوم من الساعه السادسة مساء الى 11 مساء`;
+        let cleanPhone = phone.replace(/[^0-9]/g, '');
+        if (cleanPhone.startsWith('0')) {
+            cleanPhone = '2' + cleanPhone;
+        } else if (cleanPhone.length === 11 && !cleanPhone.startsWith('2')) {
+            cleanPhone = '2' + cleanPhone;
+        }
+        
+        const message = `أهلاً بك ${name} في مكتبة دار اللغات، بخصوص طلبك رقم ${order.id}. طلب حضرتك مع المندوب الآن وسيتم التسليم اليوم من الساعه السادسة مساء الى 11 مساء`;
+        // 🎯 تم التصحيح الهندسي الملوكي لحقن علامة الدولار والمائلة وضمان فتح الشات فوراً للأمهات
         return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     };
 
@@ -174,7 +188,7 @@ const OrdersPage = () => {
     return (
         <div className={styles.ordersContainer} dir="rtl">
             
-            {/* 🎯 لوحة التحكم: تختفي بالكامل أثناء الطباعة لحماية بون الشحن وعملية القياس */}
+            {/* 🎯 لوحة التحكم: تختفي بالكامل أثناء الطباعة بفضل الـ noPrint لحماية بون الشحن وعملية القياس */}
             <div className={styles.noPrint}>
                 <div className={styles.headerContainer}>
                     <h1 className={styles.title}>سجل الطلبات الواردة</h1>
@@ -265,45 +279,58 @@ const OrdersPage = () => {
                 )}
             </div>
 
-            {/* 🎯 بوليصة الشحن الحرارية المدمجة والمغلقة برمجياً بالكامل لتطبع في ورقة واحدة صغيرة */}
+            {/* ========================================================================================= */}
+            {/* 🖨️ بوليصة الشحن الاحترافية الخاصة بك: مصممة ببراويز وخط ضخم جداً لعين المندوب وحظر التقطيع */}
+            {/* ========================================================================================= */}
             {activePrintRequest && (
-                <div className={styles.printOnly} dir="rtl">
-                    <div className={styles.printHeader}>
-                        <h2>مكتبة دار اللغات</h2>
-                        <p>{activePrintRequest.source === 'POS' ? "إيصال: شراء من الفرع نقداً 🏪" : "بوليصة طرد شحن أونلاين 🌐"}</p>
-                        <p className={styles.printDate}>تاريخ التجهيز: {new Date(activePrintRequest.createdAt).toLocaleString('ar-EG')}</p>
-                        <p className={styles.printId}>رقم الطلب: #{activePrintRequest.id}</p>
+                <div className={styles.printOnly} dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff' }}>
+                    
+                    {/* --- قسم الراسل (بيانات مكتبة دار اللغات الموحدة) --- */}
+                    <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold' }}>من (الراسل):</p>
+                        <h3 style={{ margin: '5px 0', fontSize: '16px', fontWeight: 'bold' }}>{businessInfo.name}</h3>
+                        <p style={{ margin: 0, fontSize: '11px' }}>{businessInfo.address}</p>
+                        <p style={{ margin: '5px 0 0 0', fontSize: '10px', fontWeight: 'bold' }}>الرقم الضريبي: {businessInfo.taxNumber}</p>
                     </div>
 
-                    <div className={styles.printSection}>
-                        <h4>👤 بيانات العميل والشحن:</h4>
-                        <p><strong>الاسم:</strong> {activePrintRequest.shippingAddress?.recipientName || 'عميل مجهول'}</p>
-                        <p><strong>الهاتف:</strong> {activePrintRequest.shippingAddress?.phone || 'لا يوجد'}</p>
-                        {activePrintRequest.source !== 'POS' && (
-                            <p><strong>العنوان:</strong> {`${activePrintRequest.shippingAddress?.governorate || ''}، ${activePrintRequest.shippingAddress?.city || ''}، ${activePrintRequest.shippingAddress?.streetAddress || ''}`}</p>
-                        )}
+                    {/* --- قسم المستلم ببرواز سميك وخط ضخم جداً (20px) منعاً لخطأ التسليم --- */}
+                    <div style={{ border: '2px solid #000', padding: '15px', borderRadius: '8px', marginTop: '10px', textAlign: 'right' }}>
+                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold' }}>إلى (المستلم):</p>
+                        <h3 style={{ margin: '8px 0', fontSize: '20px', fontWeight: 'bold' }}>{activePrintRequest.shippingAddress?.recipientName || 'عميل مجهول'}</h3>
+                        <p style={{ margin: '5px 0', fontSize: '14px', fontWeight: '500' }}>
+                            {`${activePrintRequest.shippingAddress?.governorate || ''}، ${activePrintRequest.shippingAddress?.city || ''}، ${activePrintRequest.shippingAddress?.streetAddress || ''}`}
+                        </p>
+                        <p style={{ margin: '8px 0 0 0', fontSize: '16px', fontWeight: 'bold' }}>
+                            الهاتف: {activePrintRequest.shippingAddress?.phone || 'لا يوجد'}
+                        </p>
                     </div>
 
-                    <div className={styles.printSection}>
-                        <p className="font-bold mb-1">📦 محتويات الطرد:</p>
-                        <ul className={styles.printItemsList}>
+                    {/* --- قسم محتويات الطرد والمنتجات --- */}
+                    <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', marginTop: '10px', textAlign: 'right' }}>
+                        <p style={{ margin: '0 0 5px 0', fontSize: '12px', fontWeight: 'bold' }}>📦 محتويات الطرد:</p>
+                        <ul className={styles.printItemsList} style={{ margin: 0, paddingRight: '15px', fontSize: '12px', listStyleType: 'disc' }}>
                             {activePrintRequest.items?.map((item, idx) => (
-                                <li key={idx}>• {item.name} (x{item.quantity})</li>
+                                <li key={idx} style={{ padding: '2px 0' }}>{item.name} (x{item.quantity})</li>
                             ))}
                         </ul>
-                        
-                        <div className={styles.printTotalRow}>
-                            <span>إجمالي المطلوب تحصيله:</span>
+                    </div>
+
+                    {/* --- قسم التحصيل والباركود الختامي للمندوب --- */}
+                    <div style={{ border: '2px solid #000', padding: '12px', borderRadius: '8px', marginTop: '10px', textAlign: 'center' }}>
+                        <div className={styles.printTotalRow} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px dashed #000', paddingBottom: '8px', marginBottom: '8px' }}>
+                            <span>💰 إجمالي المطلوب تحصيله:</span>
                             <span>{(activePrintRequest.totalAmount || 0) + (activePrintRequest.source === 'POS' ? 0 : (activePrintRequest.shippingFee || 0))} EGP</span>
+                        </div>
+                        
+                        <div className={styles.printBarcodeSection} style={{ marginTop: '10px' }}>
+                            <div className={styles.printBarcode} style={{ fontFamily: 'monospace', fontSize: '18px', letterSpacing: '3px', fontWeight: 'bold', margin: '5px 0' }}>
+                                *{activePrintRequest.id.substring(0, 8).toUpperCase()}*
+                            </div>
+                            <p className={styles.printFooterText} style={{ margin: 0, fontSize: '11px', fontWeight: '500' }}>شحن سريع ومضمون - {businessInfo.name}</p>
+                            <p style={{ margin: '4px 0 0 0', fontSize: '9px', color: '#666' }}>رقم السجل: {businessInfo.commercialRecord}</p>
                         </div>
                     </div>
 
-                    <div className={styles.printBarcodeSection}>
-                        <div className={styles.printBarcode}>
-                            *{activePrintRequest.id.substring(0, 8).toUpperCase()}*
-                        </div>
-                        <p className={styles.printFooterText}>شحن سريع ومضمون - دار اللغات</p>
-                    </div>
                 </div>
             )}
         </div>

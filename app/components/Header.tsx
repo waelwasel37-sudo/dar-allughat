@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from './Header.module.css';
 import { SITE_LINKS } from '@/app/lib/constants';
-import { FaBars, FaUserCircle } from 'react-icons/fa';
+import { FaBars, FaUserCircle, FaTimes } from 'react-icons/fa'; // 🎯 إضافة أيقونة الإغلاق
 import { SessionData } from '@/app/lib/session';
 
 const Cart = dynamic(() => import('./Cart'), { ssr: false });
@@ -85,7 +85,7 @@ const Header = ({ session }: HeaderProps) => {
       </h1>
 
       <div className={styles.topBar}>
-        <div className={styles.topBarContainer}>
+         <div className={styles.topBarContainer}>
           <p className={styles.taxNumber}>الرقم الضريبي: 769499732</p>
           <p className={styles.taxNumber}>السجل التجاري: 100160</p>
           <div className={styles.socialLinks}>
@@ -111,7 +111,20 @@ const Header = ({ session }: HeaderProps) => {
             />
           </Link>
         </div>
+
+        {/* ================================================================= */}
+        {/* 🎯 بداية التعديل الشامل: إضافة طبقة العزل وتحسين القائمة         */}
+        {/* ================================================================= */}
+        {isMobileMenuOpen && (
+          <div className={styles.mobileMenuOverlay} onClick={closeMobileMenu} />
+        )}
+        
         <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileMenu : ''}`}>
+          {/* زر إغلاق القائمة من الداخل */}
+          <button onClick={closeMobileMenu} className={styles.closeMenuButton}>
+            <FaTimes /> إغلاق
+          </button>
+
           <Link href="/" onClick={closeMobileMenu}>الرئيسية</Link>
           <Link href="/about" onClick={closeMobileMenu}>من نحن</Link>
           <Link href="/contact" onClick={closeMobileMenu}>اتصل بنا</Link>
@@ -134,6 +147,9 @@ const Header = ({ session }: HeaderProps) => {
              <ShareButton />
           </div>
         </nav>
+        {/* ================================================================= */}
+        {/* 🎯 نهاية التعديل الشامل                                           */}
+        {/* ================================================================= */}
         
         <div className={styles.actionsContainer}>
           <Cart />

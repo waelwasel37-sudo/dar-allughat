@@ -26,8 +26,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
     }
 
-    // تحديد ما إذا كان الحساب هو حساب المالك الفردي لمنحه ميزات الإشراف الكامل
-    const isAdmin = decodedToken.email === "waelwasel37@gmail.com";
+    // ✅ *** هذا هو التصحيح ***
+    // تحديد صلاحية الأدمن بناءً على وجود الإيميل في القائمة المعتمدة
+    const isAdmin = allowedEmails.includes(decodedToken.email || '');
 
     // Cookie expiration time (e.g., 14 days)
     const expiresIn = 60 * 60 * 24 * 14 * 1000; 
