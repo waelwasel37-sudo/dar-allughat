@@ -8,7 +8,7 @@ import { auth } from '../lib/firebase-client';
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
-  isEditor: boolean; // إضافة صلاحية المحرر للكود
+  isEditor: boolean;
   loading: boolean;
   logout: () => Promise<void>;
 }
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isEditor, setIsEditor] = useState(false); // تتبع حالة المحررين الجداد
+  const [isEditor, setIsEditor] = useState(false);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
@@ -33,14 +33,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Failed to trigger server logout:', e);
     }
   }, []);
-
   useEffect(() => {
-    // 1️⃣ معالجة إعادة التوجيه في سطر منفصل فوراً
     getRedirectResult(auth).catch((error) => {
       console.error("Error processing Firebase redirect result:", error);
     });
 
-    // 2️⃣ تشغيل مستمع الهوية المباشر وحقن الصلاحيات بالمليم
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
@@ -54,23 +51,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
 
           if (response.ok) {
-              const userEmail = currentUser.email?.toLowerCase() || '';
-              
-              // 👑 المالك الأساسي والوحيد للمشروع (Owner)
-              const ADMIN_EMAIL = 'waelwasel37@gmail.com';
-              const userIsAdmin = userEmail === ADMIN_EMAIL;
-              setIsAdmin(userIsAdmin);
+              // 🎯 التصحيح الخرساني الصارم: قراءة الصلاحيات والملكيات والوظائف من السيرفر المأمن مباشرة
+              const data = await response.json();
+              setIsAdmin(data.isAdmin || false);
+              setIsEditor(data.isEditor || false);
 
-              // 🛡️ قائمة الموظفين والمحررين المعتمدين والمحميين جوه الكود (Editors)
-              const ALLOWED_EDITORS = [
-                'dallughat@gmail.com',
-                'bondka111@gmail.com'
-              ];
-              const userIsEditor = userIsAdmin || ALLOWED_EDITORS.includes(userEmail);
-              setIsEditor(userIsEditor);
-
-              // إذا كان المستخدم آدمن أو محرر معتمد يحاول الدخول لصفحة الـ Login يتم تحويله للوحة التحكم
-              if (userIsEditor && pathname === '/login') {
+              // إذا كان المستخدم أدمن أو موظف معتمد يحاول دخول صفحة الـ Login يتم توجيهه للوحة التحكم فوراً
+              if (data.isEditor && pathname === '/login') {
                   window.location.replace('/admin');
               }
           } else {

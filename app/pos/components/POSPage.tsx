@@ -322,32 +322,50 @@ export default function POSPage() {
     return (
         <div className="min-h-screen bg-gray-100 p-4 font-sans text-right" dir="rtl">
             
-            {/* 🛡️ حزام الحظر الخرساني: تصفير الهوامش قسرياً ينسف روابط المتصفح وأرقام الصفحات 1 و 2 و 3 نهائياً */}
+            {/* 🎯 التصحيح الجذري لمشكلة الطباعة */}
             <style dangerouslySetInnerHTML={{__html: `
                 @media print {
-                    .no-print { display: none !important; }
-                    .print-only { display: block !important; }
-                    body { 
-                        background: white !important; 
-                        color: black !important; 
-                        padding: 0 !important; 
-                        margin: 0 !important; 
-                        width: 80mm !important; 
+                    /* الخطوة 1: إخفاء كل شيء بشكل قسري */
+                    body > * {
+                        display: none !important;
                     }
-                    @page { 
-                        size: 80mm auto; 
-                        margin: 0mm !important; 
+
+                    /* الخطوة 2: إظهار حاوية الطباعة فقط، والتأكد من أنها مرئية */
+                    .print-only, .print-only * {
+                        display: block !important;
+                        visibility: visible !important;
                     }
-                    .print-card-wrapper {
-                        page-break-inside: avoid !important;
+
+                    /* الخطوة 3: وضع حاوية الطباعة في أعلى يسار الصفحة بدون أي هوامش خارجية */
+                    body {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        background: white !important;
+                    }
+                    .print-only {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        width: 100%;
+                    }
+
+                    /* الخطوة 4: تحديد حجم وهوامش الصفحة المطبوعة بدقة */
+                    @page {
+                        size: 80mm auto; /* عرض الطابعة الحرارية، مع ارتفاع تلقائي */
+                        margin: 4mm !important; /* هامش صغير جداً لمنع قص الحواف */
                     }
                 }
+
                 @media screen {
-                    .print-only { display: none !important; }
+                    /* إخفاء قسم الطباعة على الشاشة كالمعتاد */
+                    .print-only {
+                        display: none !important;
+                    }
                 }
             `}} />
 
-            {/* شاشة العرض الرقمية للكاشير (تختفي تماماً أثناء الطباعة بفضل الـ no-print) */}
+            {/* شاشة العرض الرقمية للكاشير (تختفي تماماً أثناء الطباعة بفضل الـ .no-print) */}
             <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
                 <div className="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[calc(100vh-2rem)] sticky top-4">
                     <div className="flex items-center justify-between border-b pb-4 mb-4">

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers, cookies } from 'next/headers'; 
-// 🎯 استيراد الأدوات المحدثة وقاعدة البيانات السليمة
 import { getDb, getAdminAuth } from '@/app/lib/firebase-admin';
 import { firestore } from 'firebase-admin';
 import { Order, OrderItem, ShippingAddress, PaymentDetails, InstallmentDetails } from '@/app/lib/types';
@@ -14,7 +13,7 @@ export async function GET(req: NextRequest) {
     const db = getDb();
 
     try {
-        const cookieStore = await cookies(); // 🎯 التوافق مع Next.js 15 الإجباري
+        const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("__session")?.value;
         if (!sessionCookie) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -59,107 +58,110 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json();
-
-        // 🎯 تفكيك البيانات بناءً على الـ Order Schema الدقيق مع إرسال مصدر الطلب (source)
         const {
-            userId,
-            items,
-            totalAmount,
-            shippingAddress,
-            shippingFee,
-            payment,        // تفاصيل الـ PaymentDetails (البنك أو الكاش)
-            installment,    // تفاصيل الـ InstallmentDetails (شركة التقسيط)
-            notes,
-            source          // 🌟 المتغير الجديد لاستقبال مصدر الطلب: "Web" أو "POS"
-        }: { 
-            userId: string,
-            items: OrderItem[], 
-            totalAmount: number, 
-            shippingAddress?: ShippingAddress, // 🌟 جعلناه اختيارياً لتجنب مشاكل نظام الكاشير
-            shippingFee: number,
+            userId, items, totalAmount, shippingAddress, shippingFee, payment, installment, notes, source
+        }: {
+            userId: string, items: OrderItem[], totalAmount: number, shippingAddress?: ShippingAddress, shippingFee: number,
             payment: Omit<PaymentDetails, 'amount' | 'currency'> & { method: string, status: string, transactionId?: string },
-            installment?: InstallmentDetails,
-            notes?: string,
-            source?: string // 🌟 تحديد نوع المنشأ برمجياً
+            installment?: InstallmentDetails, notes?: string, source?: string
         } = body;
-
-        // تحديد المصدر الافتراضي بـ "Web" إن لم يُرسل صراحة من واجهة الكاشير
+        
         const orderSource = source || 'Web';
 
-        // 🌟 بناء بيانات شحن وهمية في حال كان الطلب قادم من الكاشير بالمحل (POS) لتجنب أخطاء حظر البيانات
         let finalShippingAddress = shippingAddress;
-        
         if (orderSource === 'POS') {
             finalShippingAddress = {
                 recipientName: shippingAddress?.recipientName || 'عميل المحل (الكاشير)',
                 streetAddress: shippingAddress?.streetAddress || 'شراء مباشر من الفرع',
                 city: shippingAddress?.city || 'المحل',
                 governorate: shippingAddress?.governorate || 'الفرع الرئيسي',
-                postalCode: shippingAddress?.postalCode || null,
+                postalCode: shippingAddress?.postalCode || undefined,
                 phone: shippingAddress?.phone || '00000000000'
             };
         }
 
-        // التحقق الصارم المعدل (يتفقد الآن العنوان النهائي المعالج برمجياً لعدم ضرب الكود)
         if (!items || items.length === 0 || totalAmount === undefined || !finalShippingAddress || !finalShippingAddress.phone || !finalShippingAddress.recipientName) {
             return NextResponse.json({ error: 'Missing required order fields: items, totalAmount, or shipping details.' }, { status: 400 });
         }
+        
+        const newOrderRef = await db.runTransaction(async (transaction) => {
+            const productRefs = items.map(item => db.collection('products').doc(item.productId));
+            const productDocs = await transaction.getAll(...productRefs);
 
-        const serverTimestamp = firestore.FieldValue.serverTimestamp();
+            for (let i = 0; i < items.length; i++) {
+                const productDoc = productDocs[i];
+                const requestedItem = items[i];
 
-        // 💳 بناء كائن الطلب المطابق تماماً للـ Schema المحترف والجاهز لبوابات التقسيط والـ POS
-        const orderData = {
-            userId: userId || 'guest',
-            source: orderSource, // 🌟 حفظ حقل المصدر في الفايربيس لتسهيل الفلترة في صفحة التقارير
-            items: items.map(item => ({
-                productId: item.productId,
-                name: item.name,
-                slug: item.slug,
-                price: item.price,
-                quantity: item.quantity,
-                imageUrl: item.imageUrl || null,
-            })),
-            totalAmount, 
-            shippingAddress: {
-                recipientName: finalShippingAddress.recipientName,
-                streetAddress: finalShippingAddress.streetAddress,
-                city: finalShippingAddress.city,
-                governorate: finalShippingAddress.governorate,
-                postalCode: finalShippingAddress.postalCode || null,
-                phone: finalShippingAddress.phone
-            },
-            shippingFee: orderSource === 'POS' ? 0 : (shippingFee || 0), // مبيعات الفرع ليس لها رسوم شحن
-            status: orderSource === 'POS' ? 'completed' : 'new', // 🌟 مبيعات الكاشير تكتمل فوراً ولا تنتظر الشحن والتجهيز
-            
-            // بيانات الدفع البنكي الرقمي أو الكاش الجاهزة
-            payment: {
-                method: payment?.method || (orderSource === 'POS' ? 'cash' : 'cash_on_delivery'),
-                transactionId: payment?.transactionId || null,
-                status: orderSource === 'POS' ? 'paid' : (payment?.status || 'pending'), // 🌟 مبيعات الفرع مدفوعة تلقائياً
-                amount: totalAmount + (orderSource === 'POS' ? 0 : (shippingFee || 0)),
-                currency: 'EGP'
-            },
-            
-            // حقن بيانات التقسيط الذكية إذا قوطعت المعاملة بنجاح مع الـ API للبنك
-            ...(payment?.method === 'installment' && installment ? {
-                installment: {
-                    provider: installment.provider, // مثل valu أو souhoola
-                    plan: installment.plan,
-                    monthlyPayment: installment.monthlyPayment,
-                    totalAmount: installment.totalAmount,
-                    numberOfMonths: installment.numberOfMonths
+                if (!productDoc.exists) {
+                    throw new Error(`المنتج "${requestedItem.name}" لم يعد موجودًا.`);
                 }
-            } : {}),
 
-            notes: notes || null,
-            createdAt: serverTimestamp,
-            updatedAt: serverTimestamp,
-        };
+                const productData = productDoc.data();
+                const currentStock = productData?.stock;
 
-        // حفظ الطلبية في قاعدة البيانات
-        const newOrderRef = await db.collection('orders').add(orderData);
+                if (currentStock === undefined || currentStock < requestedItem.quantity) {
+                    throw new Error(`الكمية المطلوبة للمنتج "${requestedItem.name}" غير متوفرة. الكمية المتاحة: ${currentStock || 0}`);
+                }
+            }
 
-        // 🚀 إرسال حدث الشراء الفوري إلى فيسبوك (فقط للأونلاين لمنع تخريب بيانات الحملات الإعلانية بمبيعات الفرع)
+            const orderRef = db.collection('orders').doc();
+            const serverTimestamp = firestore.FieldValue.serverTimestamp();
+            
+            const orderData = {
+                userId: userId || 'guest',
+                source: orderSource,
+                items: items.map(item => ({
+                    productId: item.productId, 
+                    name: item.name, 
+                    slug: item.slug,
+                    price: item.price, 
+                    quantity: item.quantity, 
+                    imageUrl: item.imageUrl || undefined,
+                })),
+                totalAmount, 
+                shippingAddress: {
+                    recipientName: finalShippingAddress.recipientName,
+                    streetAddress: finalShippingAddress.streetAddress,
+                    city: finalShippingAddress.city,
+                    governorate: finalShippingAddress.governorate,
+                    postalCode: finalShippingAddress.postalCode || undefined,
+                    phone: finalShippingAddress.phone
+                },
+                shippingFee: orderSource === 'POS' ? 0 : (shippingFee || 0),
+                status: orderSource === 'POS' ? 'completed' : 'new',
+                payment: {
+                    method: payment?.method || (orderSource === 'POS' ? 'cash' : 'cash_on_delivery'),
+                    transactionId: payment?.transactionId || undefined,
+                    status: orderSource === 'POS' ? 'paid' : (payment?.status || 'pending'),
+                    amount: totalAmount + (orderSource === 'POS' ? 0 : (shippingFee || 0)),
+                    currency: 'EGP'
+                },
+                ...(payment?.method === 'installment' && installment ? {
+                    installment: { 
+                        provider: installment.provider, 
+                        plan: installment.plan, 
+                        monthlyPayment: installment.monthlyPayment, 
+                        totalAmount: installment.totalAmount, 
+                        numberOfMonths: installment.numberOfMonths 
+                    }
+                } : {}),
+                notes: notes || undefined,
+                createdAt: serverTimestamp,
+                updatedAt: serverTimestamp,
+            };
+            transaction.set(orderRef, orderData);
+
+            for (let i = 0; i < items.length; i++) {
+                const productRef = productRefs[i];
+                const requestedQuantity = items[i].quantity;
+                transaction.update(productRef, { 
+                    stock: firestore.FieldValue.increment(-requestedQuantity) 
+                });
+            }
+
+            return orderRef;
+        });
+
         if (orderSource === 'Web') {
             try {
                 const headersList = await headers();
@@ -179,12 +181,12 @@ export async function POST(req: NextRequest) {
         }
 
         return NextResponse.json({ 
-            message: orderSource === 'POS' ? 'POS Order completed successfully' : 'Order created successfully', 
+            message: orderSource === 'POS' ? 'POS Order completed and stock updated' : 'Order created and stock updated', 
             orderId: newOrderRef.id 
         }, { status: 201 });
 
     } catch (error: any) {
-        console.error('[POST /api/orders] Error:', error);
-        return NextResponse.json({ error: `Failed to create order: ${error.message}` }, { status: 500 });
+        console.error('[POST /api/orders] Transaction Error:', error);
+        return NextResponse.json({ error: error.message || 'Failed to create order due to a stock or database issue.' }, { status: 500 });
     }
 }

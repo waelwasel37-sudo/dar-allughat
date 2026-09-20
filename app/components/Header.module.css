@@ -1,280 +1,291 @@
+/* app/components/Header.module.css */
 
-/* ==========================================================================
-   2. الغلاف الرئيسي للهيدر
-   ========================================================================== */
 .headerWrapper {
+  width: 100%;
+  background-color: var(--color-white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: var(--shadow-md); 
-  direction: rtl;
 }
 
-/* ==========================================================================
-   3. الشريط العلوي الجديد
-   ========================================================================== */
 .topBar {
-  background-color: var(--color-primary); 
+  background-color: var(--color-primary-dark);
   color: var(--color-white);
-  padding: 0.5rem 2rem;
+  padding: 0.3rem 1.5rem;
+  font-size: 0.75rem;
 }
 
 .topBarContainer {
+  max-width: 1300px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
-.taxNumber {
-  font-size: 0.85rem;
-  font-weight: 700; /* 🎯 تحسين وضوح وقراءة الخط للرقم الضريبي */
-  margin: 0;
-  color: #FFFFFF !important; /* 🎯 ضمان أن اللون أبيض ناصع دائماً */
-
-}
-
-/* ==========================================================================
-   4. الهيدر الرئيسي (الشعار، القائمة، الخ)
-   ========================================================================== */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: var(--color-background); 
-    transition: background-color 0.3s ease;
-}
-
-.logo {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-}
-
-.logo a {
-    display: inline-block;
-    max-width: 100%;
-}
-
-/* 🎯 إصلاح حاسم للأداء: ضبط الشعار لمنع الـ Layout Shift وتحسين تقييم LCP */
-.logo img {
-    height: 64px !important; /* مطابقة أبعاد مكون الصورة لـ Next.js */
-    width: 256px !important;
-    display: block;
-}
-
-.nav {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.nav a,
-.notificationLink {
-    text-decoration: none;
-    color: var(--color-text-base); 
-    font-weight: 500;
-    position: relative;
-    transition: color 0.2s ease; /* تقليل الوقت لتسريع تفاعل المتصفح */
-}
-
-.nav a:hover {
-    color: var(--color-secondary); 
-}
-
-/* أيقونات التواصل الاجتماعي في الشريط العلوي */
-.socialLinks {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
+.socialLinks, .actionsContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem; 
 }
 
 .socialLinks a {
-    color: #fff;
-    font-size: 1.1rem;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  color: var(--color-white);
+  transition: color 0.2s;
+  font-size: 1rem;
 }
-
 .socialLinks a:hover {
-    transform: scale(1.15) translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  color: var(--color-accent-light);
 }
 
-.facebookIcon { background-color: #1877F2; }
-.whatsappIcon { background-color: #25D366; }
-.telegramIcon { background-color: #0088CC; }
-.mapIcon { background-color: #DB4437; }
-
-.actionsContainer, .userSection {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.taxNumber {
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+  opacity: 0.8;
 }
 
-/* زر الدخول المحدث */
-.loginButton {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.logo {
+  flex-shrink: 0;
+}
+
+.logo img {
+  height: 40px; /* Adjust as needed */
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 1rem;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
   background-color: var(--color-primary);
-  color: var(--color-white) !important; 
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius-md);
-  font-weight: 700;
-  text-decoration: none !important;
+  transition: width 0.3s ease;
+}
+
+.nav a:hover::after {
+  width: 100%;
+}
+
+.actionsContainer {
+  gap: 1.2rem;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.welcomeMessage {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+}
+
+.loginButton, .logoutButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-full);
+  font-weight: 600;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.loginButton {
+  background-color: var(--color-light-gray);
+  color: var(--color-primary-dark);
 }
 
 .loginButton:hover {
-  background-color: var(--color-primary-dark);
-  color: var(--color-white) !important;
-  transform: translateY(-2px);
-  text-decoration: none !important;
+  background-color: var(--color-gray);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* --- التنسيقات الخاصة بالموبايل --- */
-.mobileOnlyActions {
-  display: none;
+.logoutButton {
+  background-color: transparent;
+  color: var(--color-danger);
+  border-color: var(--color-danger-light);
+}
+
+.logoutButton:hover {
+  background-color: var(--color-danger);
+  color: white;
 }
 
 .menuButton {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
+  display: none; /* Hidden on desktop */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-primary-dark);
+  cursor: pointer;
 }
 
+/* 🎯 زر الإغلاق: مخفي بشكل افتراضي في كل الحالات */
+.closeMenuButton {
+  display: none;
+}
+
+.mobileOnlyActions {
+  display: none; /* Hidden on desktop */
+}
+
+/* =================================== */
+/* 🎯 بداية قواعد الموبايل المحسّنة    */
+/* =================================== */
+
+@media (max-width: 992px) { /* A wider breakpoint for tablets */
+  .nav {
+    gap: 1.2rem;
+  }
+}
 
 @media (max-width: 768px) {
-    .topBar {
-      padding: 0.5rem 1rem;
-    }
-    .taxNumber {
-      font-size: 0.75rem;
-    }
-    .socialLinks a {
-      font-size: 1rem;
-      width: 28px;
-      height: 28px;
-    }
-    .header {
-      padding: 0.75rem 1rem;
-    }
-    /* 🎯 التصحيح السحري: تصغير حجم الشعار على الموبايل ليوفر مساحة للثلاث شرط ويمنع هامش اليسار */
-    .logo img {
-        height: 40px !important;  /* تصغير الارتفاع من 64px لـ 40px ليصبح متناسقاً على الهاتف */
-        width: auto !important;   /* جعل العرض يتكيف تلقائياً لمنع تمطيط الصورة */
-        max-width: 160px !important; /* وضع حد أقصى لعرض اللوجو على الشاشات الضيقة */
-        display: block;
-    }
-    
-    .nav {
-        flex-direction: column;
-        position: fixed;
-        
-        /* 🎯 التعديل المحكم: قائمة أصغر وأنعم للموبايل */
-        top: 0; /* يبدأ من أعلى الشاشة */
-        left: 0;
-        right: auto;
-        width: 280px; /* عرض مناسب يترك مساحة كافية */
-        height: 100vh; /* يملأ ارتفاع الشاشة بالكامل */
-        background-color: var(--color-background);
-        box-shadow: 3px 0 12px rgba(0, 0, 0, 0.15); /* ظل أوضح قليلاً */
-        padding: 1.5rem; 
-        z-index: 9999; /* يجب أن يكون فوق طبقة العزل */
-        align-items: flex-start;
-        gap: 1.2rem; 
-        display: flex; 
-        
-        transform: translateX(-100%);
-        visibility: hidden;
-        transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), visibility 0.3s; /* حركة احترافية */
-    }
+  .topBar {
+    display: none; /* Hide top bar on mobile */
+  }
 
-    .nav.mobileMenu {
-        transform: translateX(0);
-        visibility: visible; 
-    }
+  .header {
+    padding: 0.75rem 1rem;
+  }
 
-    /* 🎯 بداية التعديلات والإضافات الجديدة هنا */
+  .nav {
+    display: none; /* Hide nav links by default */
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 250px; /* 🎯 تم تصغير عرض القائمة لتناسب الموبايل بشكل أفضل */
+    background-color: white;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 4rem 1.5rem 2rem; 
+    box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    gap: 1.5rem;
+  }
 
-    /* 1. طبقة العزل الخلفية (Overlay) */
-    .mobileMenuOverlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.6); /* لون داكن شبه شفاف */
-        z-index: 9998; /* أقل من القائمة نفسها لتبقى القائمة في الأمام */
-        backdrop-filter: blur(4px); /* تأثير بلور أنيق للخلفية */
-        transition: opacity 0.25s ease-out;
-        opacity: 1;
-    }
+  .nav.mobileMenu {
+    display: flex; /* Show the menu */
+    transform: translateX(0);
+  }
 
-    /* 2. زر إغلاق القائمة من الداخل */
-    .closeMenuButton {
-        display: flex; /* يظهر فقط في نسخة الموبايل */
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        background-color: var(--color-gray-200);
-        border: none;
-        color: var(--color-text-base);
-        padding: 0.75rem;
-        width: 100%;
-        border-radius: var(--border-radius-md);
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        margin-bottom: 1rem; /* لإعطاء مساحة قبل الروابط */
-    }
+  /* طبقة التعتيم الخلفية */
+  .mobileMenuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999; /* Below the header, but above content */
+  }
 
-    .closeMenuButton:hover {
-        background-color: var(--color-gray-300);
-    }
+  .nav a {
+    font-size: 1.1rem;
+    width: 100%;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-light-gray);
+  }
+  .nav a::after {
+    display: none; /* Disable underline animation on mobile */
+  }
 
-    /* 3. تعديل بسيط على زر فتح القائمة لضمان ظهوره */
-    .menuButton {
-        display: block;
-        z-index: 10000; /* يجب أن يكون الأعلى ليظل قابلاً للنقر دائمًا */
-        margin: 0 !important;
-        padding: 4px 8px !important;
-        font-size: 1.6rem !important;
-        line-height: 1 !important;
-        overflow: hidden !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .menuButton {
+    display: block; /* Show hamburger menu */
+    z-index: 1001; /* Ensure it's above the overlay */
+  }
 
-    /* نخفي زر الإغلاق على الشاشات الكبيرة */
-    .closeMenuButton {
-        display: none;
-    }
+  /* 🎯 زر الإغلاق: يظهر فقط عندما تكون القائمة مفتوحة في الموبايل */
+  .nav.mobileMenu .closeMenuButton {
+    display: flex;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: var(--color-light-gray);
+    color: var(--color-text);
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-weight: bold;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    /* نظهر زر الإغلاق فقط داخل القائمة المفتوحة على الموبايل */
-    .nav.mobileMenu .closeMenuButton {
-        display: flex;
-    }
+  .userSection {
+    display: none; /* Hide user section from header bar on mobile */
+  }
 
-    .mobileOnlyActions {
-        display: flex;
-        width: 100%;
-        justify-content: center;
-        margin-top: auto;
-        padding-top: 1rem;
-        border-top: 1px solid var(--color-border);
-    }
+  .mobileOnlyActions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-light-gray);
+    width: 100%;
+  }
+  
+  /* إظهار معلومات المستخدم وزر الخروج في القائمة المنسدلة */
+  .mobileMenu .userSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+    border-top: 1px solid var(--color-light-gray);
+    padding-top: 1.5rem;
+  }
+   .mobileMenu .logoutButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
 
-    /* 🎯 نهاية التعديلات */
+.notificationLink {
+  position: relative;
+}
+
+.notificationBadge {
+  position: absolute;
+  top: -5px;
+  right: -15px;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  border: 2px solid white;
 }

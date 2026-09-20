@@ -1,114 +1,76 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import styles from '@/app/page.module.css';
-import { Category } from '../lib/types';
-import SchoolListForm from './SchoolListForm';
-import FactorySupplyForm from './FactorySupplyForm'; // 🎯 استيراد المكون الجديد
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { FaSearch } from 'react-icons/fa';
+import styles from './SearchAndFilter.module.css';
+import { Category } from '@/app/lib/types';
+import SchoolListForm from './SchoolListForm';
+import FactorySupplyForm from './FactorySupplyForm';
+import CategoryPills from './CategoryPills'; 
 
 interface SearchAndFilterProps {
-    categories: Category[];
+  categories: Category[];
 }
 
-const SearchAndFilter = ({ categories = [] }: SearchAndFilterProps) => {
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const { replace } = useRouter();
-    const [isSchoolFormOpen, setSchoolFormOpen] = useState(false);
-    const [isFactoryFormOpen, setFactoryFormOpen] = useState(false); // 🎯 متغير حالة جديد
-    const [searchInputValue, setSearchInputValue] = useState(searchParams.get('q') || '');
-    
-    const selectedCategorySlug = searchParams.get('category') || 'all';
+export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-    const executeSearch = (e: React.FormEvent) => {
-        e.preventDefault(); 
-        const params = new URLSearchParams(searchParams);
-        if (searchInputValue.trim()) {
-            params.set('q', searchInputValue.trim());
-        } else {
-            params.delete('q');
-        }
-        replace(`${pathname}?${params.toString()}`);
-    };
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  const [isSchoolListOpen, setSchoolListOpen] = useState(false);
+  const [isFactorySupplyOpen, setFactorySupplyOpen] = useState(false);
 
-    const handleCategoryChange = (categorySlug: string) => {
-        const params = new URLSearchParams(searchParams);
-        if (categorySlug && categorySlug !== 'all') {
-            params.set('category', categorySlug);
-        } else {
-            params.delete('category');
-        }
-        replace(`${pathname}?${params.toString()}`);
-    };
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchQuery.trim()) {
+      params.set('q', searchQuery.trim());
+      router.push(`/products?${params.toString()}`);
+    } else if (pathname === '/products') {
+        params.delete('q');
+        router.push(`/products?${params.toString()}`);
+    }
+  };
+  
+  return (
+    <>
+      <div className={styles.container}>
+        <div className={styles.searchAndActions}>
+          
+          <form onSubmit={handleSearch} className={styles.searchForm}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="ابحث عن كتاب، سبلايز، أو لعبة منتسوري..."
+              className={styles.searchInput}
+            />
+            <button type="submit" className={styles.searchButton}>
+              <FaSearch />
+            </button>
+          </form>
 
-    return (
-        <>
-            <div className={styles.filters}>
-                <form 
-                    onSubmit={executeSearch} 
-                    className={styles.searchForm}
-                    data-mcp-tool="product-search"
-                >
-                    <input
-                        type="text"
-                        placeholder="ابحث عن كتاب أو أداة..."
-                        className={styles.searchInput}
-                        value={searchInputValue}
-                        onChange={(e) => setSearchInputValue(e.target.value)}
-                        data-mcp-input="search-term"
-                    />
-                    <button 
-                        type="submit" 
-                        className={styles.searchSubmitButton} 
-                        aria-label="بدء البحث عن الكتب والمنتجات"
-                    >
-                        <FaSearch />
-                    </button>
-                </form>
+          <div className={styles.actionButtons}>
+            <button onClick={() => setSchoolListOpen(true)} className={styles.schoolListButton}>
+                <span className={styles.schoolListIcon}>🎒</span>
+                <span className={styles.schoolListText}>ارفع قائمة مدرستك كتب وسبلايز - Books & Supplies</span>
+            </button>
+          </div>
 
-                <div className={styles.categories}>
-                    {categories.map(category => (
-                        <button
-                            key={category.id}
-                            className={`${styles.categoryButton} ${selectedCategorySlug === category.slug ? styles.active : ''}`}
-                            onClick={() => handleCategoryChange(category.slug || '')}
-                            aria-label={`عرض قسم ${category.name}`}
-                        >
-                            <span className={styles.icon}>{category.emoji}</span>
-                            {category.name}
-                        </button> 
-                    ))}
+        </div>
 
-                    <button 
-                        className={`${styles.categoryButton} ${styles.schoolListButton}`}
-                        onClick={() => setSchoolFormOpen(true)}
-                        aria-label="افتح نموذج رفع قائمة الكتب المدرسية الخاصة بطفلك"
-                        data-mcp-action="upload-school-list"
-                    >
-                        <span className={styles.icon}>🎒</span>
-                        ارفع قائمة مدرستك
-                    </button>
-
-                    {/* 🎯 تحويل الرابط إلى زر يفتح النموذج المنبثق */}
-                    <button 
-                        className={`${styles.categoryButton} ${styles.factorySupplyButton}`}
-                        onClick={() => setFactoryFormOpen(true)} 
-                        aria-label="افتح نموذج طلب توريدات للمصانع والمؤسسات"
-                        data-mcp-action="factory-supply"
-                    >
-                        <span className={styles.icon}>🏢</span>
-                        توريدات مصانع ومؤسسات
-                    </button>
-                </div>
+        {pathname === '/' && categories.length > 0 && (
+            <div className={styles.categoriesSection}>
+                <CategoryPills categories={categories} />
             </div>
+        )}
 
-            {/* 🎯 عرض النموذجين بناءً على متغيرات الحالة الخاصة بهما */}
-            <SchoolListForm isOpen={isSchoolFormOpen} onClose={() => setSchoolFormOpen(false)} />
-            <FactorySupplyForm isOpen={isFactoryFormOpen} onClose={() => setFactoryFormOpen(false)} />
-        </>
-    );
-};
+      </div>
 
-export default SearchAndFilter;
+      <SchoolListForm isOpen={isSchoolListOpen} onClose={() => setSchoolListOpen(false)} />
+      <FactorySupplyForm isOpen={isFactorySupplyOpen} onClose={() => setFactorySupplyOpen(false)} />
+    </>
+  );
+}
