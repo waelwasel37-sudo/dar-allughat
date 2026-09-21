@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
     }
 }
 
-// --- POST: إنشاء طلبية شراء جديدة لجميع المنتجات متوافقة مع الـ Installment API واﻟـ POS ---
+// --- POST: إنشاء طلبية شراء جديدة مع محرك الـ Revalidation الفوري المدمج ---
 export async function POST(req: NextRequest) {
     const db = getDb();
 
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
                     slug: item.slug,
                     price: item.price, 
                     quantity: item.quantity, 
-                    imageUrl: item.imageUrl,
+                    imageUrl: item.imageUrl || undefined,
                 })),
                 totalAmount, 
                 shippingAddress: {
@@ -150,14 +150,14 @@ export async function POST(req: NextRequest) {
                     streetAddress: finalShippingAddress.streetAddress,
                     city: finalShippingAddress.city,
                     governorate: finalShippingAddress.governorate,
-                    postalCode: finalShippingAddress.postalCode,
+                    postalCode: finalShippingAddress.postalCode, // سيتم حذفه تلقائياً إن لم يوجد بفضل دالتك الجديدة
                     phone: finalShippingAddress.phone
                 },
                 shippingFee: orderSource === 'POS' ? 0 : (shippingFee || 0),
                 status: orderSource === 'POS' ? 'completed' : 'new',
                 payment: {
                     method: payment?.method || (orderSource === 'POS' ? 'cash' : 'cash_on_delivery'),
-                    transactionId: payment?.transactionId,
+                    transactionId: payment?.transactionId || undefined,
                     status: orderSource === 'POS' ? 'paid' : (payment?.status || 'pending'),
                     amount: totalAmount + (orderSource === 'POS' ? 0 : (shippingFee || 0)),
                     currency: 'EGP'
@@ -171,14 +171,12 @@ export async function POST(req: NextRequest) {
                         numberOfMonths: installment.numberOfMonths 
                     }
                 } : {}),
-                notes: notes,
+                notes: notes || undefined,
                 createdAt: serverTimestamp,
                 updatedAt: serverTimestamp,
             };
 
-            // 💡 تطبيق دالة التطهير النووية والمحسنة لضمان معاملة ناجحة 100%
             const safeOrderData = cleanDataForFirestore(orderData);
-            
             transaction.set(orderRef, safeOrderData);
 
             for (let i = 0; i < items.length; i++) {
@@ -191,6 +189,36 @@ export async function POST(req: NextRequest) {
 
             return orderRef;
         });
+
+        // =========================================================================================
+        // 🚀 محرك الـ Revalidation الفوري: تحديث كاش الزبون الأونلاين بمجرد إنهاء عملية البيع (POS/Web)
+        // =========================================================================================
+        try {
+            const productTags = items.map(item => `product-${item.productId}`);
+            
+            // لا ننتظر إتمام هذا الطلب، أطلقه في الخلفية. نجاح الطلب الأساسي هو الأهم.
+            fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/revalidate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.REVALIDATION_TOKEN}`
+                },
+                body: JSON.stringify({
+                    tags: ['products', ...productTags], // مسح كاش مصفوفة المنتجات والعلامات الفرعية
+                    paths: ['/products', '/']          // إجبار السيرفر على إعادة بناء الصفحة الرئيسية وصفحة المنتجات للزوار
+                })
+            }).then(async (res) => {
+                if (!res.ok) {
+                    console.error(`🔴 [Cache Automation] Failed to send revalidation signal: ${res.status}`, await res.json());
+                } else {
+                    console.log('⚡ [Cache Automation] Revalidation signal sent successfully.');
+                }
+            }).catch(err => {
+                console.error("🔴 [Cache Automation] Network error sending revalidation signal:", err);
+            });
+        } catch (cacheError) {
+            console.error("🔴 [Cache Automation] Failed to prepare revalidation signal:", cacheError);
+        }
 
         if (orderSource === 'Web') {
             try {

@@ -8,7 +8,7 @@
     "// 🎯 تصحيح ذهبي": "توسيع حجم قراءة الهيدرز مجاناً على السيرفر السحابي لمنع خطأ 431 و 500 عند تسجيل الدخول",
     "start": "node --max-http-header-size=32768 ./node_modules/.bin/next start",
     "lint": "next lint",
-    "seed:categories": "npx ts-node -r dotenv/config --project tsconfig.scripts.json scripts/seed-categories.ts",
+    "seed:categories": "npx ts-node -r dotenv/config -r tsconfig-paths/register --project tsconfig.scripts.json scripts/seed-categories.ts",
     "test": "jest"
   },
   "dependencies": {
@@ -63,6 +63,7 @@
     "postcss": "^8.5.23",
     "tailwindcss": "^3.4.19",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5"
   },
   "engines": {

@@ -1,5 +1,6 @@
 // scripts/seed-categories.ts
-import { getDb, admin } from '@/app/lib/firebase-admin';
+import { getDb } from '@/app/lib/firebase-admin';
+import { firestore } from 'firebase-admin'; // 🎯 [تصحيح هندسي] - استيراد firestore مباشرة للوصول إلى الأدوات المساعدة مثل serverTimestamp
 
 // The exact list of categories provided and corrected by the user.
 const categoriesToSeed = [
@@ -11,8 +12,9 @@ const categoriesToSeed = [
     { name: 'كتب تأسيس اطفال', emoji: '🖍️' },
     { name: 'كتب تنمية مهارات اطفال', emoji: '🧠' },
     { name: 'قصص اطفال', emoji: '🧸' },
-    { name: 'العاب تنمية مهارات اطفال مونتيسوري', emoji: '🧩' }, // Corrected name
-    { name: 'ادوات مكتبيه ومدرسيه', emoji: '✏️' }
+    { name: 'العاب تنمية مهارات اطفال مونتيسوري', emoji: '🧩' },
+    { name: 'ادوات مكتبيه ومدرسيه', emoji: '✏️' },
+    { name: 'شنط مدرسية', emoji: '🎒' }
 ];
 
 async function seedCategories() {
@@ -31,7 +33,7 @@ async function seedCategories() {
         batch.set(docRef, {
             name: cat.name,
             emoji: cat.emoji,
-            createdAt: admin.firestore.FieldValue.serverTimestamp()
+            createdAt: firestore.FieldValue.serverTimestamp() // 🎯 [تصحيح هندسي] - استخدام firestore مباشرة كما هو موثق في الإصدارات الحديثة
         });
         count++;
         console.log(`Prepared category for batch: ${cat.name}`);
@@ -46,11 +48,8 @@ async function seedCategories() {
     }
 
     console.log('Seeding finished successfully.');
-    // We don't call process.exit() in a server environment script like this
 }
 
-// We will call this function using a specific script command, not by running the file directly.
-// This ensures better control over its execution.
 if (require.main === module) {
     seedCategories().catch(error => {
         console.error('Seeding script failed:', error);
@@ -58,5 +57,4 @@ if (require.main === module) {
     });
 }
 
-// Export the function in case we want to use it programmatically elsewhere (optional)
 export default seedCategories;
