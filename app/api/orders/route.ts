@@ -7,6 +7,27 @@ import { sendPurchaseEvent } from '@/app/lib/meta-capi';
 
 export const dynamic = 'force-dynamic';
 
+// --- دالة تنظيف البيانات لتحويل الـ undefined إلى null لمنع أخطاء Firestore ---
+function cleanDataForFirestore(data: any): any {
+    if (data === undefined) {
+        return null;
+    }
+    // نرجع التواريخ وقيم Firestore الخاصة مثل serverTimestamp و increment كما هي دون تعديل
+    if (data === null || typeof data !== 'object' || data instanceof Date || data instanceof firestore.FieldValue) {
+        return data; 
+    }
+    if (Array.isArray(data)) {
+        return data.map(item => cleanDataForFirestore(item));
+    }
+    const cleanedData: any = {};
+    for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            cleanedData[key] = cleanDataForFirestore(data[key]);
+        }
+    }
+    return cleanedData;
+}
+
 // --- GET: جلب جميع الطلبات بتفاصيلها البنكية والتقسيط (للأدمن فقط) ---
 export async function GET(req: NextRequest) {
     const firebaseAuth = getAdminAuth();
@@ -149,7 +170,11 @@ export async function POST(req: NextRequest) {
                 createdAt: serverTimestamp,
                 updatedAt: serverTimestamp,
             };
-            transaction.set(orderRef, orderData);
+
+            // 💡 تنظيف الكائن بالكامل وتحويل الـ undefined إلى null لحماية المعاملة من التوقف المفاجئ
+            const safeOrderData = cleanDataForFirestore(orderData);
+            
+            transaction.set(orderRef, safeOrderData);
 
             for (let i = 0; i < items.length; i++) {
                 const productRef = productRefs[i];

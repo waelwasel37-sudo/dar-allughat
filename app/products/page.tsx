@@ -1,25 +1,41 @@
-// ENGINEERING UPGRADE: V8 (Direct Server-Side Rendering via Admin SDK)
+// ENGINEERING UPGRADE: V9 (Server-Side Search Filtering - Next.js Compliant)
 
 import { Suspense } from 'react';
 import ProductsView from '../components/ProductsView';
 import { Product } from '../lib/types';
-// التعديل المستهدف (البند 3): التغيير إلى النسخة المخصصة للسيرفر (Admin SDK)
 import { getProducts } from '../lib/data-server'; 
 
-// --- DYNAMIC RENDERING ---
-// يضمن جلب بيانات فريش دائماً عند كل زيارة للصفحة
 export const dynamic = 'force-dynamic';
 
-export default async function ProductsPage() {
+// تحديد نوع الـ Props ليتوافق مع الـ Promise في النسخ الحديثة
+interface PageProps {
+  searchParams: Promise<{ q?: string }>;
+}
+
+export default async function ProductsPage({ searchParams }: PageProps) {
   let products: Product[] = [];
+  
+  // 💡 [تحديث أمان]: فك الـ Promise الخاص بالـ searchParams لقراءة قيمة الـ q بأمان
+  const resolvedParams = await searchParams;
+  const searchQuery = resolvedParams?.q || ''; 
 
   try {
-    // جلب البيانات مباشرة من السيرفر بدون استدعاء fetch داخلي بطيء
-    products = await getProducts();
-    console.log('Fetched Products directly via data-server for /products page.');
+    const allProducts = await getProducts();
+    console.log(`Fetched ${allProducts.length} products directly via data-server.`);
+
+    // 💡 [V9] تنفيذ الفلترة على السيرفر قبل إرسال المكون للواجهة
+    if (searchQuery) {
+      console.log(`Filtering products by search query: "${searchQuery}"`);
+      products = allProducts.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      console.log(`Found ${products.length} matching products.`);
+    } else {
+      products = allProducts;
+    }
+
   } catch (error) {
     console.error("Error loading products for /products page:", error);
-    // إرجاع مصفوفة فارغة لحماية الصفحة من الانهيار في حال حدوث خطأ
     products = [];
   }
 

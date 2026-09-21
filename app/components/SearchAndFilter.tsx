@@ -1,8 +1,8 @@
-'use client';
+''''use client';
 
 import { useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaBuilding } from 'react-icons/fa'; // 🎯 حقن أيقونة الشركات والمؤسسات
 import { Category } from '@/app/lib/types';
 import SchoolListForm from './SchoolListForm';
 import FactorySupplyForm from './FactorySupplyForm';
@@ -80,9 +80,18 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
               <FaSearch />
             </button>
           </form>
-
-          {/* 🎯 زر رفع القوائم الملوكي باللغتين ومحصن داخلياً بالكامل */}
-          <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+          {/* 🎯 الأزرار المزدوجة المحدثة والمستجيبة للموبايل والكمبيوتر جنباً إلى جنب */}
+          <div 
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr', 
+              gap: '0.75rem', 
+              width: '100%',
+              marginTop: '0.25rem'
+            }}
+            className="sm:grid-cols-2" // سيتحول لعمودين تلقائياً على الشاشات الكبيرة لوجود Tailwind
+          >
+            {/* 1. زر رفع قوائم المدارس الملوكي باللغتين */}
             <button 
               onClick={() => setSchoolListOpen(true)} 
               style={{
@@ -92,19 +101,42 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
                 gap: '0.5rem',
                 backgroundColor: '#1d4ed8', // الأزرق الملوكي الجاذب للأمهات
                 color: '#ffffff',
-                padding: '0.85rem 1.5rem',
+                padding: '0.85rem 1.25rem',
                 borderRadius: '0.75rem',
                 fontWeight: 'bold',
-                fontSize: '0.95rem',
+                fontSize: '0.9rem',
                 border: 'none',
                 cursor: 'pointer',
-                width: '100%',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                 transition: 'all 0.2s ease'
               }}
             >
               <span style={{ fontSize: '1.2rem' }}>🎒</span>
               <span>ارفع قائمة مدرستك كتب وسبلايز - Books & Supplies</span>
+            </button>
+
+            {/* 2. زر توريدات المصانع والمؤسسات المعاد تفعيله وهندسته بقوة */}
+            <button 
+              onClick={() => setFactorySupplyOpen(true)} 
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                backgroundColor: '#10b981', // الأخضر الناري المعتمد للشركات والتوريدات
+                color: '#ffffff',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '0.75rem',
+                fontWeight: 'bold',
+                fontSize: '0.9rem',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <span style={{ fontSize: '1.2rem' }}>🏢</span>
+              <span>توريدات مصانع ومؤسسات - Corporate Supplies</span>
             </button>
           </div>
 
@@ -123,3 +155,4 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
     </>
   );
 }
+'''
