@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { FaSearch, FaBuilding } from 'react-icons/fa'; // 🎯 حقن أيقونة الشركات والمؤسسات
+import { FaSearch, FaBuilding } from 'react-icons/fa';
 import { Category } from '@/app/lib/types';
 import SchoolListForm from './SchoolListForm';
 import FactorySupplyForm from './FactorySupplyForm';
@@ -35,21 +35,19 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
   
   return (
     <>
-      {/* 🎯 الغلاف الرئيسي المحصن بالتنسيق الداخلي المرن لضمان التناسق الكامل على الموبايل والكمبيوتر */}
       <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
           
-          {/* شريط البحث المطور والمستجيب */}
           <form 
             onSubmit={handleSearch} 
             style={{ 
               display: 'flex', 
               width: '100%', 
-              backgroundColor: '#ffffff', 
-              borderRadius: '0.75rem', 
-              border: '1px solid #d1d5db', 
+              backgroundColor: 'var(--color-background)', 
+              borderRadius: 'var(--border-radius-md)', 
+              border: '1px solid var(--color-border)', 
               overflow: 'hidden',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+              boxShadow: 'var(--shadow-sm)'
             }}
           >
             <input
@@ -63,16 +61,17 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
                 border: 'none', 
                 outline: 'none', 
                 fontSize: '0.95rem',
-                color: '#1f2937'
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-base)'
               }}
             />
             <button 
               type="submit" 
               style={{ 
                 padding: '0.75rem 1.25rem', 
-                backgroundColor: '#f3f4f6', 
+                backgroundColor: 'var(--color-accent)', 
                 border: 'none', 
-                color: '#4b5563', 
+                color: 'var(--color-text-muted)', 
                 cursor: 'pointer',
                 transition: 'background-color 0.2s'
               }}
@@ -80,7 +79,7 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
               <FaSearch />
             </button>
           </form>
-          {/* 🎯 الأزرار المزدوجة المحدثة والمستجيبة للموبايل والكمبيوتر جنباً إلى جنب */}
+
           <div 
             style={{ 
               display: 'grid', 
@@ -89,9 +88,9 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
               width: '100%',
               marginTop: '0.25rem'
             }}
-            className="sm:grid-cols-2" // سيتحول لعمودين تلقائياً على الشاشات الكبيرة لوجود Tailwind
+            className="sm:grid-cols-2"
           >
-            {/* 1. زر رفع قوائم المدارس الملوكي باللغتين */}
+            {/* 🎯 الزر الأساسي: باللون الأزرق الداكن الفاخر والراقي */}
             <button 
               onClick={() => setSchoolListOpen(true)} 
               style={{
@@ -99,15 +98,15 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                backgroundColor: '#1d4ed8', // الأزرق الملوكي الجاذب للأمهات
-                color: '#ffffff',
+                backgroundColor: 'var(--color-primary)', // الهوية الملوكية الرسمية
+                color: 'var(--color-white)', // نص أبيض نقي للوضوح
                 padding: '0.85rem 1.25rem',
-                borderRadius: '0.75rem',
+                borderRadius: 'var(--border-radius-md)',
                 fontWeight: 'bold',
                 fontSize: '0.9rem',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                boxShadow: 'var(--shadow-md)',
                 transition: 'all 0.2s ease'
               }}
             >
@@ -115,7 +114,7 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
               <span>ارفع قائمة مدرستك كتب وسبلايز - Books & Supplies</span>
             </button>
 
-            {/* 2. زر توريدات المصانع والمؤسسات المعاد تفعيله وهندسته بقوة */}
+            {/* 🎯 الزر الثانوي: بالأبيض النقي والحدود الرمادية الأنيقة */}
             <button 
               onClick={() => setFactorySupplyOpen(true)} 
               style={{
@@ -123,15 +122,15 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                backgroundColor: '#10b981', // الأخضر الناري المعتمد للشركات والتوريدات
-                color: '#ffffff',
+                backgroundColor: 'var(--color-background)', // أبيض نقي لراحة العين
+                color: 'var(--color-primary)', // نص أزرق داكن للحفاظ على الهوية
                 padding: '0.85rem 1.25rem',
-                borderRadius: '0.75rem',
+                borderRadius: 'var(--border-radius-md)',
                 fontWeight: 'bold',
                 fontSize: '0.9rem',
-                border: 'none',
+                border: '1px solid var(--color-border)', // حد رمادي فاتح وأنيق
                 cursor: 'pointer',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                boxShadow: 'var(--shadow-sm)',
                 transition: 'all 0.2s ease'
               }}
             >

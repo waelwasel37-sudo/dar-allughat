@@ -7,22 +7,27 @@ import { sendPurchaseEvent } from '@/app/lib/meta-capi';
 
 export const dynamic = 'force-dynamic';
 
-// --- دالة تنظيف البيانات لتحويل الـ undefined إلى null لمنع أخطاء Firestore ---
+// =========================================================================================
+// 🎯 دالة التطهير النووية والمحسنة: تزيل المفاتيح ذات القيمة undefined بدلاً من تحويلها لـ null
+// =========================================================================================
 function cleanDataForFirestore(data: any): any {
-    if (data === undefined) {
-        return null;
-    }
-    // نرجع التواريخ وقيم Firestore الخاصة مثل serverTimestamp و increment كما هي دون تعديل
     if (data === null || typeof data !== 'object' || data instanceof Date || data instanceof firestore.FieldValue) {
-        return data; 
+        return data;
     }
+
     if (Array.isArray(data)) {
-        return data.map(item => cleanDataForFirestore(item));
+        // بالنسبة للمصفوفات، نقوم بتنظيف كل عنصر ثم نزيل أي عناصر أصبحت undefined
+        return data.map(item => cleanDataForFirestore(item)).filter(item => item !== undefined);
     }
-    const cleanedData: any = {};
+
+    const cleanedData: { [key: string]: any } = {};
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
-            cleanedData[key] = cleanDataForFirestore(data[key]);
+            const value = data[key];
+            // المفتاح الحاسم: لا تقم بإضافة المفتاح إلى الكائن الجديد إذا كانت قيمته undefined
+            if (value !== undefined) {
+                cleanedData[key] = cleanDataForFirestore(value); // استدعاء التنظيف بشكل متكرر
+            }
         }
     }
     return cleanedData;
@@ -96,7 +101,7 @@ export async function POST(req: NextRequest) {
                 streetAddress: shippingAddress?.streetAddress || 'شراء مباشر من الفرع',
                 city: shippingAddress?.city || 'المحل',
                 governorate: shippingAddress?.governorate || 'الفرع الرئيسي',
-                postalCode: shippingAddress?.postalCode || undefined,
+                postalCode: shippingAddress?.postalCode,
                 phone: shippingAddress?.phone || '00000000000'
             };
         }
@@ -137,7 +142,7 @@ export async function POST(req: NextRequest) {
                     slug: item.slug,
                     price: item.price, 
                     quantity: item.quantity, 
-                    imageUrl: item.imageUrl || undefined,
+                    imageUrl: item.imageUrl,
                 })),
                 totalAmount, 
                 shippingAddress: {
@@ -145,14 +150,14 @@ export async function POST(req: NextRequest) {
                     streetAddress: finalShippingAddress.streetAddress,
                     city: finalShippingAddress.city,
                     governorate: finalShippingAddress.governorate,
-                    postalCode: finalShippingAddress.postalCode || undefined,
+                    postalCode: finalShippingAddress.postalCode,
                     phone: finalShippingAddress.phone
                 },
                 shippingFee: orderSource === 'POS' ? 0 : (shippingFee || 0),
                 status: orderSource === 'POS' ? 'completed' : 'new',
                 payment: {
                     method: payment?.method || (orderSource === 'POS' ? 'cash' : 'cash_on_delivery'),
-                    transactionId: payment?.transactionId || undefined,
+                    transactionId: payment?.transactionId,
                     status: orderSource === 'POS' ? 'paid' : (payment?.status || 'pending'),
                     amount: totalAmount + (orderSource === 'POS' ? 0 : (shippingFee || 0)),
                     currency: 'EGP'
@@ -166,12 +171,12 @@ export async function POST(req: NextRequest) {
                         numberOfMonths: installment.numberOfMonths 
                     }
                 } : {}),
-                notes: notes || undefined,
+                notes: notes,
                 createdAt: serverTimestamp,
                 updatedAt: serverTimestamp,
             };
 
-            // 💡 تنظيف الكائن بالكامل وتحويل الـ undefined إلى null لحماية المعاملة من التوقف المفاجئ
+            // 💡 تطبيق دالة التطهير النووية والمحسنة لضمان معاملة ناجحة 100%
             const safeOrderData = cleanDataForFirestore(orderData);
             
             transaction.set(orderRef, safeOrderData);

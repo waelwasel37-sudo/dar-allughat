@@ -159,6 +159,7 @@ a:hover {
   }
 }
 
+
 /* ========================================================================= */
 /* 🖨️ صمام الأمان النووي والموحد للطباعة الحرارية (80mm) لجميع الشاشات     */
 /* ========================================================================= */
@@ -168,29 +169,9 @@ a:hover {
         display: none !important;
     }
 
-    /* 2. إحياء وإظهار حاويات البوالص وإيصال الكاشير فقط في نفس اللحظة */
-    .printOnly, .print-only, .print-card-wrapper, [class*="printOnly"], [class*="print-only"] {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-
-    .printOnly *, .print-only *, .print-card-wrapper *, [class*="printOnly"] *, [class*="print-only"] * {
-        display: inline-block !important;
-        visibility: visible !important;
-    }
-
-    /* 3. تصفير الهوامش الخارجية وتثبيت عرض رول المحل قسرياً برؤية واضحة */
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-        width: 80mm !important;
-        color: #000000 !important; /* ضمان طباعة فاحمة السواد ومتباينة */
-    }
-
-    /* 4. تثبيت الحاوية وتلوين الخطوط الفاحمة للمناديب وتفجير الباركود */
+    /* 2. تحديد حاوية الطباعة وإعادتها للوجود هي وكل ما بداخلها */
     .printOnly, .print-only, .print-card-wrapper {
+        display: block !important; /* إعادة الحاوية الرئيسية للوجود */
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
@@ -199,6 +180,24 @@ a:hover {
         margin: 0 !important;
         padding: 4mm !important;
         box-sizing: border-box !important;
+        -webkit-print-color-adjust: exact !important; /* ضمان طباعة الألوان والخلفيات */
+        print-color-adjust: exact !important;
+    }
+
+    /* 3. إظهار جميع العناصر داخل حاوية الطباعة دون المساس بتنسيقها الأصلي (Display) */
+    .printOnly *, .print-only *, .print-card-wrapper * {
+        visibility: visible !important; /* فقط نجعلها مرئية */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* 4. تصفير الهوامش الخارجية وتثبيت عرض رول المحل قسرياً برؤية واضحة */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        width: 80mm !important;
+        color: #000000 !important; /* ضمان طباعة فاحمة السواد ومتباينة */
     }
 
     /* 5. ضبط حجم الصفحة وهوامش الطابعة الحرارية بدقة تمنع قص أول الحروف */
