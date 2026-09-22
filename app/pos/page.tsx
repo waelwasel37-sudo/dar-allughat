@@ -210,7 +210,9 @@ export default function POSPage() {
                 productId: item.id,
                 name: item.name,
                 slug: item.slug,
-                price: getProductFinalPrice(item), // حفظ السعر الفعلي المخصوم بالسيرفر
+                price: getProductFinalPrice(item),        // السعر بعد الخصم
+                originalPrice: item.price,                // ← السعر الأصلي
+                discount: item.discount || 0,             // ← نسبة الخصم
                 quantity: item.quantity,
                 imageUrl: item.imageUrl
             }));
@@ -525,8 +527,8 @@ export default function POSPage() {
 
                 {/* التوثيق القانوني: السجل التجاري والرقم الضريبي أسفل الفاتورة لسلامة المنشأة */}
                 <div className="text-center text-[9px] space-y-0.5 border-t border-dotted border-gray-400 pt-2 pb-1 text-gray-700">
-                    <p className="font-semibold">السجل التجاري: XXXXXX</p>
-                    <p className="font-semibold">الرقم الضريبي: XXXXXXXXX-XXX</p>
+                    <p className="font-semibold">السجل التجاري: 100160</p>
+                    <p className="font-semibold">الرقم الضريبي: 769499732</p>
                     <p className="text-[8px] font-medium mt-1">شكراً لزيارتكم وثقتكم بمكتبة دار اللغات!</p>
                 </div>
             </div>

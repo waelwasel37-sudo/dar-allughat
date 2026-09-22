@@ -7,7 +7,14 @@ import { FaWhatsapp, FaTrash, FaPrint, FaShoppingBag, FaStore } from 'react-icon
 
 // ... (Interfaces and other constants remain the same)
 interface OrderItem {
-    productId: string; name: string; price: number; quantity: number; imageUrl: string; slug?: string;
+    productId: string; 
+    name: string; 
+    price: number;            // السعر النهائي
+    originalPrice?: number;   // ← السعر الأصلي (جديد)
+    discount?: number;        // ← نسبة الخصم (جديد)
+    quantity: number; 
+    imageUrl: string; 
+    slug?: string;
 }
 interface Order {
     id: string; userId: string; source?: string;
@@ -251,7 +258,6 @@ const OrdersPage = () => {
             {/* ✅ 3. الحل الهندسي النهائي للطباعة: استخدام الكلاس العام "printOnly" */}
             {activePrintRequest && (
                 <div className="printOnly" dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff' }}>
-                    {/* ... (The invoice JSX remains exactly the same) */}
                       {/* --- قسم الراسل (بيانات مكتبة دار اللغات الموحدة) --- */}
                     <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold' }}>من (الراسل):</p>
@@ -272,31 +278,93 @@ const OrdersPage = () => {
                         </p>
                     </div>
 
-                    {/* --- قسم محتويات الطرد والمنتجات --- */}
-                    <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', marginTop: '10px', textAlign: 'right' }}>
-                        <p style={{ margin: '0 0 5px 0', fontSize: '12px', fontWeight: 'bold' }}>📦 محتويات الطرد:</p>
-                        <ul className={styles.printItemsList} style={{ margin: 0, paddingRight: '15px', fontSize: '12px', listStyleType: 'disc' }}>
-                            {activePrintRequest.items?.map((item, idx) => (
-                                <li key={idx} style={{ padding: '2px 0' }}>{item.name} (x{item.quantity})</li>
-                            ))}
-                        </ul>
-                    </div>
+                    {/* --- محتويات الطرد --- */}
+<div style={{ border: '1px solid #000', padding: '5px', borderRadius: '4px', marginBottom: '5px', textAlign: 'right' }}>
+    <p style={{ margin: '0 0 3px 0', fontSize: '10px', fontWeight: 'bold' }}>📦 محتويات الطرد:</p>
+    <ul className={styles.printItemsList} style={{ margin: 0, paddingRight: '15px', fontSize: '10px', listStyleType: 'disc', lineHeight: '1.3' }}>
+        {activePrintRequest.items?.map((item, idx) => {
+            const originalPrice = item.originalPrice || item.price;
+            const finalPrice = item.price;
+            const hasDiscount = originalPrice > finalPrice;
+            
+            return (
+                <li key={idx} style={{ padding: '2px 0' }}>
+                    {item.name} (x{item.quantity})
+                    {hasDiscount ? (
+                        <span style={{ fontSize: '9px', color: '#dc3545', marginRight: '5px' }}>
+                            {originalPrice} → {finalPrice} EGP
+                        </span>
+                    ) : (
+                        <span style={{ fontSize: '9px', color: '#666', marginRight: '5px' }}>
+                            {finalPrice} EGP
+                        </span>
+                    )}
+                </li>
+            );
+        })}
+    </ul>
+</div>
 
-                    {/* --- قسم التحصيل والباركود الختامي للمندوب --- */}
-                    <div style={{ border: '2px solid #000', padding: '12px', borderRadius: '8px', marginTop: '10px', textAlign: 'center' }}>
-                        <div className={styles.printTotalRow} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px dashed #000', paddingBottom: '8px', marginBottom: '8px' }}>
-                            <span>💰 إجمالي المطلوب تحصيله:</span>
-                            <span>{(activePrintRequest.totalAmount || 0) + (activePrintRequest.source === 'POS' ? 0 : (activePrintRequest.shippingFee || 0))} EGP</span>
-                        </div>
-                        
-                        <div className={styles.printBarcodeSection} style={{ marginTop: '10px' }}>
-                            <div className={styles.printBarcode} style={{ fontFamily: 'monospace', fontSize: '18px', letterSpacing: '3px', fontWeight: 'bold', margin: '5px 0' }}>
-                                *{activePrintRequest.id.substring(0, 8).toUpperCase()}*
-                            </div>
-                            <p className={styles.printFooterText} style={{ margin: 0, fontSize: '11px', fontWeight: '500' }}>شحن سريع ومضمون - {businessInfo.name}</p>
-                            <p style={{ margin: '4px 0 0 0', fontSize: '9px', color: '#666' }}>رقم السجل: {businessInfo.commercialRecord}</p>
-                        </div>
+{/* --- التحصيل --- */}
+<div style={{ border: '2px solid #000', padding: '8px', borderRadius: '4px', marginBottom: '5px' }}>
+    {(() => {
+        const itemsSubtotal = activePrintRequest.items?.reduce(
+            (sum, item) => sum + ((item.originalPrice || item.price) * item.quantity), 0
+        ) || 0;
+        
+        const itemsFinal = activePrintRequest.items?.reduce(
+            (sum, item) => sum + (item.price * item.quantity), 0
+        ) || 0;
+        
+        const shippingFee = activePrintRequest.source === 'POS' ? 0 : (activePrintRequest.shippingFee || 0);
+        const finalTotal = itemsFinal + shippingFee;
+        const discountAmount = itemsSubtotal - itemsFinal;
+        const discountPercent = itemsSubtotal > 0 
+            ? Math.round((discountAmount / itemsSubtotal) * 100) 
+            : 0;
+
+        return (
+            <>
+                {/* السعر قبل الخصم */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '3px' }}>
+                    <span>السعر قبل الخصم:</span>
+                    <span>{itemsSubtotal.toFixed(2)} EGP</span>
+                </div>
+                
+                {/* الخصم */}
+                {discountAmount > 0.01 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '3px', color: '#dc3545', fontWeight: 'bold' }}>
+                        <span>الخصم {discountPercent > 0 ? `(${discountPercent}%)` : ''}:</span>
+                        <span>-{discountAmount.toFixed(2)} EGP</span>
                     </div>
+                )}
+                
+                {/* الشحن */}
+                {shippingFee > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '3px' }}>
+                        <span>رسوم الشحن:</span>
+                        <span>+{shippingFee.toFixed(2)} EGP</span>
+                    </div>
+                )}
+                
+                {/* الإجمالي */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: 'bold', borderTop: '1px dashed #000', paddingTop: '5px', marginTop: '5px' }}>
+                    <span>💰 إجمالي المطلوب:</span>
+                    <span>{finalTotal.toFixed(2)} EGP</span>
+                </div>
+            </>
+        );
+    })()}
+    
+    {/* الباركود */}
+    <div className={styles.printBarcodeSection} style={{ marginTop: '8px', textAlign: 'center' }}>
+        <div className={styles.printBarcode} style={{ fontFamily: 'monospace', fontSize: '14px', letterSpacing: '2px', fontWeight: 'bold', margin: '3px 0' }}>
+            *{activePrintRequest.id.substring(0, 8).toUpperCase()}*
+        </div>
+        <p style={{ margin: 0, fontSize: '9px', fontWeight: '500' }}>شحن سريع ومضمون - {businessInfo.name}</p>
+        <p style={{ margin: '2px 0 0 0', fontSize: '8px', color: '#666' }}>رقم السجل: {businessInfo.commercialRecord}</p>
+    </div>
+</div>
                 </div>
             )}
         </div>

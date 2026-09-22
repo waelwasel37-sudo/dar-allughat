@@ -115,8 +115,10 @@ export interface ShippingAddress {
 export interface OrderItem {
     productId: string;
     name: string;
-    slug: string;
+    slug?: string;
     price: number;
+    originalPrice?: number;   // ← جديد
+    discount?: number;        // ← جديد
     quantity: number;
     imageUrl?: string;
 }

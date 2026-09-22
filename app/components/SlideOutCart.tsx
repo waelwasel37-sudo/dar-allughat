@@ -54,6 +54,8 @@ export default function SlideOutCart() {
         name: item.name,
         slug: item.slug,
         price: item.discount ? item.price * (1 - item.discount / 100) : item.price,
+        originalPrice: item.price,           // ← جديد: السعر الأصلي
+        discount: item.discount || 0,        // ← جديد: نسبة الخصم
         quantity: item.quantity,
         imageUrl: item.imageUrl
       })),

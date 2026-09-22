@@ -141,6 +141,8 @@ export async function POST(req: NextRequest) {
                     name: item.name, 
                     slug: item.slug,
                     price: item.price, 
+                    originalPrice: item.originalPrice || item.price,  // ← جديد
+                    discount: item.discount || 0,                      // ← جديد
                     quantity: item.quantity, 
                     imageUrl: item.imageUrl || undefined,
                 })),
