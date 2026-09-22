@@ -7,8 +7,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from './Header.module.css';
 import { SITE_LINKS } from '@/app/lib/constants';
-// 🎯 استدعاء مباشر وصريح للأيقونات العلوية لمنع اختفائها كلياً وتصفير التعبئة
-import { FaBars, FaUserCircle, FaTimes, FaFacebook, FaWhatsapp, FaTelegram, FaMapMarkerAlt } from 'react-icons/fa'; 
+import { FaBars, FaUserCircle, FaTimes, FaFacebook, FaWhatsapp, FaTelegram, FaMapMarkerAlt } from 'react-icons/fa';
 import { SessionData } from '@/app/lib/session';
 
 const Cart = dynamic(() => import('./Cart'), { ssr: false });
@@ -28,6 +27,7 @@ const Header = ({ session }: HeaderProps) => {
   const displayName = session?.username || (user?.displayName ? user.displayName.split(' ')[0] : 'عضو');
 
   useEffect(() => {
+    // Your existing useEffect logic remains the same
     if (isAdmin && user) {
       const fetchAllNewRequests = async () => {
         try {
@@ -61,40 +61,48 @@ const Header = ({ session }: HeaderProps) => {
   const toggleMobileMenu = () => setMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <header className={styles.headerWrapper}>
-      {/* سطر الـ SEO المخفي لعناكب جوجل */}
-      <h1 
-        className="sr-only"
-        style={{ position: 'absolute', width: '1px', height: '1px', padding: '0', margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: '0' }}
-      >
+      <h1 className="sr-only">
         مكتبة دار اللغات بالعبور - المنصة الأولى للكتب وألعاب تنمية المهارات والمنتسوري والمستلزمات المدرسية والسبلايز (Stationery & School Supplies).
       </h1>
 
-      {/* 🎯 شريط الرأس العلوي المطور والمأمن 100% بالـ Inline Styles الخرسانية ضد البهتان */}
-      <div style={{ backgroundColor: '#f1f5f9', borderBottom: '1px solid #e2e8f0', padding: '0.5rem 1rem', width: '100%' }}>
-         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'between', gap: '0.75rem' }} className="justify-between">
+      {/* 🎯 Top Bar converted to Tailwind CSS */}
+      <div className="bg-slate-100 border-b border-slate-200 py-2 px-4 w-full">
+         <div className="max-w-[1200px] mx-auto flex flex-wrap items-center justify-between gap-3">
           
-          {/* الأرقام القانونية محصنة بلون أسود فاحم صريح وجريء جداً لمنع البهتان قسرياً */}
-          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
-            <p style={{ margin: '0', fontWeight: '800', color: '#000000', fontSize: '13px' }}>
+          <div className="flex gap-5 flex-wrap">
+            <p className="m-0 font-extrabold text-black text-xs sm:text-sm">
               الرقم الضريبي: <span dir="ltr">769499732</span>
             </p>
-            <p style={{ margin: '0', fontWeight: '800', color: '#000000', fontSize: '13px' }}>
+            <p className="m-0 font-extrabold text-black text-xs sm:text-sm">
               السجل التجاري: 100160
             </p>
           </div>
 
-          {/* أيقونات التواصل الاجتماعي العلوية محقونة ومفجرة بالألوان الرسمية الحادة لمنع الاختفاء نهائياً */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" style={{ color: '#1877F2', fontSize: '18px', display: 'flex', alignItems: 'center' }} aria-label="تابع صفحتنا على فيسبوك"><FaFacebook /></a>
-            <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" style={{ color: '#22c55e', fontSize: '18px', display: 'flex', alignItems: 'center' }} aria-label="تواصل معنا عبر واتساب"><FaWhatsapp /></a>
-            <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" style={{ color: '#2AABEE', fontSize: '18px', display: 'flex', alignItems: 'center' }} aria-label="تابع قناتنا على تليجرام"><FaTelegram /></a>
-            <a href={SITE_LINKS.googleMaps} target="_blank" rel="noopener noreferrer" style={{ color: '#ef4444', fontSize: '18px', display: 'flex', alignItems: 'center' }} aria-label="موقع مكتبتنا على خرائط جوجل"><FaMapMarkerAlt /></a>
+          <div className="flex items-center gap-4">
+            <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" style={{ color: '#1877F2' }} className="text-lg hover:opacity-80 transition-opacity" aria-label="تابع صفحتنا على فيسبوك"><FaFacebook /></a>
+            <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366' }} className="text-lg hover:opacity-80 transition-opacity" aria-label="تواصل معنا عبر واتساب"><FaWhatsapp /></a>
+            <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" style={{ color: '#2AABEE' }} className="text-lg hover:opacity-80 transition-opacity" aria-label="تابع قناتنا على تليجرام"><FaTelegram /></a>
+            <a href={SITE_LINKS.googleMaps} target="_blank" rel="noopener noreferrer" style={{ color: '#EA4335' }} className="text-lg hover:opacity-80 transition-opacity" aria-label="موقع مكتبتنا على خرائط جوجل"><FaMapMarkerAlt /></a>
           </div>
 
         </div>
       </div>
+      
+      {/* Main Header */}
       <div className={styles.header}>
         <div className={styles.logo}>
           <Link href="/" onClick={closeMobileMenu}>
@@ -110,15 +118,12 @@ const Header = ({ session }: HeaderProps) => {
           </Link>
         </div>
 
-        {/* ================================================================= */}
-        {/* 🎯 طبقة العزل الملوكية وقائمة التصفح المستجيبة للموبايل           */}
-        {/* ================================================================= */}
+        {/* ✅ Mobile Menu Fix: Added z-index classes */}
         {isMobileMenuOpen && (
-          <div className={styles.mobileMenuOverlay} onClick={closeMobileMenu} />
+          <div className={`${styles.mobileMenuOverlay} z-40`} onClick={closeMobileMenu} />
         )}
         
-        <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileMenu : ''}`}>
-          {/* زر إغلاق القائمة من الداخل للموبايل */}
+        <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileMenu : ''} z-50`}>
           <button onClick={closeMobileMenu} className={styles.closeMenuButton}>
             <FaTimes /> إغلاق
           </button>
@@ -145,11 +150,7 @@ const Header = ({ session }: HeaderProps) => {
              <ShareButton />
           </div>
         </nav>
-        {/* ================================================================= */}
-        {/* 🎯 نهاية التعديل الشامل                                           */}
-        {/* ================================================================= */}
         
-        {/* حاوية أزرار الكاشير وسلة الشراء والتحقق من جلسة الموظفين الحية */}
         <div className={styles.actionsContainer}>
           <Cart />
           {isLoggedIn ? (

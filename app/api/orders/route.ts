@@ -4,6 +4,8 @@ import { getDb, getAdminAuth } from '@/app/lib/firebase-admin';
 import { firestore } from 'firebase-admin';
 import { Order, OrderItem, ShippingAddress, PaymentDetails, InstallmentDetails } from '@/app/lib/types';
 import { sendPurchaseEvent } from '@/app/lib/meta-capi';
+// 🎯 1. تم استدعاء أدوات تحديث الكاش الفوري مباشرة من داخل محرك Next.js
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +18,6 @@ function cleanDataForFirestore(data: any): any {
     }
 
     if (Array.isArray(data)) {
-        // بالنسبة للمصفوفات، نقوم بتنظيف كل عنصر ثم نزيل أي عناصر أصبحت undefined
         return data.map(item => cleanDataForFirestore(item)).filter(item => item !== undefined);
     }
 
@@ -24,9 +25,8 @@ function cleanDataForFirestore(data: any): any {
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
             const value = data[key];
-            // المفتاح الحاسم: لا تقم بإضافة المفتاح إلى الكائن الجديد إذا كانت قيمته undefined
             if (value !== undefined) {
-                cleanedData[key] = cleanDataForFirestore(value); // استدعاء التنظيف بشكل متكرر
+                cleanedData[key] = cleanDataForFirestore(value);
             }
         }
     }
@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
                     streetAddress: finalShippingAddress.streetAddress,
                     city: finalShippingAddress.city,
                     governorate: finalShippingAddress.governorate,
-                    postalCode: finalShippingAddress.postalCode, // سيتم حذفه تلقائياً إن لم يوجد بفضل دالتك الجديدة
+                    postalCode: finalShippingAddress.postalCode,
                     phone: finalShippingAddress.phone
                 },
                 shippingFee: orderSource === 'POS' ? 0 : (shippingFee || 0),
@@ -191,33 +191,28 @@ export async function POST(req: NextRequest) {
         });
 
         // =========================================================================================
-        // 🚀 محرك الـ Revalidation الفوري: تحديث كاش الزبون الأونلاين بمجرد إنهاء عملية البيع (POS/Web)
+        // 🚀 محرك الـ Revalidation الفوري المطور: تفجير كاش السيرفر داخلياً بأعلى سرعة وبدون fetch خارجي
         // =========================================================================================
         try {
-            const productTags = items.map(item => `product-${item.productId}`);
+            console.log('⚡ [Cache Automation] Activating on-demand database cache flush...');
             
-            // لا ننتظر إتمام هذا الطلب، أطلقه في الخلفية. نجاح الطلب الأساسي هو الأهم.
-            fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/revalidate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.REVALIDATION_TOKEN}`
-                },
-                body: JSON.stringify({
-                    tags: ['products', ...productTags], // مسح كاش مصفوفة المنتجات والعلامات الفرعية
-                    paths: ['/products', '/']          // إجبار السيرفر على إعادة بناء الصفحة الرئيسية وصفحة المنتجات للزوار
-                })
-            }).then(async (res) => {
-                if (!res.ok) {
-                    console.error(`🔴 [Cache Automation] Failed to send revalidation signal: ${res.status}`, await res.json());
-                } else {
-                    console.log('⚡ [Cache Automation] Revalidation signal sent successfully.');
-                }
-            }).catch(err => {
-                console.error("🔴 [Cache Automation] Network error sending revalidation signal:", err);
-            });
-        } catch (cacheError) {
-            console.error("🔴 [Cache Automation] Failed to prepare revalidation signal:", cacheError);
+            // 1. تفجير كاش التاجات الخاصة بكل منتج تم بيعه بالفاتورة فوراً لتحديث أعداده أونلاين
+            if (items && Array.isArray(items)) {
+                items.forEach(item => {
+                    if (item.productId) {
+                        revalidateTag(`product-${item.productId}`);
+                    }
+                });
+            }
+            
+            // 2. إجبار السيرفر على إعادة بناء الصفحات الرئيسية وقائمة المنتجات حياً على الهواء للزوار
+            revalidateTag('products');
+            revalidatePath('/products');
+            revalidatePath('/');
+            
+            console.log('✅ [Cache Automation] Server cache for all products flushed successfully.');
+        } catch (cacheError: any) {
+            console.error("🔴 [Cache Automation] Critical error flushing native server cache:", cacheError.message);
         }
 
         if (orderSource === 'Web') {

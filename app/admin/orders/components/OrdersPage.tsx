@@ -1,65 +1,34 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react'; // ✅ 1. استدعاء useCallback
 import * as XLSX from 'xlsx';
 import styles from './OrdersPage.module.css';
 import { FaWhatsapp, FaTrash, FaPrint, FaShoppingBag, FaStore } from 'react-icons/fa';
 
-type OrderStatus = 'new' | 'processing' | 'delivered' | 'cancelled';
-
+// ... (Interfaces and other constants remain the same)
 interface OrderItem {
-    productId: string;
-    name: string;
-    price: number;
-    quantity: number;
-    imageUrl: string;
-    slug?: string;
+    productId: string; name: string; price: number; quantity: number; imageUrl: string; slug?: string;
 }
-
 interface Order {
-    id: string;
-    userId: string;
-    source?: string;
-    shippingAddress: {
-        recipientName: string;
-        streetAddress: string;
-        city: string;
-        governorate: string;
-        postalCode: string | null;
-        phone: string;
-    };
-    items: OrderItem[];
-    totalAmount: number;
-    shippingFee: number;
-    status: OrderStatus;
-    createdAt: string;
-    payment: {
-        method: string;
-        status: string;
-        amount: number;
-    };
+    id: string; userId: string; source?: string;
+    shippingAddress: { recipientName: string; streetAddress: string; city: string; governorate: string; postalCode: string | null; phone: string; };
+    items: OrderItem[]; totalAmount: number; shippingFee: number; status: OrderStatus; createdAt: string;
+    payment: { method: string; status: string; amount: number; };
 }
-
-// 🎯 كائن التحكم المركزي الموحد: تم تثبيت "مكتبة دار اللغات" بدقة وبالمفرد
+type OrderStatus = 'new' | 'processing' | 'delivered' | 'cancelled';
 const businessInfo = {
     name: 'مكتبة دار اللغات',
     address: 'مول روضة العبور - محل 47، الدور الأول، الحي السادس، مدينة العبور',
     commercialRecord: '100160',
     taxNumber: '769499732',
 };
-
 const getStatusDetails = (status: OrderStatus) => {
     switch (status) {
-        case 'new':
-            return { text: 'طلب جديد', className: styles.statusNew }; 
-        case 'processing':
-            return { text: 'جاري التجهيز', className: styles.statusProcessing };
-        case 'delivered':
-            return { text: 'تم التسليم', className: styles.statusDelivered };
-        case 'cancelled':
-            return { text: 'ملغي', className: styles.statusCancelled };
-        default:
-            return { text: 'غير معروف', className: '' };
+        case 'new': return { text: 'طلب جديد', className: styles.statusNew };
+        case 'processing': return { text: 'جاري التجهيز', className: styles.statusProcessing };
+        case 'delivered': return { text: 'تم التسليم', className: styles.statusDelivered };
+        case 'cancelled': return { text: 'ملغي', className: styles.statusCancelled };
+        default: return { text: 'غير معروف', className: '' };
     }
 };
 
@@ -69,27 +38,41 @@ const OrdersPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [activePrintRequest, setActivePrintRequest] = useState<Order | null>(null);
 
+    // ✅ 2. الحل الهندسي النهائي لمشكلة الطباعة والكاش
+    // هذا الـ Effect يعمل فقط عندما تتغير قيمة activePrintRequest
+    useEffect(() => {
+        // إذا كانت هناك بيانات طلب جاهزة للطباعة
+        if (activePrintRequest) {
+            // الآن الواجهة قد تم تحديثها بالكامل، نقوم بالطباعة بأمان
+            window.print();
+            // بعد الطباعة، نقوم بتصفير الحالة لمنع الطباعة مرة أخرى عند أي تحديث آخر
+            setActivePrintRequest(null);
+        }
+    }, [activePrintRequest]);
+    
+    // الدالة الجديدة: وظيفتها فقط تحديث الحالة، والباقي يتم في الـ useEffect
+    const handlePrintLabel = useCallback((order: Order) => {
+        setActivePrintRequest(order);
+    }, []);
+
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 setLoading(true);
                 const response = await fetch('/api/orders', { credentials: 'include' });
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to fetch orders');
-                }
-
+                if (!response.ok) throw new Error(data.error || 'Failed to fetch orders');
                 setOrders(Array.isArray(data) ? data : []);
             } catch (err: any) {
                 setError(err.message);
-            } finally { // 🎯 تم التصحيح الجذري والنهائي هنا لسحق عطل التحميل
+            } finally {
                 setLoading(false);
             }
         };
-
         fetchOrders();
     }, []);
+
+    // ... (Your other functions like handleStatusChange, handleDeleteOrder, exportToExcel, getWhatsAppLink remain the same)
     const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
         const originalOrders = [...orders];
         setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
@@ -134,14 +117,6 @@ const OrdersPage = () => {
         }
     };
 
-    const handlePrintLabel = (order: Order) => {
-        setActivePrintRequest(order);
-        setTimeout(() => {
-            window.print();
-            setActivePrintRequest(null);
-        }, 300);
-    };
-
     const exportToExcel = () => {
         const dataToExport = orders.map(order => ({
             'رقم الطلب': order.id,
@@ -161,7 +136,7 @@ const OrdersPage = () => {
         XLSX.utils.book_append_sheet(workbook, worksheet, 'الطلبات');
         XLSX.writeFile(workbook, 'طلبات_دار_اللغات.xlsx');
     };
-
+    
     const getWhatsAppLink = (order: Order) => {
         const phone = order.shippingAddress?.phone || '';
         const name = order.shippingAddress?.recipientName || '';
@@ -174,23 +149,17 @@ const OrdersPage = () => {
         }
         
         const message = `أهلاً بك ${name} في مكتبة دار اللغات، بخصوص طلبك رقم ${order.id}. طلب حضرتك مع المندوب الآن وسيتم التسليم اليوم من الساعه السادسة مساء الى 11 مساء`;
-        // 🎯 تم التصحيح الهندسي الملوكي لحقن علامة الدولار والمائلة وضمان فتح الشات فوراً للأمهات
         return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     };
 
-    if (loading) {
-        return <div className={styles.loading}>جاري تحميل الطلبات...</div>;
-    }
+    if (loading) return <div className={styles.loading}>جاري تحميل الطلبات...</div>;
+    if (error) return <div className={styles.error}>خطأ في تحميل الطلبات: {error}</div>;
 
-    if (error) {
-        return <div className={styles.error}>خطأ في تحميل الطلبات: {error}</div>;
-    }
     return (
         <div className={styles.ordersContainer} dir="rtl">
-            
-            {/* 🎯 لوحة التحكم: تختفي بالكامل أثناء الطباعة بفضل الـ noPrint لحماية بون الشحن وعملية القياس */}
             <div className={styles.noPrint}>
-                <div className={styles.headerContainer}>
+                {/* ... (Your main page content remains the same) */}
+                 <div className={styles.headerContainer}>
                     <h1 className={styles.title}>سجل الطلبات الواردة</h1>
                     <button onClick={exportToExcel} className={styles.exportButton} disabled={orders.length === 0}>
                         📊 تصدير كشف إلى Excel
@@ -279,13 +248,11 @@ const OrdersPage = () => {
                 )}
             </div>
 
-            {/* ========================================================================================= */}
-            {/* 🖨️ بوليصة الشحن الاحترافية الخاصة بك: مصممة ببراويز وخط ضخم جداً لعين المندوب وحظر التقطيع */}
-            {/* ========================================================================================= */}
+            {/* ✅ 3. الحل الهندسي النهائي للطباعة: استخدام الكلاس العام "printOnly" */}
             {activePrintRequest && (
-                <div className={styles.printOnly} dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff' }}>
-                    
-                    {/* --- قسم الراسل (بيانات مكتبة دار اللغات الموحدة) --- */}
+                <div className="printOnly" dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff' }}>
+                    {/* ... (The invoice JSX remains exactly the same) */}
+                      {/* --- قسم الراسل (بيانات مكتبة دار اللغات الموحدة) --- */}
                     <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold' }}>من (الراسل):</p>
                         <h3 style={{ margin: '5px 0', fontSize: '16px', fontWeight: 'bold' }}>{businessInfo.name}</h3>
@@ -330,7 +297,6 @@ const OrdersPage = () => {
                             <p style={{ margin: '4px 0 0 0', fontSize: '9px', color: '#666' }}>رقم السجل: {businessInfo.commercialRecord}</p>
                         </div>
                     </div>
-
                 </div>
             )}
         </div>

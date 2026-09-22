@@ -1,115 +1,110 @@
 'use client';
 
 import Link from 'next/link';
-import dynamic from 'next/dynamic'; // البتر البرمجي لتخفيف الأداء وسحق الـ TBT
-import styles from './Footer.module.css';
-import { SITE_LINKS } from '@/app/lib/constants'; 
-
-// تحميل الأيقونات ديناميكياً لتسريع الصفحة الافتتاحية الأولى أمام عناكب جوجل
-const FaFacebook = dynamic(() => import('react-icons/fa').then((mod) => mod.FaFacebook));
-const FaTelegram = dynamic(() => import('react-icons/fa').then((mod) => mod.FaTelegram));
-const FaWhatsapp = dynamic(() => import('react-icons/fa').then((mod) => mod.FaWhatsapp));
-const FaMapMarkerAlt = dynamic(() => import('react-icons/fa').then((mod) => mod.FaMapMarkerAlt));
-const FaEnvelope = dynamic(() => import('react-icons/fa').then((mod) => mod.FaEnvelope));
+import { FaFacebook, FaTelegram, FaWhatsapp, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa'; // 🎯 استدعاء نقي ومباشر للأيقونات العلوية وسحق الـ dynamic crash
+import { SITE_LINKS } from '@/app/lib/constants';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className={styles.footer}>
-      <div className={styles.container}>
+    // 🎯 تم نسف الـ Inline Styles واستبدالها بكلاسات Tailwind النظيفة المتناسقة بلون الكحلي والرمادي
+    <footer className="w-full bg-slate-50 border-t border-slate-200 py-12 px-4 font-inherit">
+      <div className="max-w-[1200px] margin-0-auto" style={{ margin: '0 auto' }}>
         
-        {/* شبكة الأعمدة الرئيسية والنظيفة تماماً وبدون أي تكرار أو نسخ قديمة */}
-        <div className={styles.grid}>
+        {/* شبكة الأعمدة الاستجابية للمحمول والكمبيوتر */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          {/* العمود الأول: اسم المشروع والتعريف المالي والتسويقي المعقم */}
-          <div className={styles.column}>
-            {/* ✅ تثبيت الاسم الرسمي النظيف والموحد بدون أي زيادات */}
-            <h3 className={styles.columnTitle}>مكتبة دار اللغات</h3>
+          {/* العمود الأول: بيانات المكتبة والتعريف القانوني والتسويقي الفاحم الأسود */}
+          <div className="flex flex-col gap-4">
+            {/* تثبيت مسمى مكتبة دار اللغات بالمفرد الصريح للبرستيج */}
+            <h3 className="text-xl font-extrabold text-[#0A2E54] m-0">مكتبة دار اللغات</h3>
             
-            {/* ✅ تم حقن ألعاب تنمية المهارات والمنتسوري باللغتين بذكاء خارق للـ SEO لجلب ماميز العبور */} 
-            <p className={styles.aboutText} style={{ fontSize: '14px', lineHeight: '1.6', color: '#475569', margin: '0' }}> 
-              تفخر مكتبة دار اللغات بمدينة العبور بتقديم حلول تعليمية متكاملة تشمل كتب تأسيس الأطفال، كتب مستوى رفيع لغات، ألعاب تنمية مهارات أطفال منتسوري - Montessori & Skills Development Toys، وكافة مستلزمات السبلايز (School Supplies)، بالإضافة إلى قسم خاص لـ كتب مرتجع بأسعار اقتصادية تناسب الجميع. 
+            {/* حقن كلمات ألعاب المنتسوري والشنط والسبلايز باللغتين صراحة للـ SEO لجلب الأمهات */}
+            <p className="text-sm leading-relaxed text-slate-600 m-0">
+              تفخر مكتبة دار اللغات بمدينة العبور بتقديم حلول تعليمية متكاملة تشمل كتب تأسيس الأطفال، كتب مستوى رفيع لغات، <strong>ألعاب تنمية مهارات أطفال منتسوري - Montessori & Skills Development Toys</strong>، وكافة مستلزمات السبلايز (School Supplies)، <strong>شنط مدرسية - School Bags & Backpacks</strong>، بالإضافة إلى قسم خاص لـ كتب مرتجع بأسعار اقتصادية تناسب الجميع.
             </p>
             
-            {/* ✅ دمج خدمة القوائم المدرسية والسبلايز هنا بنظافة وبدون تكرار عناوين */}
-            <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px dashed var(--color-border-light, #e9ecef)' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--color-primary, #007bff)', marginBottom: '5px' }}>
+            <div className="mt-2 pt-3 border-t border-dashed border-slate-300">
+              <h4 className="text-sm font-bold text-[#0A2E54] mb-1 m-0">
                 📋 ارفع قائمة مدرستك والسبلايز
               </h4>
-              <p style={{ fontSize: '14px', lineHeight: '1.5', margin: '0' }}>
+              <p className="text-xs leading-normal text-slate-600 m-0">
                 وفّر وقتك وجهدك؛ ارفع لنا قائمة أدوات وكتب طفلك المدرسية والسبلايز (School Supplies) وسنقوم بتجهيزها لك بالكامل فوراً!
               </p>
             </div>
 
-            {/* ✅ دمج خدمة توريدات الشركات والمؤسسات بنظافة وعزل تسييبي */}
-            <div style={{ marginTop: '15px' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--color-primary, #007bff)', marginBottom: '5px' }}>
+            <div className="mt-1">
+              <h4 className="text-sm font-bold text-[#0A2E54] mb-1 m-0">
                 🏢 توريدات الشركات والمؤسسات
               </h4>
-              <p style={{ fontSize: '14px', lineHeight: '1.5', margin: '0' }}>
+              <p className="text-xs leading-normal text-slate-600 m-0">
                 نلبي كافة احتياجات الشركات، المصانع، والمؤسسات من الأدوات المكتبية والتجهيزات بأفضل الأسعار المتاحة.
               </p>
             </div>
 
-            {/* ✅ البيانات القانونية الموثقة بالرقم الضريبي الصحيح الصافي 100% */}
-            <div className={styles.legalInfo} style={{ marginTop: '20px' }}>
-                {/* 🎯 حماية الأرقام: استخدام dir="ltr" الموحد لمنع المتصفح من عكس ترتيب الرقم الضريبي كلياً */}
-                <p dir="ltr" style={{ textAlign: 'right', margin: '5px 0', fontWeight: 'bold' }}>
+            {/* 🎯 البيانات القانونية محصنة ومعزولة بلون أسود فاحم صريح بالـ Tailwind لمنع البهتان نهائياً */}
+            <div className="mt-4 bg-slate-100 p-3 rounded-lg border border-slate-200">
+                <p dir="ltr" className="text-right m-0 mb-1 font-extrabold text-black text-sm">
                   الرقم الضريبي: 769499732
                 </p>
-                <p style={{ margin: '5px 0' }}>السجل التجاري: 100160</p>
+                <p className="m-0 font-extrabold text-black text-sm">
+                  السجل التجاري: 100160
+                </p>
             </div>
           </div>
-
-          {/* العمود الثاني: الروابط السريعة المبتورة للخفة */}
-          <div className={styles.column}>
-            <h3 className={styles.columnTitle}>روابط سريعة</h3>
-            <ul className={styles.linkList}>
-              <li><Link href="/">الرئيسية</Link></li>
-              <li><Link href="/about">من نحن</Link></li>
-              <li><Link href="/blog">المدونة</Link></li>
-              <li><Link href="/contact">اتصل بنا</Link></li>
+          {/* العمود الثاني: الروابط السريعة المحدثة بسياسات جوجل لضمان جودة الحساب ومطابقتها لميرشنت */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg font-extrabold text-[#0A2E54] m-0">روابط سريعة</h3>
+            <ul className="list-none p-0 m-0 flex flex-col gap-3 text-sm font-semibold">
+              <li><Link href="/" className="text-slate-600 hover:text-[#FFC107] no-underline transition-colors duration-200">الرئيسية</Link></li>
+              <li><Link href="/about" className="text-slate-600 hover:text-[#FFC107] no-underline transition-colors duration-200">من نحن</Link></li>
+              <li><Link href="/blog" className="text-slate-600 hover:text-[#FFC107] no-underline transition-colors duration-200">المدونة</Link></li>
+              <li><Link href="/contact" className="text-slate-600 hover:text-[#FFC107] no-underline transition-colors duration-200">اتصل بنا</Link></li>
+              <li><Link href="/privacy-policy" className="text-slate-600 hover:text-[#FFC107] no-underline transition-colors duration-200">سياسة الخصوصية</Link></li>
+              <li><Link href="/shipping-policy" className="text-slate-600 hover:text-[#FFC107] no-underline transition-colors duration-200">سياسة الشحن</Link></li>
+              <li><Link href="/return-policy" className="text-slate-600 hover:text-[#FFC107] no-underline transition-colors duration-200">سياسة الاسترجاع</Link></li>
             </ul>
           </div>
 
-          {/* العمود الثالث: قنوات التواصل والربط الجغرافي بالعبور */}
-          <div className={styles.column}>
-            <h3 className={styles.columnTitle}>تواصل معنا - Contact Us</h3>
-            <ul className={styles.contactList}>
-              <li className={styles.contactItem}>
-                <FaMapMarkerAlt className={styles.contactIcon} />
-                <a href={SITE_LINKS.googleMaps} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
+          {/* العمود الثالث: قنوات التواصل بالعبور وشبكة الأيقونات الملونة رسمياً */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg font-extrabold text-[#0A2E54] m-0">تواصل معنا - Contact Us</h3>
+            <ul className="list-none p-0 m-0 flex flex-col gap-3 text-sm">
+              <li className="flex items-center gap-2 text-slate-600">
+                <FaMapMarkerAlt className="text-red-500 flex-shrink-0" />
+                <a href={SITE_LINKS.googleMaps} target="_blank" rel="noopener noreferrer" className="text-slate-600 no-underline font-semibold">
                   مدينة العبور، القليوبية، مصر
                 </a>
               </li>
-              <li className={styles.contactItem}>
-                <FaEnvelope className={styles.contactIcon} />
-                <a href="mailto:dallughat@gmail.com" className={styles.contactLink}>dallughat@gmail.com</a>
+              <li className="flex items-center gap-2 text-slate-600">
+                <FaEnvelope className="text-sky-600 flex-shrink-0" />
+                <a href="mailto:dallughat@gmail.com" className="text-slate-600 no-underline font-semibold">dallughat@gmail.com</a>
               </li>
-              <li className={styles.contactItem}>
-                <FaWhatsapp className={styles.contactIcon} />
-                <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>
+              <li className="flex items-center gap-2 text-slate-600">
+                <FaWhatsapp className="text-green-500 flex-shrink-0" />
+                <a href={SITE_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className="text-slate-600 no-underline font-semibold">
                   تواصل عبر واتساب - WhatsApp
                 </a>
               </li>
             </ul>
 
-            <div className={styles.socialIcons}>
-              <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook Page">
-                <FaFacebook />
+            {/* 🔥 الأيقونات الرسمية الحادة بألوانها النارية وحجمها الضخم لمنع الاختفاء كلياً */}
+            <div className="flex items-center gap-4 mt-2">
+              <a href={SITE_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook Page" className="hover:scale-105 transition-transform duration-200">
+                <FaFacebook style={{ color: '#1877F2', fontSize: '32px' }} />
               </a>
-              <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" aria-label="Telegram Channel">
-                <FaTelegram />
+              <a href={SITE_LINKS.telegram} target="_blank" rel="noopener noreferrer" aria-label="Telegram Channel" className="hover:scale-105 transition-transform duration-200">
+                <FaTelegram style={{ color: '#2AABEE', fontSize: '32px' }} />
               </a>
             </div>
           </div>
 
         </div>
 
-        {/* ✅ السطر الأخير المعقم تماماً: مسح الكلمات الإنجليزية بناءً على طلبك الصارم وثبات اسم مكتبة دار اللغات فقط */}
-        <div className={styles.copyright}>
-          <p>&copy; {currentYear} مكتبة دار اللغات. جميع الحقوق محفوظة.</p>
+        {/* سطر الحقوق السفلي النظيف بالكامل بالـ Tailwind */}
+        <div className="mt-10 pt-6 border-t border-slate-200 text-center text-xs text-slate-500 font-semibold">
+          <p className="m-0">&copy; {currentYear} مكتبة دار اللغات. جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </footer>
