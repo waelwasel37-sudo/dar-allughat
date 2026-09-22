@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -8,9 +7,9 @@ import { Product } from '@/app/lib/types';
 import { useCart } from '@/app/context/CartContext';
 import styles from './ProductDetails.module.css';
 import RelatedProducts from '@/app/components/RelatedProducts';
-import { FaEye, FaShareAlt } from 'react-icons/fa';
+import { FaShareAlt } from 'react-icons/fa';
 import { database } from '@/app/lib/firebase-client';
-import { ref, onValue, onDisconnect, set, serverTimestamp } from 'firebase/database';
+import { ref, onValue } from 'firebase/database';
 
 // 🎯 استيراد مكون التقييمات بشكل ديناميكي (Lazy Loading) تسريعاً للـ LCP
 import nextDynamic from 'next/dynamic';
@@ -20,7 +19,6 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
   const { addToCart } = useCart();
   const router = useRouter();
   const [added, setAdded] = useState(false);
-  const [viewers, setViewers] = useState(0);
   
   // الحالات الحية (Live States) المتزامنة مع السيرفر وقاعدة البيانات لتسعير والمخزون الحي
   const [realTimeStock, setRealTimeStock] = useState(product.stock ?? 0);
@@ -44,55 +42,37 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
   // حساب السعر النهائي بعد الخصم بناءً على القيم الحية الحالية
   const priceAfter = useMemo(() => livePrice * (1 - liveDiscount / 100), [livePrice, liveDiscount]);
 
-  // ✅ استخدام الدالة المدمجة بالمتصفح لتوليد معرف فريد بوزن صفر بايت!
-  const userId = useMemo(() => {
-    if (typeof window !== 'undefined' && window.crypto) {
-      return crypto.randomUUID();
-    }
-    return Math.random().toString(36).substring(2, 15);
-  }, []);
-
   useEffect(() => {
-    const presenceRef = ref(database, `products/${product.slug}/viewers`);
-    const userRef = ref(database, `products/${product.slug}/viewers/${userId}`);
-    
     const stockRef = ref(database, `products/${product.slug}/stock`);
     const priceRef = ref(database, `products/${product.slug}/price`);
     const discountRef = ref(database, `products/${product.slug}/discount`);
 
-    set(userRef, { timestamp: serverTimestamp() });
-    onDisconnect(userRef).remove();
-
-    const viewersListener = onValue(presenceRef, (snapshot) => {
-      setViewers(snapshot.size);
-    });
-
-    const stockListener = onValue(stockRef, (snapshot) => {
+    // ✅ الخطوة 1: حفظ دوال إلغاء الاشتراك
+    const unsubscribeStock = onValue(stockRef, (snapshot) => {
       if (snapshot.exists()) {
         setRealTimeStock(snapshot.val());
       }
     });
 
-    const priceListener = onValue(priceRef, (snapshot) => {
+    const unsubscribePrice = onValue(priceRef, (snapshot) => {
       if (snapshot.exists()) {
         setLivePrice(snapshot.val());
       }
     });
 
-    const discountListener = onValue(discountRef, (snapshot) => {
+    const unsubscribeDiscount = onValue(discountRef, (snapshot) => {
       if (snapshot.exists()) {
         setLiveDiscount(snapshot.val());
       }
     });
 
+    // ✅ الخطوة 2: استدعاء دوال إلغاء الاشتراك عند الخروج من الصفحة
     return () => {
-      viewersListener();
-      stockListener();
-      priceListener();
-      discountListener();
-      set(userRef, null);
+      unsubscribeStock();
+      unsubscribePrice();
+      unsubscribeDiscount();
     };
-  }, [product.slug, userId]);
+  }, [product.slug]);
 
   const handleAddToCart = () => {
     const liveProduct = { 
@@ -259,7 +239,6 @@ export default function ProductClientPage({ product, relatedProducts }: { produc
           </div>
           <div className={styles.detailsContainer}>
             <h1 className={styles.name}>{product.name}</h1>
-            {viewers > 1 && <div className={styles.viewersCount}><FaEye /><span>{`${viewers} أشخاص يشاهدون هذا المنتج الآن`}</span></div>}
             
             {product.description && (
               <div className={styles.descriptionContainer}>

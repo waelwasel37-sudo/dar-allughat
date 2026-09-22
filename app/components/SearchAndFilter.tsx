@@ -90,49 +90,17 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
             }}
             className="sm:grid-cols-2"
           >
-            {/* 🎯 الزر الأساسي: باللون الأزرق الداكن الفاخر والراقي */}
             <button 
               onClick={() => setSchoolListOpen(true)} 
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                backgroundColor: 'var(--color-primary)', // الهوية الملوكية الرسمية
-                color: 'var(--color-white)', // نص أبيض نقي للوضوح
-                padding: '0.85rem 1.25rem',
-                borderRadius: 'var(--border-radius-md)',
-                fontWeight: 'bold',
-                fontSize: '0.9rem',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: 'var(--shadow-md)',
-                transition: 'all 0.2s ease'
-              }}
+              className="btn-school-list"
             >
               <span style={{ fontSize: '1.2rem' }}>🎒</span>
               <span>ارفع قائمة مدرستك كتب وسبلايز - Books & Supplies</span>
             </button>
 
-            {/* 🎯 الزر الثانوي: بالأبيض النقي والحدود الرمادية الأنيقة */}
             <button 
               onClick={() => setFactorySupplyOpen(true)} 
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                backgroundColor: 'var(--color-background)', // أبيض نقي لراحة العين
-                color: 'var(--color-primary)', // نص أزرق داكن للحفاظ على الهوية
-                padding: '0.85rem 1.25rem',
-                borderRadius: 'var(--border-radius-md)',
-                fontWeight: 'bold',
-                fontSize: '0.9rem',
-                border: '1px solid var(--color-border)', // حد رمادي فاتح وأنيق
-                cursor: 'pointer',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s ease'
-              }}
+              className="btn-factory-supplies"
             >
               <span style={{ fontSize: '1.2rem' }}>🏢</span>
               <span>توريدات مصانع ومؤسسات - Corporate Supplies</span>
