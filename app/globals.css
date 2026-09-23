@@ -165,14 +165,28 @@ a:hover {
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - 80mm                                                       */
+
+
+/* ========================================================================= */
+/* 🖨️ الطباعة - 80mm (موحّد لكل الصفحات)                                   */
 /* ========================================================================= */
 @media print {
-    /* ✅ 1. اخفي كل حاجة بـ display */
-    body > * {
-        display: none !important;
+    /* ✅ 1. اخفي كل حاجة بـ visibility (مش display) */
+    body * {
+        visibility: hidden;
     }
 
-    /* ✅ 2. اظهر حاويات الطباعة */
+    /* ✅ 2. اظهر حاويات الطباعة وكل عناصرها */
+    .printOnly,
+    .print-only,
+    .print-card-wrapper,
+    .printOnly *,
+    .print-only *,
+    .print-card-wrapper * {
+        visibility: visible !important;
+    }
+
+    /* ✅ 3. ثبّت حاويات الطباعة */
     .printOnly,
     .print-only,
     .print-card-wrapper {
@@ -187,16 +201,187 @@ a:hover {
         color: #000 !important;
     }
 
-    /* ✅ 3. اظهر العناصر جوه البوليصة */
-    .printOnly *,
-    .print-only *,
-    .print-card-wrapper * {
-        visibility: visible !important;
+    /* ✅ 4. اخفي العناصر الثابتة */
+    header,
+    footer,
+    nav,
+    aside,
+    button {
+        display: none !important;
     }
 
-    /* ✅ 4. الطابعة الحرارية */
+    /* ✅ 5. الطابعة الحرارية */
     @page {
         size: 80mm auto;
         margin: 2mm !important;
     }
+}
+
+/* ========================================================================= */
+/* 🎯 أزرار "ارفع قائمة مدرستك" و "توريدات مصانع"                         */
+/* ========================================================================= */
+
+/* ✅ زر ارفع قائمة مدرستك - أزرق داكن */
+.btn-school-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--border-radius-md);
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-school-list::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+/* ✅ زر توريدات مصانع ومؤسسات - أخضر زمردي */
+.btn-factory-supplies {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  color: var(--color-white);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--border-radius-md);
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-factory-supplies::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+/* ✅ زر البحث - تصميم احترافي */
+.search-submit-btn {
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-primary);
+  border: none;
+  color: var(--color-white);
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.search-submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+/* ========================================================================= */
+/* 🎬 مؤثرات الحركة - كمبيوتر (Hover)                                       */
+/* ========================================================================= */
+@media (hover: hover) and (pointer: fine) {
+  .btn-school-list:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow:
+      0 12px 24px rgba(10, 46, 84, 0.30),
+      0 4px 8px rgba(10, 46, 84, 0.15);
+    background-color: var(--color-primary-dark);
+    letter-spacing: 0.3px;
+  }
+  .btn-school-list:hover::before { left: 100%; }
+
+  .btn-factory-supplies:hover {
+    transform: translateY(-4px) scale(1.03);
+    background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+    box-shadow:
+      0 12px 24px rgba(5, 150, 105, 0.40),
+      0 4px 8px rgba(5, 150, 105, 0.20);
+    letter-spacing: 0.3px;
+  }
+  .btn-factory-supplies:hover::before { left: 100%; }
+
+  .search-submit-btn:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+  }
+  .search-submit-btn:hover::before { left: 100%; }
+}
+
+/* ========================================================================= */
+/* 🎬 مؤثرات الحركة - موبايل (Touch)                                        */
+/* ========================================================================= */
+@media (hover: none) {
+  .btn-school-list:active {
+    transform: scale(0.96);
+    background-color: var(--color-primary-dark);
+    box-shadow: 0 2px 8px rgba(10, 46, 84, 0.2);
+    transition: all 0.1s ease;
+  }
+
+  .btn-factory-supplies:active {
+    transform: scale(0.96);
+    background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+    transition: all 0.1s ease;
+  }
+
+  .search-submit-btn:active {
+    transform: scale(0.92);
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    transition: all 0.1s ease;
+  }
 }
