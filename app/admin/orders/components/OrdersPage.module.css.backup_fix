@@ -290,4 +290,42 @@
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة (display مش visibility)       */
+/* ========================================================================= */
+@media print {
+    /* ✅ 1. اخفي كل حاجة بـ display */
+    body > * {
+        display: none !important;
+    }
 
+    /* ✅ 2. اظهر البوليصة بس */
+    .printOnly {
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    /* ✅ 3. اظهر العناصر جوه البوليصة */
+    .printOnly * {
+        visibility: visible !important;
+    }
+
+    /* ✅ 4. منع تقسيم العناصر */
+    .printItemsList,
+    .printBarcodeSection,
+    .printTotalRow {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* ✅ 5. الطابعة الحرارية 80mm */
+    @page {
+        size: 80mm auto;
+        margin: 2mm !important;
+    }
+}

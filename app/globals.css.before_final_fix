@@ -162,41 +162,170 @@ a:hover {
 /* ========================================================================= */
 /* 🖨️ الطباعة الحرارية الموحدة - 80mm                                     */
 /* ========================================================================= */
-
-/* ========================================================================= */
-/* 🖨️ الطباعة - 80mm                                                       */
-/* ========================================================================= */
 @media print {
-    /* ✅ 1. اخفي كل حاجة بـ display */
-    body > * {
-        display: none !important;
+    /* ✅ 1. اخفي كل حاجة بـ visibility */
+    body * {
+        visibility: hidden;
     }
-
+    
     /* ✅ 2. اظهر حاويات الطباعة */
+    .printOnly,
+    .print-only,
+    .print-card-wrapper,
+    .printOnly *,
+    .print-only *,
+    .print-card-wrapper * {
+        visibility: visible !important;
+    }
+    
+    /* ✅ 3. ثبّت حاويات الطباعة */
     .printOnly,
     .print-only,
     .print-card-wrapper {
         display: block !important;
         position: absolute !important;
-        top: 0 !important;
         left: 0 !important;
+        top: 0 !important;
         width: 80mm !important;
         margin: 0 !important;
         padding: 2mm !important;
         background: #fff !important;
         color: #000 !important;
     }
-
-    /* ✅ 3. اظهر العناصر جوه البوليصة */
-    .printOnly *,
-    .print-only *,
-    .print-card-wrapper * {
-        visibility: visible !important;
+    
+    /* ✅ 4. اخفي الهيدر والفوتر والقوائم */
+    header,
+    footer,
+    nav,
+    aside {
+        display: none !important;
     }
-
-    /* ✅ 4. الطابعة الحرارية */
+    
+    /* ✅ 5. جسم الصفحة */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        width: 80mm !important;
+    }
+    
+    /* ✅ 6. الطابعة الحرارية */
     @page {
         size: 80mm auto;
         margin: 2mm !important;
     }
+}
+
+/* ========================================================================= */
+/* 🎯 أزرار "ارفع قائمة مدرستك" و "توريدات مصانع" - في SearchAndFilter      */
+/* ========================================================================= */
+
+/* ✅ زر ارفع قائمة مدرستك - أزرق داكن مع حركة عند المرور */
+.btn-school-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--border-radius-md);
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-school-list:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 
+    0 12px 24px rgba(10, 46, 84, 0.30),
+    0 4px 8px rgba(10, 46, 84, 0.15);
+  background-color: var(--color-primary-dark);
+  letter-spacing: 0.3px;
+}
+
+.btn-school-list:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* ✨ تأثير لمعان يمر على الزر */
+.btn-school-list::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.btn-school-list:hover::before {
+  left: 100%;
+}
+
+/* ✅ زر توريدات مصانع ومؤسسات - أخضر زمردي فاخر مع حركة */
+.btn-factory-supplies {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: var(--color-white);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--border-radius-md);
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-factory-supplies:hover {
+  transform: translateY(-4px) scale(1.03);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 
+    0 12px 24px rgba(16, 185, 129, 0.40),
+    0 4px 8px rgba(16, 185, 129, 0.20);
+  letter-spacing: 0.3px;
+}
+
+.btn-factory-supplies:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* ✨ تأثير لمعان للزر التوريدات */
+.btn-factory-supplies::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.btn-factory-supplies:hover::before {
+  left: 100%;
 }

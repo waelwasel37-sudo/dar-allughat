@@ -287,7 +287,50 @@
 /* ========================================================================= */
 /* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة                                */
 /* ========================================================================= */
+@media print {
+    /* ✅ 1. اخفي كل حاجة بـ visibility (مش display) */
+    body * {
+        visibility: hidden;
+    }
 
-/* ========================================================================= */
-/* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة (display مش visibility)       */
+    /* ✅ 2. اظهر البوليصة بس */
+    .printOnly,
+    .printOnly * {
+        visibility: visible !important;
+    }
 
+    /* ✅ 3. ثبّت البوليصة في أول الصفحة */
+    .printOnly {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        background: #fff !important;
+    }
+
+    /* ✅ 4. اخفي الهيدر والفوتر والقوائم والأزرار */
+    header,
+    footer,
+    nav,
+    aside,
+    button {
+        display: none !important;
+    }
+
+    /* ✅ 5. منع تقسيم العناصر */
+    .printItemsList,
+    .printBarcodeSection,
+    .printTotalRow {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* ✅ 6. الطابعة الحرارية 80mm */
+    @page {
+        size: 80mm auto;
+        margin: 2mm !important;
+    }
+}
