@@ -169,7 +169,53 @@ a:hover {
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - 80mm (موحّد لكل الصفحات)                                   */
+/* ========================================================================= */
+@media print {
+    /* ✅ 1. اخفي كل حاجة بـ visibility (مش display) */
+    body * {
+        visibility: hidden;
+    }
 
+    /* ✅ 2. اظهر حاويات الطباعة وكل عناصرها */
+    .printOnly,
+    .print-only,
+    .print-card-wrapper,
+    .printOnly *,
+    .print-only *,
+    .print-card-wrapper * {
+        visibility: visible !important;
+    }
+
+    /* ✅ 3. ثبّت حاويات الطباعة */
+    .printOnly,
+    .print-only,
+    .print-card-wrapper {
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    /* ✅ 4. اخفي العناصر الثابتة */
+    header,
+    footer,
+    nav,
+    aside,
+    button {
+        display: none !important;
+    }
+
+    /* ✅ 5. الطابعة الحرارية */
+    @page {
+        size: 80mm auto;
+        margin: 2mm !important;
+    }
+}
 
 /* ========================================================================= */
 /* 🎯 أزرار "ارفع قائمة مدرستك" و "توريدات مصانع"                         */
@@ -338,16 +384,4 @@ a:hover {
     color: var(--color-primary);
     transition: all 0.1s ease;
   }
-}
-
-/* ========================================================================= */
-/* 🖨️ الطباعة - إخفاء Header و Footer                                      */
-/* ========================================================================= */
-@media print {
-    header,
-    footer,
-    nav,
-    aside {
-        display: none !important;
-    }
 }
