@@ -350,10 +350,6 @@ a:hover {
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة (visibility)                   */
-
-
-/* ========================================================================= */
-/* 🖨️ الطباعة - إخفاء noPrint وإظهار printOnly                            */
 /* ========================================================================= */
 @media print {
     /* ✅ 1. اخفي كل حاجة بـ visibility */
@@ -361,28 +357,22 @@ a:hover {
         visibility: hidden;
     }
     
-    /* ✅ 2. اخفي noPrint (المحتوى الرئيسي) */
-    .noPrint,
-    .noPrint * {
-        display: none !important;
-    }
-    
-    /* ✅ 3. اظهر البوليصة وكل عناصرها */
+    /* ✅ 2. اظهر البوليصة وكل عناصرها */
     .printOnly,
     .printOnly * {
-        display: block !important;
         visibility: visible !important;
     }
     
-    /* ✅ 4. اظهر الأباء (html, body, main) */
+    /* ✅ 3. اخلي الأباء display: block (مهم!) */
     html,
     body,
-    main {
+    main,
+    body > * {
         display: block !important;
         visibility: visible !important;
     }
     
-    /* ✅ 5. ثبّت البوليصة */
+    /* ✅ 4. ثبّت البوليصة */
     .printOnly {
         position: absolute !important;
         top: 0 !important;
@@ -394,7 +384,7 @@ a:hover {
         color: #000 !important;
     }
     
-    /* ✅ 6. اخفي Header و Footer */
+    /* ✅ 5. اخفي Header و Footer */
     header,
     footer,
     nav,
@@ -402,50 +392,9 @@ a:hover {
         display: none !important;
     }
     
-    /* ✅ 7. الطابعة الحرارية */
+    /* ✅ 6. الطابعة الحرارية */
     @page {
         size: 80mm auto;
         margin: 2mm !important;
     }
-}
-
-/* ========================================================================= */
-/* 🔍 ضمان ظهور العدسة على الموبايل والكمبيوتر                              */
-/* ========================================================================= */
-
-/* ✅ تحديد svg صراحةً */
-.search-submit-btn svg {
-  width: 1.2em !important;
-  height: 1.2em !important;
-  min-width: 20px !important;
-  min-height: 20px !important;
-  color: currentColor !important;
-  fill: currentColor !important;
-  display: inline-block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  z-index: 1 !important;
-  position: relative !important;
-}
-
-/* ✅ ضمان إن ::before مش بيغطي العدسة */
-.search-submit-btn::before {
-  z-index: 0 !important;
-}
-
-/* ✅ على الموبايل (شاشات صغيرة) */
-@media (max-width: 768px) {
-  .search-submit-btn {
-    padding: 0.75rem 1rem !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
-    font-size: 1.3rem !important;
-  }
-  
-  .search-submit-btn svg {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    min-height: 24px !important;
-  }
 }

@@ -1,0 +1,54 @@
+.adminLayout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    border-left: 1px solid #e0e0e0; /* Border on the left for RTL */
+    padding: 1.5rem;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+}
+
+.sidebarTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a73e8;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.sidebarNav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebarNav li a {
+    display: block;
+    padding: 0.9rem 1.2rem;
+    color: #3c4043;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebarNav li a:hover {
+    background-color: #e8f0fe;
+    color: #1967d2;
+}
+
+/* Add some spacing between list items */
+.sidebarNav li {
+    margin-bottom: 0.5rem;
+}
+
+
+.content {
+    flex: 1;
+    padding: 2rem 3rem;
+    overflow-y: auto;
+}
