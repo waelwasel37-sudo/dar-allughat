@@ -81,15 +81,7 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
               aria-label="ابحث"
               className="search-submit-btn"
             >
-              <span 
-                aria-hidden="true" 
-                style={{ 
-                  fontSize: '1.2rem', 
-                  color: 'white', 
-                  display: 'inline-block',
-                  lineHeight: 1
-                }}
-              >🔍</span>
+              <FaSearch aria-hidden="true" />
             </button>
           </form>
 

@@ -340,35 +340,22 @@ a:hover {
 
 /* ========================================================================= */
 /* 🖨️ الطباعة الموحّدة - كل الصفحات                                        */
-
-
-/* ========================================================================= */
-/* 🖨️ الطباعة الموحّدة - visibility + الأباء ظاهرين                        */
 /* ========================================================================= */
 @media print {
-    /* ✅ 1. اخفي كل حاجة بـ visibility */
-    body * {
-        visibility: hidden;
+    /* ✅ 1. اخفي كل حاجة بـ display */
+    body > * {
+        display: none !important;
     }
-    
-    /* ✅ 2. اخفي noPrint و no-print بـ display */
+
+    /* ✅ 2. اخفي noPrint و no-print */
     .noPrint,
     .noPrint *,
     .no-print,
     .no-print * {
         display: none !important;
     }
-    
-    /* ✅ 3. اظهر كل الأباء */
-    html,
-    body,
-    main,
-    body > * {
-        visibility: visible !important;
-        display: block !important;
-    }
-    
-    /* ✅ 4. اظهر حاويات الطباعة */
+
+    /* ✅ 3. اظهر كل حاويات الطباعة */
     .printOnly,
     .printOnly *,
     .print-only,
@@ -378,8 +365,8 @@ a:hover {
         display: block !important;
         visibility: visible !important;
     }
-    
-    /* ✅ 5. ثبّت الحاويات */
+
+    /* ✅ 4. ثبّت الحاويات */
     .printOnly,
     .print-only,
     .print-card-wrapper {
@@ -393,15 +380,15 @@ a:hover {
         background: #fff !important;
         color: #000 !important;
     }
-    
-    /* ✅ 6. جسم الصفحة */
+
+    /* ✅ 5. جسم الصفحة */
     body {
         margin: 0 !important;
         padding: 0 !important;
         background: #fff !important;
     }
-    
-    /* ✅ 7. الطابعة الحرارية */
+
+    /* ✅ 6. الطابعة الحرارية */
     @page {
         size: 80mm auto;
         margin: 2mm !important;
