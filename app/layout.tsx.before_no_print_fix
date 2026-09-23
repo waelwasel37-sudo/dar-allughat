@@ -143,12 +143,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <SessionWrapper>
               {(session) => (
                 <>
-                  <div className="no-print"><Header session={session} /></div>
+                  <Header session={session} />
                   <main>{children}</main>
-                  <div className="no-print"><SlideOutCart /></div>
-                  <div className="no-print"><RelatedProductsBar /></div>
-                  <div className="no-print"><Footer /></div>
-                  <div className="no-print"><GoogleMerchantBadge /></div> {/* <-- 3. إضافة المكون هنا */}
+                  <SlideOutCart />
+                  <RelatedProductsBar />
+                  <Footer />
+                  <GoogleMerchantBadge /> {/* <-- 3. إضافة المكون هنا */}
                 </>
               )}
             </SessionWrapper>
