@@ -286,4 +286,41 @@
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - إخفاء noPrint وإظهار printOnly                            */
-
+/* ========================================================================= */
+@media print {
+    /* ✅ 1. اخفي كل محتوى الصفحة */
+    .noPrint {
+        display: none !important;
+    }
+    
+    /* ✅ 2. اظهر البوليصة */
+    .printOnly {
+        display: block !important;
+        visibility: visible !important;
+        position: static !important;
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        background: #fff !important;
+        color: #000 !important;
+    }
+    
+    /* ✅ 3. اظهر كل عناصر البوليصة */
+    .printOnly * {
+        visibility: visible !important;
+    }
+    
+    /* ✅ 4. منع تقسيم العناصر */
+    .printItemsList,
+    .printBarcodeSection,
+    .printTotalRow {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    
+    /* ✅ 5. الطابعة الحرارية */
+    @page {
+        size: 80mm auto;
+        margin: 2mm !important;
+    }
+}

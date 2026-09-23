@@ -342,47 +342,12 @@ a:hover {
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - إخفاء Header و Footer                                      */
-
-
-/* ========================================================================= */
-/* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة (global)                       */
 /* ========================================================================= */
 @media print {
-    /* ✅ 1. اخفي كل حاجة */
-    body * {
-        display: none !important;
-    }
-    
-    /* ✅ 2. اظهر البوليصة وكل عناصرها */
-    .printOnly,
-    .printOnly * {
-        display: block !important;
-        visibility: visible !important;
-    }
-    
-    /* ✅ 3. ثبّت البوليصة */
-    .printOnly {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 80mm !important;
-        margin: 0 !important;
-        padding: 2mm !important;
-        background: #fff !important;
-        color: #000 !important;
-    }
-    
-    /* ✅ 4. اخفي Header و Footer */
     header,
     footer,
     nav,
     aside {
         display: none !important;
-    }
-    
-    /* ✅ 5. الطابعة الحرارية */
-    @page {
-        size: 80mm auto;
-        margin: 2mm !important;
     }
 }
