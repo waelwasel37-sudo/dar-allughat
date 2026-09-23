@@ -125,10 +125,6 @@
 
 /* ========================================================================= */
 /* 📱 تحسين Admin على الموبايل                                              */
-
-
-/* ========================================================================= */
-/* 📱 تحسين Admin على الموبايل                                              */
 /* ========================================================================= */
 @media (max-width: 768px) {
     /* ✅ Container */
@@ -173,6 +169,25 @@
     }
     
     .card p {
+        font-size: 0.9rem !important;
+    }
+    
+    /* ✅ الجداول والأزرار (بـ :global) */
+    :global(table) {
+        display: block !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        width: 100% !important;
+        font-size: 0.85rem !important;
+    }
+    
+    :global(th),
+    :global(td) {
+        padding: 0.5rem !important;
+    }
+    
+    :global(button) {
+        min-height: 44px !important;
         font-size: 0.9rem !important;
     }
 }
