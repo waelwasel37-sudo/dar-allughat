@@ -113,62 +113,16 @@
 /* ========================================================================= */
 /* 📱 تحسين Admin على الموبايل                                              */
 /* ========================================================================= */
-
-
-/* ========================================================================= */
-/* 📱 تحسين Admin على الموبايل                                              */
-
-
-/* ========================================================================= */
-/* 📱 تحسين Admin على الموبايل                                              */
-/* ========================================================================= */
 @media (max-width: 768px) {
-    /* ✅ Container */
-    .container {
+    /* ✅ Padding أقل */
+    [class*="container"],
+    [class*="Container"],
+    [class*="page"],
+    [class*="Page"] {
         padding: 1rem !important;
-        min-height: auto !important;
     }
     
-    /* ✅ Header */
-    .header {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        align-items: flex-start !important;
-        margin-bottom: 1.5rem !important;
-    }
-    
-    /* ✅ Title */
-    .title {
-        font-size: 1.5rem !important;
-    }
-    
-    /* ✅ Description */
-    .description {
-        font-size: 0.95rem !important;
-        margin-bottom: 1.5rem !important;
-    }
-    
-    /* ✅ Cards Grid */
-    .cardContainer {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-    }
-    
-    /* ✅ Card */
-    .card {
-        padding: 1.25rem !important;
-    }
-    
-    .card h2 {
-        font-size: 1.3rem !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    .card p {
-        font-size: 0.9rem !important;
-    }
-    
-    /* ✅ الجداول */
+    /* ✅ الجداول responsive */
     table {
         display: block !important;
         overflow-x: auto !important;
@@ -181,9 +135,21 @@
         padding: 0.5rem !important;
     }
     
-    /* ✅ الأزرار */
-    button {
+    /* ✅ العناوين أصغر */
+    h1 { font-size: 1.5rem !important; }
+    h2 { font-size: 1.25rem !important; }
+    h3 { font-size: 1.1rem !important; }
+    
+    /* ✅ الأزرار كبيرة للمس */
+    button,
+    [class*="Button"] {
         min-height: 44px !important;
         font-size: 0.9rem !important;
+    }
+    
+    /* ✅ الشبكات عمودية */
+    [class*="grid"],
+    [class*="Grid"] {
+        grid-template-columns: 1fr !important;
     }
 }
