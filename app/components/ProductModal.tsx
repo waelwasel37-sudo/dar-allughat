@@ -33,7 +33,7 @@ const ProductModal = ({ product, onClose }: ProductModalProps) => {
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}><FaTimes /></button>
+        <button className={styles.closeButton} onClick={onClose} aria-label="إغلاق النافذة"><FaTimes aria-hidden="true" /></button>
         <div className={styles.content}>
           <div className={styles.imageContainer}>
             <Image 

@@ -124,7 +124,7 @@ const Header = ({ session }: HeaderProps) => {
         )}
         
         <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.mobileMenu : ''} z-50`}>
-          <button onClick={closeMobileMenu} className={styles.closeMenuButton}>
+          <button onClick={closeMobileMenu} className={styles.closeMenuButton} aria-label="إغلاق قائمة التصفح">
             <FaTimes /> إغلاق
           </button>
 

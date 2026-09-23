@@ -92,12 +92,9 @@
 }
 
 .homeButton {
-  background-color: #f9fafb;
-  color: #374151;
-  border-color: #d1d5db;
-  position: relative;
-  z-index: 9999;
-  cursor: pointer !important;
+  background-color: #f9fafb; /* Gray-50 */
+  color: #374151; /* Gray-700 */
+  border-color: #d1d5db; /* Gray-300 */
 }
 
 .homeButton:hover {

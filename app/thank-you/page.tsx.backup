@@ -19,11 +19,8 @@ const ThankYouContent = () => {
   const deliveryDate = searchParams.get('deliveryDate');
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      clearCart();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+    clearCart();
+  }, [clearCart]);
 
   return (
     <div className={styles.container}>
@@ -44,17 +41,9 @@ const ThankYouContent = () => {
             className={`${styles.button} ${styles.whatsappButton}`}>
             <FaWhatsapp /> متابعة على الواتساب
           </a>
-          <a 
-            href="/" 
-            className={`${styles.button} ${styles.homeButton}`}
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.href = '/';
-            }}
-            style={{ cursor: 'pointer' }}
-          >
+          <Link href="/" className={`${styles.button} ${styles.homeButton}`}>
             <FaHome /> العودة إلى الصفحة الرئيسية
-          </a>
+          </Link>
         </div>
       </div>
       

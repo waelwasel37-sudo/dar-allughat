@@ -53,18 +53,7 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearchQuery(value);
-                const params = new URLSearchParams(searchParams.toString());
-                if (value.trim()) {
-                  params.set('q', value.trim());
-                } else {
-                  params.delete('q');
-                }
-                const newUrl = params.toString() ? `?${params.toString()}` : '';
-                router.push(`${pathname}${newUrl}`, { scroll: false });
-              }}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ابحث عن كتاب، سبلايز، أو لعبة منتسوري..."
               style={{ 
                 flex: 1, 
@@ -78,10 +67,16 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
             />
             <button 
               type="submit" 
-              aria-label="ابحث"
-              className="search-submit-btn"
+              style={{ 
+                padding: '0.75rem 1.25rem', 
+                backgroundColor: 'var(--color-accent)', 
+                border: 'none', 
+                color: 'var(--color-text-muted)', 
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
             >
-              <FaSearch aria-hidden="true" />
+              <FaSearch />
             </button>
           </form>
 

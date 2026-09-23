@@ -173,7 +173,7 @@ export default function SlideOutCart() {
                       </div>
                       <div className={styles.subtotal}>الإجمالي: {getItemSubtotal(item).toFixed(2)} ج.م</div>
                     </div>
-                    <button onClick={() => removeFromCart(item.slug)} className={styles.removeItemButton}><FaTrash /></button>
+                    <button onClick={() => removeFromCart(item.slug)} className={styles.removeItemButton} aria-label="حذف المنتج من السلة"><FaTrash aria-hidden="true" /></button>
                   </div>
                 );
               })}
