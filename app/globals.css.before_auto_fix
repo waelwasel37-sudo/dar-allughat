@@ -253,7 +253,7 @@ a:hover {
 }
 
 
-
+}
 
 /* ========================================================================= */
 /* 🎬 مؤثرات الحركة - موبايل (Touch)                                        */
@@ -336,61 +336,4 @@ a:hover {
     min-width: 24px !important;
     min-height: 24px !important;
   }
-}
-
-/* ========================================================================= */
-/* 🖨️ الطباعة الموحّدة - كل الصفحات                                        */
-/* ========================================================================= */
-@media print {
-    /* ✅ 1. اخفي كل حاجة بـ display */
-    body > * {
-        display: none !important;
-    }
-
-    /* ✅ 2. اخفي noPrint و no-print */
-    .noPrint,
-    .noPrint *,
-    .no-print,
-    .no-print * {
-        display: none !important;
-    }
-
-    /* ✅ 3. اظهر كل حاويات الطباعة */
-    .printOnly,
-    .printOnly *,
-    .print-only,
-    .print-only *,
-    .print-card-wrapper,
-    .print-card-wrapper * {
-        display: block !important;
-        visibility: visible !important;
-    }
-
-    /* ✅ 4. ثبّت الحاويات */
-    .printOnly,
-    .print-only,
-    .print-card-wrapper {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 80mm !important;
-        margin: 0 !important;
-        padding: 2mm !important;
-        background: #fff !important;
-        color: #000 !important;
-    }
-
-    /* ✅ 5. جسم الصفحة */
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-    }
-
-    /* ✅ 6. الطابعة الحرارية */
-    @page {
-        size: 80mm auto;
-        margin: 2mm !important;
-    }
 }

@@ -253,7 +253,7 @@ a:hover {
 }
 
 
-
+}
 
 /* ========================================================================= */
 /* 🎬 مؤثرات الحركة - موبايل (Touch)                                        */
@@ -339,6 +339,10 @@ a:hover {
 }
 
 /* ========================================================================= */
+/* 🖨️ الطباعة الموحّدة - بوليصة + فاتورة POS                               */
+
+
+/* ========================================================================= */
 /* 🖨️ الطباعة الموحّدة - كل الصفحات                                        */
 /* ========================================================================= */
 @media print {
@@ -392,5 +396,90 @@ a:hover {
     @page {
         size: 80mm auto;
         margin: 2mm !important;
+    }
+}
+
+/* ========================================================================= */
+/* 🔍 زر البحث - عدسة واضحة على كل الأجهزة                                   */
+/* ========================================================================= */
+.search-submit-btn {
+    padding: 0.75rem 1.25rem;
+    background-color: var(--color-primary);
+    border: none;
+    color: var(--color-white);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 48px;
+    min-height: 48px;
+}
+
+.search-submit-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+    stroke: #FFFFFF !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 10 !important;
+    position: relative !important;
+    pointer-events: none !important;
+}
+
+.search-submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.search-submit-btn:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.search-submit-btn:hover svg {
+    color: var(--color-primary) !important;
+    fill: var(--color-primary) !important;
+}
+
+.search-submit-btn:hover::before {
+    left: 100%;
+}
+
+.search-submit-btn:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .search-submit-btn {
+        padding: 0.75rem 1rem !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+    }
+    
+    .search-submit-btn svg {
+        width: 22px !important;
+        height: 22px !important;
+        min-width: 22px !important;
+        min-height: 22px !important;
     }
 }
