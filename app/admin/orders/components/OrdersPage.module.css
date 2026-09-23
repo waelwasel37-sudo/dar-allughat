@@ -97,7 +97,6 @@
     color: #4338ca;
 }
 
-
 .statusBadge {
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
@@ -133,7 +132,7 @@
     margin: 0;
     max-height: 150px;
     overflow-y: auto;
-    padding-right: 8px; /* For scrollbar spacing */
+    padding-right: 8px;
 }
 
 .item {
@@ -185,20 +184,20 @@
 .whatsappButton { background-color: #25d366; color: white; border-color: #25d366; }
 .whatsappButton:hover { background-color: #128c7e; }
 
-/* 🎯 CSS for the new, refactored print/invoice component */
+/* ========================================================================= */
+/* 🖨️ أنماط البوليصة القابلة للطباعة                                       */
+/* ========================================================================= */
 
-/* Hide the main dashboard when printing */
 .noPrint {
-    /* This class is used in a media query below */
+    /* يُستخدم في @media print */
 }
 
-/* The main container for the printable invoice */
 .printOnly {
-    display: none; /* Hidden by default */
-    font-family: 'Cairo', sans-serif; /* A good font for Arabic printing */
+    display: none;
+    font-family: 'Cairo', sans-serif;
     color: #000;
     background-color: #fff;
-    padding: 15px;
+    padding: 10px;
 }
 
 .printHeader {
@@ -209,18 +208,18 @@
 }
 
 .printHeader h2 {
-    font-size: 1.5rem; /* 24px */
+    font-size: 1.5rem;
     font-weight: bold;
     margin: 0;
 }
 
 .printHeader p {
-    font-size: 0.8rem; /* 12px */
+    font-size: 0.8rem;
     margin: 2px 0;
 }
 
 .printDate, .printId {
-    font-size: 0.75rem; /* 12px */
+    font-size: 0.75rem;
     font-family: monospace;
 }
 
@@ -236,12 +235,12 @@
 
 .printSection h4 {
     font-weight: bold;
-    font-size: 1rem; /* 16px */
+    font-size: 1rem;
     margin-bottom: 8px;
 }
 
 .printSection p {
-    font-size: 0.8rem; /* 12px */
+    font-size: 0.8rem;
     margin: 4px 0;
 }
 
@@ -249,7 +248,7 @@
     list-style: none;
     padding: 0;
     margin: 5px 0 0 0;
-    font-size: 0.75rem; /* 12px */
+    font-size: 0.75rem;
 }
 
 .printItemsList li {
@@ -260,7 +259,7 @@
     display: flex;
     justify-content: space-between;
     font-weight: bold;
-    font-size: 1.1rem; /* 18px */
+    font-size: 1.1rem;
     margin-top: 10px;
     padding-top: 10px;
     border-top: 2px solid #000;
@@ -275,51 +274,52 @@
 
 .printBarcode {
     font-family: 'Libre Barcode 39', monospace;
-    font-size: 2.5rem; /* 40px */
+    font-size: 2.5rem;
     line-height: 1;
 }
 
 .printFooterText {
-    font-size: 0.7rem; /* 10px */
+    font-size: 0.7rem;
     color: #555;
     margin-top: 5px;
 }
-
-/* This is the magic part: Media query for printing */
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة                                */
 /* ========================================================================= */
 @media print {
-    /* ✅ 1. اخفي كل حاجة */
+    /* ✅ 1. اخفي كل حاجة بـ visibility (مش display) */
     body * {
-        display: none !important;
+        visibility: hidden;
     }
-    
+
     /* ✅ 2. اظهر البوليصة بس */
     .printOnly,
     .printOnly * {
-        display: block !important;
         visibility: visible !important;
     }
-    
+
     /* ✅ 3. ثبّت البوليصة في أول الصفحة */
     .printOnly {
+        display: block !important;
         position: absolute !important;
         left: 0 !important;
         top: 0 !important;
-        width: 100% !important;
+        width: 80mm !important;
         margin: 0 !important;
-        padding: 4mm !important;
+        padding: 2mm !important;
         background: #fff !important;
     }
-    
-    /* ✅ 4. اخفي الهيدر والفوتر */
+
+    /* ✅ 4. اخفي الهيدر والفوتر والقوائم والأزرار */
     header,
-    footer {
+    footer,
+    nav,
+    aside,
+    button {
         display: none !important;
     }
-    
+
     /* ✅ 5. منع تقسيم العناصر */
     .printItemsList,
     .printBarcodeSection,
@@ -327,8 +327,8 @@
         page-break-inside: avoid;
         break-inside: avoid;
     }
-    
-    /* ✅ 6. الطابعة الحرارية */
+
+    /* ✅ 6. الطابعة الحرارية 80mm */
     @page {
         size: 80mm auto;
         margin: 2mm !important;

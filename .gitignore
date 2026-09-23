@@ -46,3 +46,13 @@ firestore-debug.log
 *.tsbuildinfo
 
 !package.json
+
+# Backup files
+*.backup
+*.backup2
+*.backup3
+*.backup4
+*.backup5
+*.backup_before_fix
+*.backup_before_fix2
+_backup/
