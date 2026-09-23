@@ -272,32 +272,3 @@ a:hover {
 .btn-factory-supplies:hover::before {
   left: 100%;
 }
-/* ========================================================================= */
-/* 🖨️ الطباعة - إخفاء الهيدر والفوتر في كل الصفحات                        */
-/* ========================================================================= */
-@media print {
-    /* ✅ 1. اخفي الهيدر والفوتر والقوائم */
-    header,
-    footer,
-    nav,
-    aside {
-        display: none !important;
-    }
-    
-    /* ✅ 2. اخفي العناصر اللي عليها no-print */
-    .no-print {
-        display: none !important;
-    }
-    
-    /* ✅ 3. اخفي الـ NEXT-ROUTE-ANNOUNCER */
-    next-route-announcer {
-        display: none !important;
-    }
-    
-    /* ✅ 4. جسم الصفحة */
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-    }
-}
