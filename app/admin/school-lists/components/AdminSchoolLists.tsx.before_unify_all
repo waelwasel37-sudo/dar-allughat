@@ -258,7 +258,24 @@ const AdminSchoolLists = () => {
             )}
 
             {/* ستايل الميديا كويري الصارم لضغط البوليصة لطابعات الإيصالات الحرارية (80mm) */}
-            
+            <style jsx global>{`
+                @media print {
+                    .no-print { display: none !important; }
+                    .print-only { display: block !important; }
+                    body { 
+                        background: white !important; 
+                        padding: 0 !important; 
+                        margin: 0 !important; 
+                        width: 80mm !important; 
+                    }
+                    @page {
+                        margin: 2mm !important; 
+                    }
+                }
+                @media screen {
+                    .print-only { display: none !important; }
+                }
+            `}</style>
         </div>
     </div>
     );

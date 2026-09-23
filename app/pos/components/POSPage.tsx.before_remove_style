@@ -323,7 +323,47 @@ export default function POSPage() {
         <div className="min-h-screen bg-gray-100 p-4 font-sans text-right" dir="rtl">
             
             {/* 🎯 التصحيح الجذري لمشكلة الطباعة */}
-            
+            <style dangerouslySetInnerHTML={{__html: `
+                @media print {
+                    /* الخطوة 1: إخفاء كل شيء بشكل قسري */
+                    body > * {
+                        display: none !important;
+                    }
+
+                    /* الخطوة 2: إظهار حاوية الطباعة فقط، والتأكد من أنها مرئية */
+                    .print-only, .print-only * {
+                        display: block !important;
+                        visibility: visible !important;
+                    }
+
+                    /* الخطوة 3: وضع حاوية الطباعة في أعلى يسار الصفحة بدون أي هوامش خارجية */
+                    body {
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        background: white !important;
+                    }
+                    .print-only {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        width: 100%;
+                    }
+
+                    /* الخطوة 4: تحديد حجم وهوامش الصفحة المطبوعة بدقة */
+                    @page {
+                        size: 80mm auto; /* عرض الطابعة الحرارية، مع ارتفاع تلقائي */
+                        margin: 4mm !important; /* هامش صغير جداً لمنع قص الحواف */
+                    }
+                }
+
+                @media screen {
+                    /* إخفاء قسم الطباعة على الشاشة كالمعتاد */
+                    .print-only {
+                        display: none !important;
+                    }
+                }
+            `}} />
 
             {/* شاشة العرض الرقمية للكاشير (تختفي تماماً أثناء الطباعة بفضل الـ .no-print) */}
             <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">

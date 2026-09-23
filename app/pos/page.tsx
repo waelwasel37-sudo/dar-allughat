@@ -534,24 +534,7 @@ export default function POSPage() {
             </div>
 
             {/* ستايل الميديا كويري الصارم لضغط الحجم للماكينات الحرارية ومنع خروج ورقة ثانية */}
-            <style jsx global>{`
-                @media print {
-                    .no-print { display: none !important; }
-                    .print-only { display: block !important; }
-                    body { 
-                        background: white !important; 
-                        padding: 0 !important; 
-                        margin: 0 !important; 
-                        width: 80mm !important; /* معيار عرض طابعات الفواتير الحرارية */
-                    }
-                    @page {
-                        margin: 2mm !important; /* تقليص الهوامش الخارجية البيضاء تماماً */
-                    }
-                }
-                @media screen {
-                    .print-only { display: none !important; }
-                }
-            `}</style>
+            
         </div>
     );
 }
