@@ -362,7 +362,8 @@ a:hover {
     /* ✅ 3. اظهر كل الأباء */
     html,
     body,
-    main {
+    main,
+    body > * {
         visibility: visible !important;
         display: block !important;
     }

@@ -163,8 +163,8 @@ const OrdersPage = () => {
     if (error) return <div className={styles.error}>خطأ في تحميل الطلبات: {error}</div>;
 
     return (
-        <div className={`${styles.ordersContainer} noPrint`} dir="rtl">
-            <div className={styles.noPrint}>
+        <div className={styles.ordersContainer} dir="rtl">
+            <div className={`${styles.noPrint} noPrint`}>
                 {/* ... (Your main page content remains the same) */}
                  <div className={styles.headerContainer}>
                     <h1 className={styles.title}>سجل الطلبات الواردة</h1>
