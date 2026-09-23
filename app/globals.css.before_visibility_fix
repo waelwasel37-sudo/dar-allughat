@@ -346,33 +346,21 @@ a:hover {
 
 /* ========================================================================= */
 /* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة (global)                       */
-
-
-/* ========================================================================= */
-/* 🖨️ الطباعة - إخفاء كل حاجة إلا البوليصة (visibility)                   */
 /* ========================================================================= */
 @media print {
-    /* ✅ 1. اخفي كل حاجة بـ visibility */
+    /* ✅ 1. اخفي كل حاجة */
     body * {
-        visibility: hidden;
+        display: none !important;
     }
     
     /* ✅ 2. اظهر البوليصة وكل عناصرها */
     .printOnly,
     .printOnly * {
-        visibility: visible !important;
-    }
-    
-    /* ✅ 3. اخلي الأباء display: block (مهم!) */
-    html,
-    body,
-    main,
-    body > * {
         display: block !important;
         visibility: visible !important;
     }
     
-    /* ✅ 4. ثبّت البوليصة */
+    /* ✅ 3. ثبّت البوليصة */
     .printOnly {
         position: absolute !important;
         top: 0 !important;
@@ -384,7 +372,7 @@ a:hover {
         color: #000 !important;
     }
     
-    /* ✅ 5. اخفي Header و Footer */
+    /* ✅ 4. اخفي Header و Footer */
     header,
     footer,
     nav,
@@ -392,7 +380,7 @@ a:hover {
         display: none !important;
     }
     
-    /* ✅ 6. الطابعة الحرارية */
+    /* ✅ 5. الطابعة الحرارية */
     @page {
         size: 80mm auto;
         margin: 2mm !important;
