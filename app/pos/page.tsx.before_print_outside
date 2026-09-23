@@ -323,8 +323,7 @@ export default function POSPage() {
     }
 
     return (
-        <>
-      <div className="no-print min-h-screen bg-gray-100 p-4 font-sans text-right" dir="rtl">
+        <div className="no-print min-h-screen bg-gray-100 p-4 font-sans text-right" dir="rtl">
             {/* واجهة الكاشير المخصصة للشاشات (تختفي تلقائياً عند أمر الطباعة عبر CSS السفلي) */}
             <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
                 
@@ -470,8 +469,6 @@ export default function POSPage() {
             {/* ========================================================================= */}
             {/* 🖨️ هيكل الفاتورة المخصصة للطباعة الورقية الفورية (مضغوطة لورقة واحدة فقط) */}
             {/* ========================================================================= */}
-
-      
             <div className="print-only text-black p-1 font-mono w-full text-[11px] leading-tight" dir="rtl">
                 
                 {/* رأس الفاتورة: الشعار والاسم والـ QR code بالأعلى */}
@@ -539,6 +536,5 @@ export default function POSPage() {
             {/* ستايل الميديا كويري الصارم لضغط الحجم للماكينات الحرارية ومنع خروج ورقة ثانية */}
             
         </div>
-      </>
     );
 }
