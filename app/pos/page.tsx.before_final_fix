@@ -323,7 +323,7 @@ export default function POSPage() {
     }
 
     return (
-        <div className="no-print min-h-screen bg-gray-100 p-4 font-sans text-right" dir="rtl">
+        <div className="min-h-screen bg-gray-100 p-4 font-sans text-right" dir="rtl">
             {/* واجهة الكاشير المخصصة للشاشات (تختفي تلقائياً عند أمر الطباعة عبر CSS السفلي) */}
             <div className="no-print grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
                 
