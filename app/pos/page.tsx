@@ -651,7 +651,7 @@ export default function POSPage() {
                                 <tr key={item.id} className="border-b border-gray-200">
                                     <td className="py-0.5 font-medium text-[10px] leading-tight break-words">{item.name}</td>
                                     <td className="py-0.5 text-center font-mono">{item.quantity}</td>
-                                    <td className="py-0.5 text-center font-mono text-[9px]">{itemTaxRate > 0 ? itemTax.toFixed(2) : '—'}</td>
+                                    <td className="py-0.5 text-center font-mono text-[9px]">{itemTax.toFixed(2)}</td>
                                     <td className="py-0.5 text-left font-mono">{itemSubtotal.toFixed(2)}</td>
                                 </tr>
                             );

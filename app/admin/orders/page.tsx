@@ -435,10 +435,14 @@ const OrdersPage = () => {
                         {(() => {
                             const itemsTotal = activePrintRequest.items?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0;
                             const shipping = activePrintRequest.source === 'POS' ? 0 : (activePrintRequest.shippingFee || 0);
-                            const grandTotal = itemsTotal + shipping;
-                            const taxRate = settings.taxRate || 14;
-                            const amountWithoutTax = itemsTotal / (1 + taxRate / 100);
-                            const taxAmount = itemsTotal - amountWithoutTax;
+                            // 🆕 الضريبة لكل منتج على حدة
+                            const taxAmount = activePrintRequest.items?.reduce((sum, item) => {
+                                const itemSubtotal = item.price * item.quantity;
+                                const itemTaxRate = (item as any).taxRate ?? 0;
+                                return sum + (itemSubtotal * (itemTaxRate / 100));
+                            }, 0) || 0;
+                            const amountWithoutTax = itemsTotal;
+                            const grandTotal = itemsTotal + taxAmount + shipping;  // ✅ يشمل الضريبة
                             
                             return (
                                 <>
@@ -447,7 +451,7 @@ const OrdersPage = () => {
                                         <span>{amountWithoutTax.toFixed(2)} EGP</span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
-                                        <span>الضريبة ({taxRate}%):</span>
+                                        <span>الضريبة:</span>
                                         <span>{taxAmount.toFixed(2)} EGP</span>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0', borderTop: '1px dashed #000', marginTop: '3px', paddingTop: '5px' }}>

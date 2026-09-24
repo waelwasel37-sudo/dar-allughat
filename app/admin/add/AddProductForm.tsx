@@ -59,7 +59,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
         description: '',
         price: 0,
         discount: 0,
-        taxRate: 14,
+        taxRate: 0,
         stock: 1,
         category: '',
         year: new Date().getFullYear(),
@@ -305,7 +305,7 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                        </div>
                        <div>
                           <label htmlFor="taxRate" className="block text-sm font-medium text-gray-700">🆕 نسبة الضريبة (%)</label>
-                          <input type="number" step="1" id="taxRate" name="taxRate" value={formData.taxRate ?? 14} onChange={handleChange} placeholder="مثال: 14" min="0" max="100" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" />
+                          <input type="number" step="1" id="taxRate" name="taxRate" value={formData.taxRate ?? 0} onChange={handleChange} placeholder="مثال: 14" min="0" max="100" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" />
                           <p className="text-xs text-gray-500 mt-1">القيمة الافتراضية: 14%</p>
                        </div>
                        <div>
