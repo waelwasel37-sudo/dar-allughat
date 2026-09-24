@@ -3,7 +3,8 @@
 // 🎯 إجبار الصفحة على العمل بنظام ديناميكية كامل لتجاوز قفل الـ SECRET_COOKIE_PASSWORD ومنع فشل البناء
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import * as XLSX from 'xlsx';
 import styles from './OrdersPage.module.css';
 import { FaWhatsapp, FaTrash, FaPrint, FaStore, FaShoppingBag, FaCommentDots } from 'react-icons/fa';
@@ -66,6 +67,7 @@ const OrdersPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activePrintRequest, setActivePrintRequest] = useState<Order | null>(null);
+    const labelRef = useRef<HTMLDivElement>(null);
     
     // 🆕 إعدادات المتجر (نسبة الضريبة + البيانات)
     const [settings, setSettings] = useState({
@@ -151,12 +153,22 @@ const OrdersPage = () => {
         }
     };
 
+    // 🆕 دالة الطباعة (react-to-print)
+    const handlePrint = useReactToPrint({
+        contentRef: labelRef,
+        documentTitle: 'بوليصة-' + (activePrintRequest?.id?.substring(0, 8) || 'ORD'),
+    });
+
     const handlePrintLabel = (order: Order) => {
         setActivePrintRequest(order);
+        // 1. اطبع بعد ما البوليصة تتحدث (500ms)
         setTimeout(() => {
-            window.print();
+            handlePrint();
+        }, 500);
+        // 2. افرغ البوليصة بعد 3 ثواني
+        setTimeout(() => {
             setActivePrintRequest(null);
-        }, 300);
+        }, 3000);
     };
 
     const exportToExcel = () => {
@@ -380,7 +392,7 @@ const OrdersPage = () => {
             {/* 🖨️ بوليصة الشحن الاحترافية لـ مكتبة دار اللغات: خط ضخم جداً (20px) وبراويز تمنع التقطيع */}
             {/* ========================================================================================= */}
             {activePrintRequest && (
-                <div className="printOnly" dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff', fontFamily: 'system-ui, sans-serif' }}>
+                <div ref={labelRef} dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff', fontFamily: 'system-ui, sans-serif' }}>
                     
                     {/* رأس البوليصة: بيانات المتجر */}
                     <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
