@@ -401,11 +401,16 @@ export default function POSPage() {
                 setSuccessMessage('⚠️ تم البيع، لكن فشلت مزامنة مخزن الأونلاين. يرجى المراجعة.');
             }
             
+            // 🆕 1. اطبع بعد ما الفاتورة تتحدث (invoiceNumber)
             setTimeout(() => {
                 handlePrint();
+            }, 500);
+
+            // 🆕 2. افرغ السلة بعد ما الطباعة تخلص (3 ثواني)
+            setTimeout(() => {
                 setCart([]);
                 setSuccessMessage(null);
-            }, 1500); // زيادة طفيفة للوقت للسماح بقراءة الرسالة
+            }, 3000);
 
         } catch (err: any) {
             setErrorMessage(err.message || 'حدث خطأ غير متوقع أثناء البيع.');
