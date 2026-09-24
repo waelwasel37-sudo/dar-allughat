@@ -1,5 +1,7 @@
 'use client';
 
+// Build marker: 2026-09-24-1255-pos-print-fix
+
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext'; // تأكد من صحة مسار الـ Context في مشروعك
@@ -31,6 +33,40 @@ export default function POSPage() {
 
     // الـ State الخاص بحفظ رابط الـ QR Code المولد للفاتورة الورقية
     const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
+
+    // 🆕 States جديدة للفاتورة المحاسبية
+    const [taxRate, setTaxRate] = useState<number>(14);
+    const [storeInfo, setStoreInfo] = useState({
+        storeName: 'مكتبة دار اللغات',
+        address: 'محل 47 - دور أول - مول روضة العبور - الحي السادس - مدينة العبور',
+        phone: '01220396597',
+        commercialRegister: '100160',
+        taxNumber: '769499732',
+        invoicePrefix: 'INV',
+    });
+    const [invoiceNumber, setInvoiceNumber] = useState<string>('');
+    const [amountPaid, setAmountPaid] = useState<string>('');
+
+    // 🆕 تحميل إعدادات المتجر (نسبة الضريبة + بيانات المتجر)
+    useEffect(() => {
+        fetch('/api/settings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    setTaxRate(data.data.taxRate || 14);
+                    setStoreInfo({
+                        storeName: data.data.storeName || 'مكتبة دار اللغات',
+                        address: data.data.address || '',
+                        phone: data.data.phone || '',
+                        commercialRegister: data.data.commercialRegister || '',
+                        taxNumber: data.data.taxNumber || '',
+                        invoicePrefix: data.data.invoicePrefix || 'INV',
+                    });
+                }
+            })
+            .catch(err => console.error('فشل تحميل الإعدادات:', err));
+    }, []);
+
 
     // الـ References الخاصة بتجميع قراءات جهاز الباركود السريع
     const barcodeBufferRef = useRef<string>('');
@@ -225,6 +261,69 @@ export default function POSPage() {
                 payment: { method: 'cash', status: 'paid' }
             };
 
+            // 🆕 حساب الإجماليات والضريبة (وفق القانون المصري)
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const totalAfterDiscount = getCartTotal();
+            const discountTotal = subtotal - totalAfterDiscount;
+            
+            // الضريبة شاملة (نطلعها عكسي من السعر بعد الخصم)
+            const amountWithoutTax = totalAfterDiscount / (1 + taxRate / 100);
+            const taxAmount = totalAfterDiscount - amountWithoutTax;
+            const amountWithTax = totalAfterDiscount;
+            
+            // المدفوع والباقي
+            const paidNum = Number(amountPaid) || 0;
+            const change = paidNum - amountWithTax;
+
+            // 🆕 حفظ البيع في /api/sales (للمحاسبة)
+            let savedInvoiceNumber = '';
+            try {
+                const saleResponse = await fetch('/api/sales', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { 'Authorization': `Bearer ${token}` })
+                    },
+                    body: JSON.stringify({
+                        type: 'POS',
+                        items: orderItems.map(item => ({
+                            productId: item.productId,
+                            name: item.name,
+                            quantity: item.quantity,
+                            originalPrice: item.originalPrice,
+                            discountPercentage: item.discount,
+                            finalPrice: item.price,
+                        })),
+                        amounts: {
+                            subtotal,
+                            discountTotal,
+                            totalAfterDiscount,
+                            taxRate,
+                            taxAmount,
+                            amountWithoutTax,
+                            amountWithTax,
+                            shipping: 0,
+                            grandTotal: amountWithTax,
+                        },
+                        payment: {
+                            amountPaid: paidNum,
+                            change: change,
+                            method: 'CASH',
+                        },
+                    }),
+                });
+                
+                const saleData = await saleResponse.json();
+                if (saleData.success) {
+                    savedInvoiceNumber = saleData.data.invoiceNumber;
+                    setInvoiceNumber(savedInvoiceNumber);
+                    console.log('✅ تم حفظ البيع برقم:', savedInvoiceNumber);
+                }
+            } catch (saleErr) {
+                console.error('⚠️ فشل حفظ البيع في السجل:', saleErr);
+            }
+
+            // حفظ الأوردر في /api/orders (النظام الحالي)
             const response = await fetch('/api/orders', {
                 method: 'POST',
                 headers: {
@@ -405,6 +504,28 @@ export default function POSPage() {
                             <span>إجمالي الفاتورة الصافي:</span>
                             <span className="font-mono text-2xl text-blue-600">{getCartTotal()} EGP</span>
                         </div>
+                        {/* 🆕 خانة المدفوع + الباقي */}
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">المدفوع من العميل:</label>
+                                <input
+                                    type="number"
+                                    value={amountPaid}
+                                    onChange={(e) => setAmountPaid(e.target.value)}
+                                    placeholder="0.00"
+                                    min="0"
+                                    step="0.01"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-center font-mono text-lg"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">الباقي للعميل:</label>
+                                <div className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-center font-mono text-lg font-bold text-green-700">
+                                    {((Number(amountPaid) || 0) - getCartTotal()).toFixed(2)} EGP
+                                </div>
+                            </div>
+                        </div>
+
                         <button
                             onClick={handleCheckoutAndPrint}
                             disabled={isSubmittingOrder || cart.length === 0}
@@ -482,8 +603,10 @@ export default function POSPage() {
                             <img src={qrCodeDataUrl} alt="Store QR Code" className="w-16 h-16 object-contain" />
                         </div>
                     )}
-                    <h2 className="text-sm font-bold tracking-wide">مكتبة دار اللغات</h2>
-                    <p className="text-[9px]">فاتورة مبيعات نقدية مبسطة (POS)</p>
+                    <h2 className="text-sm font-bold tracking-wide">{storeInfo.storeName}</h2>
+                    <p className="text-[9px] leading-tight">{storeInfo.address}</p>
+                    <p className="text-[9px] font-mono">📞 {storeInfo.phone}</p>
+                    <p className="text-[9px] font-mono font-bold mt-1">رقم البون: {invoiceNumber || '---'}</p>
                     <p className="text-[9px] font-mono">التاريخ: {new Date().toLocaleString('ar-EG')}</p>
                 </div>
 
@@ -518,9 +641,25 @@ export default function POSPage() {
                             <span className="font-mono">-{getCartTotalSavings()} EGP</span>
                         </div>
                     )}
+                    <div className="flex justify-between text-[9px] pt-0.5">
+                        <span>بدون ضريبة:</span>
+                        <span className="font-mono">{(getCartTotal() / (1 + taxRate / 100)).toFixed(2)} EGP</span>
+                    </div>
+                    <div className="flex justify-between text-[9px]">
+                        <span>الضريبة ({taxRate}%):</span>
+                        <span className="font-mono">{(getCartTotal() - (getCartTotal() / (1 + taxRate / 100))).toFixed(2)} EGP</span>
+                    </div>
                     <div className="flex justify-between font-extrabold text-sm border-t border-dotted border-gray-400 pt-0.5">
                         <span>الصافي الإجمالي:</span>
                         <span className="font-mono">{getCartTotal()} EGP</span>
+                    </div>
+                    <div className="flex justify-between text-[10px] font-bold border-t border-dotted border-gray-400 pt-1 mt-1">
+                        <span>المدفوع:</span>
+                        <span className="font-mono">{(Number(amountPaid) || 0).toFixed(2)} EGP</span>
+                    </div>
+                    <div className="flex justify-between text-[10px] font-bold">
+                        <span>الباقي:</span>
+                        <span className="font-mono">{((Number(amountPaid) || 0) - getCartTotal()).toFixed(2)} EGP</span>
                     </div>
                     <div className="flex justify-between text-[9px] pt-1">
                         <span>طريقة السداد:</span>
@@ -530,8 +669,8 @@ export default function POSPage() {
 
                 {/* التوثيق القانوني: السجل التجاري والرقم الضريبي أسفل الفاتورة لسلامة المنشأة */}
                 <div className="text-center text-[9px] space-y-0.5 border-t border-dotted border-gray-400 pt-2 pb-1 text-gray-700">
-                    <p className="font-semibold">السجل التجاري: 100160</p>
-                    <p className="font-semibold">الرقم الضريبي: 769499732</p>
+                    <p className="font-semibold">السجل التجاري: {storeInfo.commercialRegister}</p>
+                    <p className="font-semibold">الرقم الضريبي: {storeInfo.taxNumber}</p>
                     <p className="text-[8px] font-medium mt-1">شكراً لزيارتكم وثقتكم بمكتبة دار اللغات!</p>
                 </div>
             </div>

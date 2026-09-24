@@ -67,6 +67,17 @@ const OrdersPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [activePrintRequest, setActivePrintRequest] = useState<Order | null>(null);
     
+    // 🆕 إعدادات المتجر (نسبة الضريبة + البيانات)
+    const [settings, setSettings] = useState({
+        storeName: 'مكتبة دار اللغات',
+        address: 'محل 47 - دور أول - مول روضة العبور - الحي السادس - مدينة العبور',
+        phone: '01220396597',
+        commercialRegister: '100160',
+        taxNumber: '769499732',
+        taxRate: 14,
+        invoicePrefix: 'INV',
+    });
+    
     // 🎯 متغير جديد لتتبع نوع الرسالة المختارة لكل طلب بشكل مستقل
     const [selectedMsgTypes, setSelectedMessageType] = useState<Record<string, WhatsAppMessageType>>({});
 
@@ -88,6 +99,18 @@ const OrdersPage = () => {
             }
         };
         fetchOrders();
+    }, []);
+
+    // 🆕 تحميل الإعدادات
+    useEffect(() => {
+        fetch('/api/settings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    setSettings(data.data);
+                }
+            })
+            .catch(err => console.error('فشل تحميل الإعدادات:', err));
     }, []);
 
     const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
@@ -357,52 +380,86 @@ const OrdersPage = () => {
             {/* 🖨️ بوليصة الشحن الاحترافية لـ مكتبة دار اللغات: خط ضخم جداً (20px) وبراويز تمنع التقطيع */}
             {/* ========================================================================================= */}
             {activePrintRequest && (
-                <div className="printOnly" dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff' }}>
+                <div className="printOnly" dir="rtl" style={{ padding: '10px', color: '#000', background: '#fff', fontFamily: 'system-ui, sans-serif' }}>
                     
-                    {/* --- قسم الراسل (بيانات مكتبة دار اللغات الموحدة والمفردة صراحة) --- */}
+                    {/* رأس البوليصة: بيانات المتجر */}
                     <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold' }}>من (الراسل):</p>
-                        <h3 style={{ margin: '5px 0', fontSize: '16px', fontWeight: 'bold' }}>{businessInfo.name}</h3>
-                        <p style={{ margin: 0, fontSize: '11px' }}>{businessInfo.address}</p>
-                        <p style={{ margin: '5px 0 0 0', fontSize: '10px', fontWeight: 'bold' }}>الرقم الضريبي: {businessInfo.taxNumber}</p>
+                        <h2 style={{ margin: '5px 0', fontSize: '18px', fontWeight: 'bold' }}>{settings.storeName}</h2>
+                        <p style={{ margin: '3px 0', fontSize: '11px' }}>{settings.address}</p>
+                        <p style={{ margin: '3px 0', fontSize: '11px', fontWeight: 'bold' }}>📞 {settings.phone}</p>
+                        <p style={{ margin: '5px 0 0 0', fontSize: '10px' }}>الرقم الضريبي: {settings.taxNumber} | السجل: {settings.commercialRegister}</p>
                     </div>
 
-                    {/* --- قسم المستلم ببرواز سميك وخط ضخم جداً (20px) منعاً لخطأ التسليم وجلب الكاش للعبور --- */}
-                    <div style={{ border: '2px solid #000', padding: '15px', borderRadius: '8px', marginTop: '10px', textAlign: 'right' }}>
+                    {/* رقم الطلب والتاريخ */}
+                    <div style={{ border: '2px solid #000', padding: '8px', borderRadius: '8px', marginTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 'bold' }}>
+                        <span>رقم الطلب: {activePrintRequest.id.substring(0, 8).toUpperCase()}</span>
+                        <span>التاريخ: {new Date().toLocaleDateString('ar-EG')}</span>
+                    </div>
+
+                    {/* قسم المستلم */}
+                    <div style={{ border: '2px solid #000', padding: '12px', borderRadius: '8px', marginTop: '8px', textAlign: 'right' }}>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: 'bold' }}>إلى (المستلم):</p>
-                        <h3 style={{ margin: '8px 0', fontSize: '20px', fontWeight: 'bold' }}>{activePrintRequest.shippingAddress?.recipientName || 'عميل مجهول'}</h3>
-                        <p style={{ margin: '5px 0', fontSize: '14px', fontWeight: '500' }}>
+                        <h3 style={{ margin: '8px 0', fontSize: '18px', fontWeight: 'bold' }}>{activePrintRequest.shippingAddress?.recipientName || 'عميل مجهول'}</h3>
+                        <p style={{ margin: '5px 0', fontSize: '13px', fontWeight: '500' }}>
                             {activePrintRequest.source === 'POS' ? 'شراء مباشر من الفرع' : `${activePrintRequest.shippingAddress?.governorate || ''}، ${activePrintRequest.shippingAddress?.city || ''}، ${activePrintRequest.shippingAddress?.streetAddress || ''}`}
                         </p>
-                        <p style={{ margin: '8px 0 0 0', fontSize: '16px', fontWeight: 'bold' }}>
+                        <p style={{ margin: '8px 0 0 0', fontSize: '15px', fontWeight: 'bold' }}>
                             الهاتف: {activePrintRequest.shippingAddress?.phone || 'لا يوجد'}
                         </p>
                     </div>
 
-                    {/* --- قسم محتويات الطرد والمنتجات المصفاة بالمليم --- */}
-                    <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', marginTop: '10px', textAlign: 'right' }}>
+                    {/* قسم محتويات الطرد */}
+                    <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', marginTop: '8px', textAlign: 'right' }}>
                         <p style={{ margin: '0 0 5px 0', fontSize: '12px', fontWeight: 'bold' }}>📦 محتويات الطرد:</p>
                         <ul style={{ margin: 0, paddingRight: '15px', fontSize: '12px', listStyleType: 'disc' }}>
                             {activePrintRequest.items?.map((item, idx) => (
-                                <li key={idx} style={{ padding: '2px 0' }}>{item.name} (x{item.quantity})</li>
+                                <li key={idx} style={{ padding: '2px 0' }}>{item.name} (x{item.quantity}) - {item.price} EGP</li>
                             ))}
                         </ul>
                     </div>
 
-                    {/* --- قسم التحصيل والباركود الختامي للمندوب لقطع الرول التلقائي وبمصاريف صفر --- */}
-                    <div style={{ border: '2px solid #000', padding: '12px', borderRadius: '8px', marginTop: '10px', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px dashed #000', paddingBottom: '8px', marginBottom: '8px' }}>
-                            <span>💰 إجمالي المطلوب تحصيله:</span>
-                            <span>{(activePrintRequest.totalAmount || 0) + (activePrintRequest.source === 'POS' ? 0 : (activePrintRequest.shippingFee || 0))} EGP</span>
-                        </div>
-                        
-                        <div style={{ marginTop: '10px' }}>
-                            <div style={{ fontFamily: 'monospace', fontSize: '18px', letterSpacing: '3px', fontWeight: 'bold', margin: '5px 0' }}>
-                                *{activePrintRequest.id.substring(0, 8).toUpperCase()}*
-                            </div>
-                            <p style={{ margin: 0, fontSize: '11px', fontWeight: '500' }}>شحن سريع ومضمون - {businessInfo.name}</p>
-                            <p style={{ margin: '4px 0 0 0', fontSize: '9px', color: '#666' }}>رقم السجل: {businessInfo.commercialRecord}</p>
-                        </div>
+                    {/* قسم المبالغ */}
+                    <div style={{ border: '2px solid #000', padding: '10px', borderRadius: '8px', marginTop: '8px', textAlign: 'right' }}>
+                        {(() => {
+                            const itemsTotal = activePrintRequest.items?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0;
+                            const shipping = activePrintRequest.source === 'POS' ? 0 : (activePrintRequest.shippingFee || 0);
+                            const grandTotal = itemsTotal + shipping;
+                            const taxRate = settings.taxRate || 14;
+                            const amountWithoutTax = itemsTotal / (1 + taxRate / 100);
+                            const taxAmount = itemsTotal - amountWithoutTax;
+                            
+                            return (
+                                <>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
+                                        <span>المنتجات (قبل ضريبة):</span>
+                                        <span>{amountWithoutTax.toFixed(2)} EGP</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
+                                        <span>الضريبة ({taxRate}%):</span>
+                                        <span>{taxAmount.toFixed(2)} EGP</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0', borderTop: '1px dashed #000', marginTop: '3px', paddingTop: '5px' }}>
+                                        <span>إجمالي المنتجات:</span>
+                                        <span>{itemsTotal.toFixed(2)} EGP</span>
+                                    </div>
+                                    {shipping > 0 && (
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', padding: '3px 0' }}>
+                                            <span>الشحن:</span>
+                                            <span>{shipping.toFixed(2)} EGP</span>
+                                        </div>
+                                    )}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: 'bold', borderTop: '2px solid #000', paddingTop: '8px', marginTop: '8px' }}>
+                                        <span>الإجمالي المطلوب:</span>
+                                        <span>{grandTotal.toFixed(2)} EGP</span>
+                                    </div>
+                                </>
+                            );
+                        })()}
+                    </div>
+
+                    {/* الذيل */}
+                    <div style={{ textAlign: 'center', marginTop: '8px', fontSize: '10px', color: '#666' }}>
+                        <p style={{ margin: '3px 0' }}>شكراً لتعاملكم مع {settings.storeName}</p>
                     </div>
 
                 </div>
