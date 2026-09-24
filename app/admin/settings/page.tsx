@@ -17,7 +17,11 @@ interface StoreSettings {
 }
 
 const AdminSettingsPage = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, user } = useAuth();
+
+    // 🛡️ المالك فقط — الإعدادات حساسة
+    const OWNER_EMAIL = 'waelwasel37@gmail.com';
+    const isOwner = user?.email === OWNER_EMAIL;
 
     // حالة تحديث Slugs
     const [isLoading, setIsLoading] = useState(false);
@@ -103,6 +107,17 @@ const AdminSettingsPage = () => {
 
     if (!isAdmin) {
         return <p className="p-6 text-center text-red-500 font-bold">You do not have permission to view this page.</p>;
+    }
+
+    // 🛡️ المالك فقط
+    if (!isOwner) {
+        return (
+            <div className="max-w-4xl mx-auto p-6 text-center" dir="rtl">
+                <h1 className="text-2xl font-bold text-red-600 mb-4">🔒 الوصول مرفوض</h1>
+                <p className="text-gray-600">هذه الإعدادات متاحة للمالك فقط</p>
+                <p className="text-gray-400 text-xs mt-2">{user?.email || 'غير معروف'}</p>
+            </div>
+        );
     }
 
     // ─── حقل إدخال مع label ───

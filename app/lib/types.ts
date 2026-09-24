@@ -25,6 +25,7 @@ export type Product = {
   sku?: string;
   description?: string;
   discount?: number; // Discount percentage
+  taxRate?: number; // 🆕 نسبة الضريبة (لكل منتج — افتراضي 14)
   stock?: number; // Available stock quantity
   year?: number; // Manufacturing or release year
   imagePath?: string; // Path for Firebase Storage if applicable

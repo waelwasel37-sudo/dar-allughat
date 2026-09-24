@@ -11,6 +11,7 @@ import { FaBarcode, FaPrint, FaTrash, FaSearch, FaSpinner, FaPlus, FaMinus, FaCa
 import * as XLSX from 'xlsx';
 // 📱 مكتبة توليد الـ QR Code لتحويل رابط المتجر إلى رمز استجابة سريع في الفاتورة
 import QRCode from 'qrcode';
+import { useReactToPrint } from 'react-to-print';
 
 export default function POSPage() {
     const router = useRouter();
@@ -46,6 +47,8 @@ export default function POSPage() {
     });
     const [invoiceNumber, setInvoiceNumber] = useState<string>('');
     const [amountPaid, setAmountPaid] = useState<string>('');
+    // 🆕 Ref للفاتورة للطباعة
+    const invoiceRef = useRef<HTMLDivElement>(null);
 
     // 🆕 تحميل إعدادات المتجر (نسبة الضريبة + بيانات المتجر)
     useEffect(() => {
@@ -66,6 +69,12 @@ export default function POSPage() {
             })
             .catch(err => console.error('فشل تحميل الإعدادات:', err));
     }, []);
+
+    // 🆕 دالة الطباعة (react-to-print)
+    const handlePrint = useReactToPrint({
+        contentRef: invoiceRef,
+        documentTitle: `فاتورة-${invoiceNumber || 'POS'}`,
+    });
 
 
     // الـ References الخاصة بتجميع قراءات جهاز الباركود السريع
@@ -261,17 +270,24 @@ export default function POSPage() {
                 payment: { method: 'cash', status: 'paid' }
             };
 
-            // 🆕 حساب الإجماليات والضريبة (وفق القانون المصري)
+            // 🆕 حساب الإجماليات والضريبة (لكل منتج على حدة — وفق القانون المصري)
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const totalAfterDiscount = getCartTotal();
             const discountTotal = subtotal - totalAfterDiscount;
             
-            // الضريبة شاملة (نطلعها عكسي من السعر بعد الخصم)
-            const amountWithoutTax = totalAfterDiscount / (1 + taxRate / 100);
-            const taxAmount = totalAfterDiscount - amountWithoutTax;
-            const amountWithTax = totalAfterDiscount;
+            // الضريبة تُحسب على كل منتج على حدة (السعر بدون ضريبة)
+            const totalTax = cart.reduce((sum, item) => {
+                const itemSubtotal = getProductFinalPrice(item) * item.quantity;
+                const itemTaxRate = (item as any).taxRate ?? 0; // ضريبة المنتج (0 لو كتاب)
+                const taxForItem = itemSubtotal * (itemTaxRate / 100);
+                return sum + taxForItem;
+            }, 0);
             
-            // المدفوع والباقي
+            const amountWithoutTax = totalAfterDiscount;        // بدون ضريبة
+            const taxAmount = totalTax;                          // إجمالي الضريبة
+            const amountWithTax = amountWithoutTax + taxAmount;  // الإجمالي مع الضريبة
+            
+            // المدفوع والباقي (على الإجمالي مع الضريبة)
             const paidNum = Number(amountPaid) || 0;
             const change = paidNum - amountWithTax;
 
@@ -386,7 +402,7 @@ export default function POSPage() {
             }
             
             setTimeout(() => {
-                window.print();
+                handlePrint();
                 setCart([]);
                 setSuccessMessage(null);
             }, 1500); // زيادة طفيفة للوقت للسماح بقراءة الرسالة
@@ -593,7 +609,7 @@ export default function POSPage() {
             {/* ========================================================================= */}
 
       
-            <div className="print-only text-black p-1 font-mono w-full text-[11px] leading-tight" dir="rtl">
+            <div ref={invoiceRef} className="text-black p-1 font-mono w-full text-[11px] leading-tight" dir="rtl">
                 
                 {/* رأس الفاتورة: الشعار والاسم والـ QR code بالأعلى */}
                 <div className="text-center space-y-0.5 border-b border-black pb-2 mb-2">
@@ -614,19 +630,24 @@ export default function POSPage() {
                 <table className="w-full text-[10px] text-right mb-2 border-b border-black pb-1">
                     <thead>
                         <tr className="border-b border-black font-bold">
-                            <th className="pb-0.5 text-right w-3/5">الصنف</th>
-                            <th className="pb-0.5 text-center w-1/5">الكمية</th>
-                            <th className="pb-0.5 text-left w-2/5">السعر</th>
+                            <th className="pb-0.5 text-right w-2/5">الصنف</th>
+                            <th className="pb-0.5 text-center w-1/5">كمية</th>
+                            <th className="pb-0.5 text-center w-1/5">ضريبة</th>
+                            <th className="pb-0.5 text-left w-1/5">إجمالي</th>
                         </tr>
                     </thead>
                     <tbody>
                         {cart.map(item => {
                             const finalItemPrice = getProductFinalPrice(item);
+                            const itemTaxRate = (item as any).taxRate ?? 0;
+                            const itemSubtotal = finalItemPrice * item.quantity;
+                            const itemTax = itemSubtotal * (itemTaxRate / 100);
                             return (
                                 <tr key={item.id} className="border-b border-gray-200">
                                     <td className="py-0.5 font-medium text-[10px] leading-tight break-words">{item.name}</td>
                                     <td className="py-0.5 text-center font-mono">{item.quantity}</td>
-                                    <td className="py-0.5 text-left font-mono">{finalItemPrice * item.quantity} EGP</td>
+                                    <td className="py-0.5 text-center font-mono text-[9px]">{itemTaxRate > 0 ? itemTax.toFixed(2) : '—'}</td>
+                                    <td className="py-0.5 text-left font-mono">{itemSubtotal.toFixed(2)}</td>
                                 </tr>
                             );
                         })}
@@ -641,17 +662,33 @@ export default function POSPage() {
                             <span className="font-mono">-{getCartTotalSavings()} EGP</span>
                         </div>
                     )}
-                    <div className="flex justify-between text-[9px] pt-0.5">
-                        <span>بدون ضريبة:</span>
-                        <span className="font-mono">{(getCartTotal() / (1 + taxRate / 100)).toFixed(2)} EGP</span>
+                    <div className="flex justify-between font-bold border-t border-dotted border-gray-400 pt-0.5">
+                        <span>الإجمالي بعد الخصم:</span>
+                        <span className="font-mono">{getCartTotal().toFixed(2)} EGP</span>
                     </div>
                     <div className="flex justify-between text-[9px]">
-                        <span>الضريبة ({taxRate}%):</span>
-                        <span className="font-mono">{(getCartTotal() - (getCartTotal() / (1 + taxRate / 100))).toFixed(2)} EGP</span>
+                        <span>بدون ضريبة:</span>
+                        <span className="font-mono">{getCartTotal().toFixed(2)} EGP</span>
                     </div>
-                    <div className="flex justify-between font-extrabold text-sm border-t border-dotted border-gray-400 pt-0.5">
-                        <span>الصافي الإجمالي:</span>
-                        <span className="font-mono">{getCartTotal()} EGP</span>
+                    <div className="flex justify-between text-[9px]">
+                        <span>الضريبة:</span>
+                        <span className="font-mono">
+                            {cart.reduce((sum, item) => {
+                                const itemSubtotal = getProductFinalPrice(item) * item.quantity;
+                                const itemTaxRate = (item as any).taxRate ?? 0;
+                                return sum + (itemSubtotal * (itemTaxRate / 100));
+                            }, 0).toFixed(2)} EGP
+                        </span>
+                    </div>
+                    <div className="flex justify-between font-extrabold text-sm border-t border-black pt-0.5">
+                        <span>الإجمالي مع ضريبة:</span>
+                        <span className="font-mono">
+                            {(getCartTotal() + cart.reduce((sum, item) => {
+                                const itemSubtotal = getProductFinalPrice(item) * item.quantity;
+                                const itemTaxRate = (item as any).taxRate ?? 0;
+                                return sum + (itemSubtotal * (itemTaxRate / 100));
+                            }, 0)).toFixed(2)} EGP
+                        </span>
                     </div>
                     <div className="flex justify-between text-[10px] font-bold border-t border-dotted border-gray-400 pt-1 mt-1">
                         <span>المدفوع:</span>
@@ -659,7 +696,15 @@ export default function POSPage() {
                     </div>
                     <div className="flex justify-between text-[10px] font-bold">
                         <span>الباقي:</span>
-                        <span className="font-mono">{((Number(amountPaid) || 0) - getCartTotal()).toFixed(2)} EGP</span>
+                        <span className="font-mono">
+                            {((Number(amountPaid) || 0) - (
+                                getCartTotal() + cart.reduce((sum, item) => {
+                                    const itemSubtotal = getProductFinalPrice(item) * item.quantity;
+                                    const itemTaxRate = (item as any).taxRate ?? 0;
+                                    return sum + (itemSubtotal * (itemTaxRate / 100));
+                                }, 0)
+                            )).toFixed(2)} EGP
+                        </span>
                     </div>
                     <div className="flex justify-between text-[9px] pt-1">
                         <span>طريقة السداد:</span>

@@ -29,8 +29,12 @@ interface Order {
 
 const ReportsPage = () => {
     // 🛡️ تفعيل نظام جدار الأمان الذي اقترحته لحماية بيانات الخزينة
-    const { isAdmin, loading: authLoading } = useAuth();
+    const { isAdmin, loading: authLoading, user } = useAuth();
     const router = useRouter();
+
+    // 🛡️ المالك فقط — التقارير المحاسبية سرية
+    const OWNER_EMAIL = 'waelwasel37@gmail.com';
+    const isOwner = user?.email === OWNER_EMAIL;
 
     const [allOrders, setAllOrders] = useState<Order[]>([]); 
     const [reportData, setReportData] = useState<ProductReport[]>([]);
@@ -176,6 +180,19 @@ const ReportsPage = () => {
     // 🛑 منع عرض أي سطر في الصفحة طالما أن فحص الأمان جارٍ أو لو كان المستخدم غير مصرح له
     if (authLoading || !isAdmin) {
         return <div className={styles.loading}>يتم التحقق من صلاحيات الدخول وأمان الخزينة...</div>;
+    }
+
+    // 🛡️ المالك فقط — منع الموظفين من رؤية التقارير
+    if (!isOwner) {
+        return (
+            <div className={styles.container} style={{ textAlign: 'center', padding: '40px' }}>
+                <h1 style={{ color: '#dc2626', marginBottom: '16px' }}>�� الوصول مرفوض</h1>
+                <p style={{ color: '#6b7280' }}>هذه التقارير متاحة للمالك فقط</p>
+                <p style={{ color: '#9ca3af', fontSize: '12px', marginTop: '8px' }}>
+                    {user?.email || 'غير معروف'}
+                </p>
+            </div>
+        );
     }
 
     if (loading) {
