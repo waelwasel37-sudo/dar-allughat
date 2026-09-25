@@ -177,6 +177,71 @@ const ReportsPage = () => {
         XLSX.writeFile(workbook, fileName);
     };
 
+    // 🆕 تصدير تقرير الموظفين إلى Excel
+    const handleExportEmployees = () => {
+        if (salesData.length === 0) {
+            alert('لا توجد بيانات لتصديرها.');
+            return;
+        }
+
+        // تجميع المبيعات حسب الموظف (نفس المنطق اللي في العرض)
+        const byEmployee: Record<string, {
+            name: string;
+            email: string;
+            count: number;
+            totalSales: number;
+            totalDiscount: number;
+            totalTax: number;
+            lastSale: number;
+        }> = {};
+
+        salesData.forEach((sale: any) => {
+            const key = sale.employeeEmail || 'unknown';
+            if (!byEmployee[key]) {
+                byEmployee[key] = {
+                    name: sale.employeeName || 'غير معروف',
+                    email: sale.employeeEmail || '',
+                    count: 0,
+                    totalSales: 0,
+                    totalDiscount: 0,
+                    totalTax: 0,
+                    lastSale: 0,
+                };
+            }
+            byEmployee[key].count += 1;
+            byEmployee[key].totalSales += (sale.grandTotal || 0);
+            byEmployee[key].totalDiscount += (sale.discountTotal || 0);
+            byEmployee[key].totalTax += (sale.taxAmount || 0);
+            const saleTimestamp = sale.timestamp || (sale.date ? new Date(sale.date).getTime() : 0);
+            if (saleTimestamp > byEmployee[key].lastSale) {
+                byEmployee[key].lastSale = saleTimestamp;
+            }
+        });
+
+        const dataToExport = Object.entries(byEmployee).map(([email, emp], index) => ({
+            '#': index + 1,
+            'الموظف': emp.name,
+            'الإيميل': emp.email,
+            'آخر نشاط': emp.lastSale ? new Date(emp.lastSale).toLocaleString('ar-EG') : '—',
+            'عدد الفواتير': emp.count,
+            'إجمالي المبيعات (EGP)': Number(emp.totalSales.toFixed(2)),
+            'إجمالي الخصم (EGP)': Number(emp.totalDiscount.toFixed(2)),
+            'إجمالي الضريبة (EGP)': Number(emp.totalTax.toFixed(2)),
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'تقرير الموظفين');
+
+        worksheet['!cols'] = [
+            { wch: 5 }, { wch: 20 }, { wch: 30 }, { wch: 20 },
+            { wch: 12 }, { wch: 20 }, { wch: 18 }, { wch: 18 },
+        ];
+
+        const fileName = `تقرير_الموظفين_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+    };
+
     // 🛑 منع عرض أي سطر في الصفحة طالما أن فحص الأمان جارٍ أو لو كان المستخدم غير مصرح له
     if (authLoading || !isAdmin) {
         return <div className={styles.loading}>يتم التحقق من صلاحيات الدخول وأمان الخزينة...</div>;
@@ -303,7 +368,15 @@ const ReportsPage = () => {
             {/* ═══════════════════════════════════════════════════ */}
             {activeTab === 'employees' && (
                 <div>
-                    <h1 className={styles.title} style={{ marginBottom: '16px' }}>👤 تقرير مبيعات الموظفين</h1>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+                        <h1 className={styles.title} style={{ margin: 0 }}>👤 تقرير مبيعات الموظفين</h1>
+                        {salesData.length > 0 && (
+                            <button onClick={handleExportEmployees} className={styles.exportButton}>
+                                <FaFileExcel />
+                                <span>تصدير إلى Excel</span>
+                            </button>
+                        )}
+                    </div>
                     
                     {salesLoading ? (
                         <div className={styles.loading}>جاري تحميل بيانات المبيعات...</div>
@@ -316,6 +389,7 @@ const ReportsPage = () => {
                                     <tr style={{ background: '#f3f4f6' }}>
                                         <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #e5e7eb' }}>#</th>
                                         <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #e5e7eb' }}>الموظف</th>
+                                        <th style={{ padding: '10px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>آخر نشاط</th>
                                         <th style={{ padding: '10px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>عدد الفواتير</th>
                                         <th style={{ padding: '10px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>إجمالي المبيعات</th>
                                         <th style={{ padding: '10px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>إجمالي الخصم</th>
@@ -332,6 +406,7 @@ const ReportsPage = () => {
                                             totalSales: number;
                                             totalDiscount: number;
                                             totalTax: number;
+                                            lastSale: number;
                                         }> = {};
                                         
                                         salesData.forEach((sale: any) => {
@@ -344,12 +419,17 @@ const ReportsPage = () => {
                                                     totalSales: 0,
                                                     totalDiscount: 0,
                                                     totalTax: 0,
+                                                    lastSale: 0,
                                                 };
                                             }
                                             byEmployee[key].count += 1;
                                             byEmployee[key].totalSales += (sale.grandTotal || 0);
                                             byEmployee[key].totalDiscount += (sale.discountTotal || 0);
                                             byEmployee[key].totalTax += (sale.taxAmount || 0);
+                                            const saleTimestamp = sale.timestamp || (sale.date ? new Date(sale.date).getTime() : 0);
+                                            if (saleTimestamp > byEmployee[key].lastSale) {
+                                                byEmployee[key].lastSale = saleTimestamp;
+                                            }
                                         });
                                         
                                         return Object.entries(byEmployee).map(([email, emp], index) => (
@@ -358,6 +438,9 @@ const ReportsPage = () => {
                                                 <td style={{ padding: '10px', textAlign: 'right' }}>
                                                     <div style={{ fontWeight: 'bold' }}>{emp.name}</div>
                                                     <div style={{ fontSize: '11px', color: '#6b7280' }}>{emp.email}</div>
+                                                </td>
+                                                <td style={{ padding: '10px', textAlign: 'center', fontSize: '11px', color: '#6b7280' }}>
+                                                    {emp.lastSale ? new Date(emp.lastSale).toLocaleString('ar-EG') : '—'}
                                                 </td>
                                                 <td style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', color: '#3b82f6' }}>{emp.count}</td>
                                                 <td style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', color: '#16a34a' }}>{emp.totalSales.toFixed(2)} EGP</td>
