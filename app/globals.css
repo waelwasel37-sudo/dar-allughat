@@ -213,6 +213,33 @@ a:hover {
   pointer-events: none;
 }
 
+/* 🎬 تأثيرات hover */
+.btn-school-list:hover,
+.btn-factory-supplies:hover {
+  transform: translateY(-3px) scale(1.02);
+}
+
+.btn-school-list:hover {
+  background-color: var(--color-primary-dark, #0a2e54);
+  box-shadow: 0 8px 20px rgba(10, 46, 84, 0.35);
+}
+
+.btn-factory-supplies:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+}
+
+.btn-school-list:hover::before,
+.btn-factory-supplies:hover::before {
+  left: 100%;
+}
+
+.btn-school-list:active,
+.btn-factory-supplies:active {
+  transform: translateY(-1px) scale(0.98);
+  transition: all 0.1s ease;
+}
+
 /* ✅ زر توريدات مصانع ومؤسسات - أخضر زمردي */
 .btn-factory-supplies {
   display: flex;

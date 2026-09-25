@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { FaSearch, FaBuilding } from 'react-icons/fa';
 import { Category } from '@/app/lib/types';
@@ -20,6 +21,18 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [isSchoolListOpen, setSchoolListOpen] = useState(false);
   const [isFactorySupplyOpen, setFactorySupplyOpen] = useState(false);
+
+  // 🆕 البحث المؤجل (Debounce) — 300ms
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value.trim()) {
+      params.set('q', value.trim());
+    } else {
+      params.delete('q');
+    }
+    const newUrl = params.toString() ? '?' + params.toString() : '';
+    router.push(pathname + newUrl, { scroll: false });
+  }, 300);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,14 +69,7 @@ export default function SearchAndFilter({ categories }: SearchAndFilterProps) {
               onChange={(e) => {
                 const value = e.target.value;
                 setSearchQuery(value);
-                const params = new URLSearchParams(searchParams.toString());
-                if (value.trim()) {
-                  params.set('q', value.trim());
-                } else {
-                  params.delete('q');
-                }
-                const newUrl = params.toString() ? `?${params.toString()}` : '';
-                router.push(`${pathname}${newUrl}`, { scroll: false });
+                debouncedSearch(value);
               }}
               placeholder="ابحث عن كتاب، سبلايز، أو لعبة منتسوري..."
               style={{ 

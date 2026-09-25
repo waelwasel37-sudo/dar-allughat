@@ -14,6 +14,7 @@ const adminApp: App = getApps().length
 // Initialize services once.
 const db: Firestore = getFirestore(adminApp); // اتصال بقاعدة البيانات (default)
 
+
 // 🎯 استخدام الصيغة المتوافقة مع آخر تحديث للحزم لمنع أي تضارب
 const db_secondary: Firestore = getFirestore(adminApp); 
 

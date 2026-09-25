@@ -106,7 +106,13 @@ export async function generateInvoiceNumber(): Promise<string> {
 // ─── 3. حفظ البيع ───
 export async function saveSale(sale: Sale): Promise<void> {
     const db = getDb();
-    await db.collection('sales').doc(sale.invoiceNumber).set(sale);
+    
+    // 🆕 تنظيف الحقول الفاضية (undefined) — Firestore مايقبلهاش
+    const cleanSale = Object.fromEntries(
+        Object.entries(sale).filter(([_, v]) => v !== undefined)
+    );
+    
+    await db.collection('sales').doc(sale.invoiceNumber).set(cleanSale);
 }
 
 // ─── 4. قراءة المبيعات (للتقارير) ───
