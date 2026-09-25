@@ -42,7 +42,9 @@ export async function POST(request: NextRequest) {
       value: sessionCookie,
       maxAge: expiresIn,
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
     };
 
     // 🔑 إرجاع استجابة النجاح المخصصة وتمرير علم الـ isAdmin للمتصفح بحسم

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import styles from './Post.module.css';
 import VideoPlayer from '../VideoPlayer';
 import Image from 'next/image';
-import { marked } from 'marked';
+import MarkdownIt from 'markdown-it';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,11 +46,20 @@ export default async function PostPage({ params }: PageProps) {
         notFound();
     }
 
-    // 🎯 الحل الأضمن: تفعيل ميزة تحويل الروابط النصية الخام تلقائياً عبر إعدادات marked
-    const parsedContent = await marked.parse(post.content || '', {
-        gfm: true,        // تفعيل GitHub Flavored Markdown للتعرف على الروابط الخام
-        breaks: true      // تحويل السطور الجديدة إلى <br> تلقائياً لضبط التنسيق العربي
+    // 🎯 الحل الجديد: markdown-it مع linkify
+    const md = new MarkdownIt({
+        html: true,
+        linkify: true,
+        typographer: true,
+        breaks: true
     });
+
+    let parsedContent = md.render(post.content || '');
+
+    parsedContent = parsedContent.replace(
+        /<a href="([^"]+)"/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer"'
+    );
 
     return (
         <article className={`${styles.container} post-responsive-wrapper`}>

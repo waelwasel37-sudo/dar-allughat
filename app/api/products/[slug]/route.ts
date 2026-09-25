@@ -112,6 +112,23 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
             updatedAt: firestore.FieldValue.serverTimestamp(),
         };
         
+        // 🆕 احذف الصور القديمة اللي اتغيرت
+        const oldFiles = [currentData.imageUrl, currentData.secondaryImageUrl, currentData.videoUrl].filter(Boolean) as string[];
+        const newFiles = [productUpdateData.imageUrl, productUpdateData.secondaryImageUrl, productUpdateData.videoUrl].filter(Boolean) as string[];
+        
+        const bucket = getBucket();
+        for (const oldUrl of oldFiles) {
+            if (!newFiles.includes(oldUrl)) {
+                const filePath = getPathFromUrl(oldUrl);
+                if (filePath) {
+                    await bucket.file(filePath).delete().catch((e: any) => 
+                        console.warn(`⚠️ فشل حذف ملف قديم: ${filePath}`, e.message)
+                    );
+                    console.log(`🗑️ تم حذف ملف قديم: ${filePath}`);
+                }
+            }
+        }
+
         await productDocRef.update(finalUpdateData);
         console.log('✅ تم تحديث المنتج في قاعدة البيانات.');
 
@@ -156,7 +173,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
         const doc = snapshot.docs[0];
         const data = doc.data() as Product;
 
-        const fileUrls = [data.imageUrl, data.secondaryImageUrl].filter(Boolean) as string[];
+        const fileUrls = [data.imageUrl, data.secondaryImageUrl, data.videoUrl].filter(Boolean) as string[];  // 🆕 videoUrl
         for (const url of fileUrls) {
             const filePath = getPathFromUrl(url);
             if (filePath) {
