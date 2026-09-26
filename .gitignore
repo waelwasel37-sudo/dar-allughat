@@ -56,3 +56,10 @@ firestore-debug.log
 *.backup_before_fix
 *.backup_before_fix2
 _backup/
+
+# Backup files — don't commit
+*.before_*
+*.backup_*
+*.bak
+firestore.rules.before_*
+storage.rules.before_*
