@@ -63,3 +63,7 @@ _backup/
 *.bak
 firestore.rules.before_*
 storage.rules.before_*
+
+# Rules backups
+firestore.rules.CURRENT
+storage.rules.CURRENT
