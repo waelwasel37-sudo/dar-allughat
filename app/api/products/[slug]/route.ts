@@ -8,6 +8,18 @@ import { revalidateTag } from 'next/cache'; // استيراد دالة تحدي�
 
 export const dynamic = 'force-dynamic';
 
+// 🎯 قائمة الموظفين (يقدر يعدلوا المخزون + بيانات المنتج)
+const STAFF_EMAILS = [
+    'waelwasel37@gmail.com',   // المالك
+    'dallughat@gmail.com',      // موظف 1
+    'bondka111@gmail.com'       // موظف 2
+];
+
+// 🎯 المالك فقط (حذف + إجراءات حساسة)
+const OWNER_EMAILS = [
+    'waelwasel37@gmail.com'
+];
+
 interface RouteParams {
     params: Promise<{ slug: string }>;
 }
@@ -78,7 +90,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
         const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, false);
         
-        if (decodedToken.email !== "waelwasel37@gmail.com") {
+        if (!STAFF_EMAILS.includes(decodedToken.email || "")) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
@@ -162,8 +174,9 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
         
         const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, false);
         
-        if (decodedToken.email !== "waelwasel37@gmail.com") {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        // 🆕 الحذف للمالك فقط
+        if (!decodedToken.email || !OWNER_EMAILS.includes(decodedToken.email)) {
+            return NextResponse.json({ error: 'Forbidden — Owner only' }, { status: 403 });
         }
 
         const productsRef = db.collection('products');

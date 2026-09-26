@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { getAdminAuth } from "@/app/lib/firebase-admin";
 import { getSecondaryDb } from "@/app/lib/firebase-admin";
 import admin from 'firebase-admin';
 
@@ -34,6 +36,31 @@ export async function POST(req: NextRequest) {
 // GET all factory supply requests
 export async function GET(req: NextRequest) {
     try {
+        // 🆕 التحقق من المصادقة
+        const firebaseAuth = getAdminAuth();
+        const cookieStore = await cookies();
+        const sessionCookie = cookieStore.get("__session")?.value;
+        
+        if (!sessionCookie) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        
+        const decodedToken = await firebaseAuth.verifySessionCookie(sessionCookie, true).catch(() => null);
+        if (!decodedToken) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        // 🆕 الموظفين المسموح لهم (المالك + المحررين)
+        const STAFF_EMAILS = [
+            'waelwasel37@gmail.com',
+            'dallughat@gmail.com',
+            'bondka111@gmail.com'
+        ];
+        
+        if (!decodedToken.email || !STAFF_EMAILS.includes(decodedToken.email)) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
+
         const db = await getSecondaryDb();
         const suppliesCollection = db.collection("factory-supplies");
         const suppliesSnapshot = await suppliesCollection.orderBy("createdAt", "desc").get();

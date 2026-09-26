@@ -1,0 +1,58 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // 🎯 دالة للتحقق من الموظفين
+    function isStaff() {
+      return request.auth != null && 
+             request.auth.token.email in [
+               "waelwasel37@gmail.com",
+               "dallughat@gmail.com",
+               "bondka111@gmail.com"
+             ];
+    }
+
+    // 🎯 المالك فقط
+    function isOwner() {
+      return request.auth != null && 
+             request.auth.token.email == "waelwasel37@gmail.com";
+    }
+
+    // 1. قراءة أي صورة للجميع
+    match /{allPaths=**} {
+      allow read: if true;
+    }
+
+    // 2. المنتجات — للأدمن + الموظفين
+    match /products/{allPaths=**} {
+      allow create, update, delete: if 
+        isStaff() &&
+        request.resource.size < 10 * 1024 * 1024 &&
+        (request.resource.contentType.matches('image/.*') || 
+         request.resource.contentType.matches('video/.*'));
+    }
+
+    // 3. قوائم المدارس — الجمهور يرفع
+    match /school-lists/{allPaths=**} {
+      allow create: if 
+        request.resource.size < 10 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+      allow update, delete: if isStaff();
+    }
+
+    // 4. التوريدات — الجمهور يرفع
+    match /supplies/{allPaths=**} {
+      allow create: if 
+        request.resource.size < 10 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+      allow update, delete: if isStaff();
+    }
+
+    // 5. المقالات — للأدمن + الموظفين
+    match /posts/{allPaths=**} {
+      allow create, update, delete: if 
+        isStaff() &&
+        request.resource.size < 20 * 1024 * 1024;
+    }
+  }
+}

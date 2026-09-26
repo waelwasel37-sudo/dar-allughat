@@ -2,54 +2,74 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 🔑 دالة مساعدة للتحقق من صلاحيات المدير (Admin)
+    // 🔑 الأدمن (المالك)
     function isAdmin() {
-      return request.auth != null && request.auth.token.role == 'admin';
+      return request.auth != null && 
+             request.auth.token.email == 'waelwasel37@gmail.com';
     }
 
-    // 📦 مجموعة المنتجات (Products) - البحث يتم بالـ Slug
+    // 🎯 Editor (موظف)
+    function isEditor() {
+      return request.auth != null && 
+             request.auth.token.email in [
+               'waelwasel37@gmail.com',
+               'dallughat@gmail.com',
+               'bondka111@gmail.com'
+             ];
+    }
+
+    // 📦 المنتجات
     match /products/{slug} {
-      // السماح للجميع بقراءة وتصفح المنتجات
       allow read, get, list: if true;
-      // منع الكتابة أو التعديل أو الحذف إلا للمدير فقط
-      allow write: if isAdmin();
+      allow write: if isEditor();
     }
 
-    // 📝 مجموعة المقالات (Posts) - البحث يتم بالـ Slug
+    // 📝 المقالات
     match /posts/{slug} {
-      // السماح للجميع بقراءة وتصفح المقالات والمدونة
       allow read, get, list: if true;
-      // منع الكتابة أو التعديل أو الحذف إلا للمدير فقط
-      allow write: if isAdmin();
+      allow write: if isEditor();
     }
 
-    // 🏷️ مجموعة الفئات والتصنيفات (Categories)
+    // 🏷️ الفئات
     match /categories/{categoryId} {
-      // السماح للجميع بقراءة التصنيفات لتظهر في القوائم
       allow read, get, list: if true;
-      // منع تعديلها أو إضافتها إلا للمدير فقط
+      allow write: if isEditor();
+    }
+
+    // 🛒 الطلبات
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, get, list, update, delete: if isAdmin();
+    }
+
+    // 🏫 قوائم المدارس
+    match /school-lists/{listId} {
+      allow create: if true;
+      allow read, get, list, update, delete: if isEditor();
+    }
+
+    // 🏭 التوريدات
+    match /factory-supplies/{id} {
+      allow create: if true;
+      allow read, get, list, update, delete: if isEditor();
+    }
+
+    // 💰 المبيعات
+    match /sales/{invoiceNumber} {
+      allow create: if isEditor();
+      allow read, get, list: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ⚙️ الإعدادات
+    match /settings/{doc} {
+      allow read: if true;
       allow write: if isAdmin();
     }
 
-    // 🛒 مجموعة طلبات الشراء (Orders)
-    match /orders/{orderId} {
-      // مسموح لأي زائر أو زبون بإنشاء وإرسال طلب شراء جديد
-      allow create: if true;
-      // قراءة الطلبات أو تعديل حالتها أو حذفها محصور فقط بالمدير لحماية خصوصية المشترين
-      allow read, get, list, update, delete: if isAdmin();
-    }
-
-    // 🏫 مجموعة قوائم المدارس (School-lists)
-    match /school-lists/{listId} {
-      // مسموح لأي مستخدم (الجمهور) برفع قائمة مدرسته (الاسم، الهاتف، الصورة)
-      allow create: if true;
-      // تصفح القوائم المرفوعة أو تحميلها أو إدارتها محصور فقط بالمدير
-      allow read, get, list, update, delete: if isAdmin();
-    }
-
-    // 🔒 حظر شامل لأي مجلدات أو مستندات أخرى غير مذكورة أعلاه
+    // 🔒 منع كل حاجة تانية
     match /{document=**} {
-      allow read, write: if isAdmin();
+      allow read, write: if false;
     }
   }
 }
