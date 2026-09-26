@@ -43,37 +43,11 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://dar-allughat.com'),
-    title: {
-        default: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
-        template: '%s | مكتبة دار اللغات',
-    },
+    title: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
     description: 'مرحباً بكم في مكتبة دار اللغات في مدينة العبور. نوفر لأبنائكم تشكيلة متكاملة من كتب خارجية، كتب مدرسية، كتب أزهري، كتب تأسيس، وقصص أطفال وألعاب تنمية مهارات أطفال منتسوري بأسعار تنافسية.',
-    keywords: [
-        'مكتبة دار اللغات',
-        'مكتبة العبور',
-        'كتب خارجية',
-        'كتب مدرسية',
-        'كتب أزهري',
-        'كتب تأسيس',
-        'قصص أطفال',
-        'ألعاب منتسوري',
-        'مستلزمات مدرسية',
-        'العبور',
-    ],
-    authors: [{ name: 'مكتبة دار اللغات' }],
-    creator: 'مكتبة دار اللغات',
-    publisher: 'مكتبة دار اللغات',
-    formatDetection: {
-        email: false,
-        address: false,
-        telephone: false,
-    },
     icons: {
       icon: '/images/logo-circular.png1.png',
       apple: '/images/logo-circular.png1.png',
-    },
-    alternates: {
-        canonical: '/',
     },
     openGraph: {
       title: 'مكتبة دار اللغات بالعبور - المنصة الأولى للكتب والمستلزمات التعليمية',
@@ -81,36 +55,7 @@ export const metadata: Metadata = {
       siteName: 'مكتبة دار اللغات',
       type: 'website',
       locale: 'ar_EG',
-      url: '/',
-      images: [
-        {
-          url: '/images/logo-circular.png1.png',
-          width: 1200,
-          height: 630,
-          alt: 'مكتبة دار اللغات - الكتب والمستلزمات التعليمية',
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'مكتبة دار اللغات بالعبور',
-      description: 'المنصة الأولى للكتب والمستلزمات التعليمية في العبور',
-      images: ['/images/logo-circular.png1.png'],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
-    verification: {
-      google: '',
-    },
+    }
 };
 
 async function getSessionData(): Promise<SessionData> {

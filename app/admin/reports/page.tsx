@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 // 🌟 استيراد سياق الحماية لحظر زوار الموقع غير المصرح لهم
 import { useAuth } from '../../context/AuthContext';
@@ -48,6 +48,9 @@ const ReportsPage = () => {
     // 🆕 State لبيانات المبيعات (للتقرير الموظفين)
     const [salesData, setSalesData] = useState<any[]>([]);
     const [salesLoading, setSalesLoading] = useState(false);
+    
+    // 🆕 State للموظف المفتوح (عرض تفاصيل فواتيره)
+    const [expandedEmployee, setExpandedEmployee] = useState<string | null>(null);
 
     // 🔒 جدار الحماية: طرد أي عميل أونلاين يحاول التسلل لصفحة أرباح المحل
     useEffect(() => {
@@ -236,6 +239,51 @@ const ReportsPage = () => {
         worksheet['!cols'] = [
             { wch: 5 }, { wch: 20 }, { wch: 30 }, { wch: 20 },
             { wch: 12 }, { wch: 20 }, { wch: 18 }, { wch: 18 },
+        ];
+
+        // 🆕 الشيت الأول: الإجماليات
+        const summarySheet = XLSX.utils.json_to_sheet(dataToExport);
+        XLSX.utils.book_append_sheet(workbook, summarySheet, 'إجماليات الموظفين');
+        
+        summarySheet['!cols'] = [
+            { wch: 5 }, { wch: 20 }, { wch: 30 }, { wch: 20 },
+            { wch: 12 }, { wch: 20 }, { wch: 18 }, { wch: 18 },
+        ];
+
+        // 🆕 الشيت الثاني: تفاصيل كل الفواتير
+        const detailsData: any[] = [];
+        salesData
+            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+            .forEach((sale) => {
+                const itemsText = sale.items?.map((item: any) => 
+                    `${item.name} × ${item.quantity}`
+                ).join(' | ') || '—';
+                
+                detailsData.push({
+                    'رقم البون': sale.invoiceNumber,
+                    'التاريخ': sale.timestamp 
+                        ? new Date(sale.timestamp).toLocaleString('ar-EG')
+                        : (sale.date ? new Date(sale.date).toLocaleString('ar-EG') : '—'),
+                    'الموظف': sale.employeeName || '—',
+                    'الإيميل': sale.employeeEmail || '—',
+                    'المنتجات': itemsText,
+                    'عدد المنتجات': sale.items?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 0,
+                    'الإجمالي (EGP)': Number((sale.grandTotal || 0).toFixed(2)),
+                    'الخصم (EGP)': Number((sale.discountTotal || 0).toFixed(2)),
+                    'الضريبة (EGP)': Number((sale.taxAmount || 0).toFixed(2)),
+                    'المدفوع (EGP)': Number((sale.amountPaid || 0).toFixed(2)),
+                    'الباقي (EGP)': Number((sale.change || 0).toFixed(2)),
+                    'طريقة الدفع': sale.paymentMethod || 'CASH',
+                });
+            });
+
+        const detailsSheet = XLSX.utils.json_to_sheet(detailsData);
+        XLSX.utils.book_append_sheet(workbook, detailsSheet, 'تفاصيل الفواتير');
+
+        detailsSheet['!cols'] = [
+            { wch: 22 }, { wch: 20 }, { wch: 15 }, { wch: 30 },
+            { wch: 50 }, { wch: 12 }, { wch: 15 }, { wch: 15 },
+            { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 12 },
         ];
 
         const fileName = `تقرير_الموظفين_${new Date().toISOString().slice(0, 10)}.xlsx`;
@@ -433,20 +481,102 @@ const ReportsPage = () => {
                                         });
                                         
                                         return Object.entries(byEmployee).map(([email, emp], index) => (
-                                            <tr key={email} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                                <td style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold' }}>{index + 1}</td>
-                                                <td style={{ padding: '10px', textAlign: 'right' }}>
-                                                    <div style={{ fontWeight: 'bold' }}>{emp.name}</div>
-                                                    <div style={{ fontSize: '11px', color: '#6b7280' }}>{emp.email}</div>
-                                                </td>
-                                                <td style={{ padding: '10px', textAlign: 'center', fontSize: '11px', color: '#6b7280' }}>
-                                                    {emp.lastSale ? new Date(emp.lastSale).toLocaleString('ar-EG') : '—'}
-                                                </td>
-                                                <td style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', color: '#3b82f6' }}>{emp.count}</td>
-                                                <td style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', color: '#16a34a' }}>{emp.totalSales.toFixed(2)} EGP</td>
-                                                <td style={{ padding: '10px', textAlign: 'center', color: '#dc2626' }}>-{emp.totalDiscount.toFixed(2)} EGP</td>
-                                                <td style={{ padding: '10px', textAlign: 'center', color: '#7c3aed' }}>{emp.totalTax.toFixed(2)} EGP</td>
-                                            </tr>
+                                            <React.Fragment key={email}>
+                                                <tr 
+                                                    style={{ 
+                                                        borderBottom: '1px solid #e5e7eb',
+                                                        cursor: 'pointer',
+                                                        background: expandedEmployee === email ? '#eff6ff' : 'transparent',
+                                                        transition: 'background 0.2s'
+                                                    }}
+                                                    onClick={() => setExpandedEmployee(expandedEmployee === email ? null : email)}
+                                                >
+                                                    <td style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold' }}>
+                                                        <span style={{ 
+                                                            display: 'inline-block',
+                                                            transform: expandedEmployee === email ? 'rotate(90deg)' : 'rotate(0deg)',
+                                                            transition: 'transform 0.2s',
+                                                            marginLeft: '6px',
+                                                            color: '#3b82f6',
+                                                            fontSize: '10px'
+                                                        }}>▶</span>
+                                                        {index + 1}
+                                                    </td>
+                                                    <td style={{ padding: '10px', textAlign: 'right' }}>
+                                                        <div style={{ fontWeight: 'bold' }}>{emp.name}</div>
+                                                        <div style={{ fontSize: '11px', color: '#6b7280' }}>{emp.email}</div>
+                                                    </td>
+                                                    <td style={{ padding: '10px', textAlign: 'center', fontSize: '11px', color: '#6b7280' }}>
+                                                        {emp.lastSale ? new Date(emp.lastSale).toLocaleString('ar-EG') : '—'}
+                                                    </td>
+                                                    <td style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', color: '#3b82f6' }}>{emp.count}</td>
+                                                    <td style={{ padding: '10px', textAlign: 'center', fontWeight: 'bold', color: '#16a34a' }}>{emp.totalSales.toFixed(2)} EGP</td>
+                                                    <td style={{ padding: '10px', textAlign: 'center', color: '#dc2626' }}>-{emp.totalDiscount.toFixed(2)} EGP</td>
+                                                    <td style={{ padding: '10px', textAlign: 'center', color: '#7c3aed' }}>{emp.totalTax.toFixed(2)} EGP</td>
+                                                </tr>
+                                                {expandedEmployee === email && (
+                                                    <tr>
+                                                        <td colSpan={7} style={{ padding: 0, background: '#f9fafb', borderBottom: '2px solid #3b82f6' }}>
+                                                            <div style={{ padding: '16px' }}>
+                                                                <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold', color: '#1f2937' }}>
+                                                                    📋 تفاصيل فواتير {emp.name}
+                                                                </h4>
+                                                                <div style={{ overflowX: 'auto' }}>
+                                                                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', background: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                                                                        <thead>
+                                                                            <tr style={{ background: '#f3f4f6' }}>
+                                                                                <th style={{ padding: '8px', textAlign: 'right', borderBottom: '1px solid #e5e7eb' }}>رقم البون</th>
+                                                                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>التاريخ</th>
+                                                                                <th style={{ padding: '8px', textAlign: 'right', borderBottom: '1px solid #e5e7eb' }}>المنتجات</th>
+                                                                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>الإجمالي</th>
+                                                                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>المدفوع</th>
+                                                                                <th style={{ padding: '8px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>الباقي</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {salesData
+                                                                                .filter((sale) => sale.employeeEmail === email)
+                                                                                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                                                                                .map((sale, idx) => (
+                                                                                    <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                                                                                        <td style={{ padding: '8px', textAlign: 'right', fontFamily: 'monospace', fontSize: '11px', color: '#3b82f6', fontWeight: 'bold' }}>
+                                                                                            {sale.invoiceNumber}
+                                                                                        </td>
+                                                                                        <td style={{ padding: '8px', textAlign: 'center', fontSize: '11px', color: '#6b7280' }}>
+                                                                                            {sale.timestamp ? new Date(sale.timestamp).toLocaleString('ar-EG') : (sale.date ? new Date(sale.date).toLocaleString('ar-EG') : '—')}
+                                                                                        </td>
+                                                                                        <td style={{ padding: '8px', textAlign: 'right' }}>
+                                                                                            {sale.items && sale.items.length > 0 ? (
+                                                                                                <ul style={{ margin: 0, paddingRight: '16px', listStyleType: 'disc' }}>
+                                                                                                    {sale.items.map((item, i) => (
+                                                                                                        <li key={i} style={{ fontSize: '11px', padding: '1px 0' }}>
+                                                                                                            {item.name} <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>× {item.quantity}</span>
+                                                                                                        </li>
+                                                                                                    ))}
+                                                                                                </ul>
+                                                                                            ) : (
+                                                                                                <span style={{ color: '#9ca3af' }}>—</span>
+                                                                                            )}
+                                                                                        </td>
+                                                                                        <td style={{ padding: '8px', textAlign: 'center', fontWeight: 'bold', color: '#16a34a' }}>
+                                                                                            {sale.grandTotal?.toFixed(2) || '0.00'} EGP
+                                                                                        </td>
+                                                                                        <td style={{ padding: '8px', textAlign: 'center', color: '#3b82f6' }}>
+                                                                                            {sale.amountPaid?.toFixed(2) || '0.00'} EGP
+                                                                                        </td>
+                                                                                        <td style={{ padding: '8px', textAlign: 'center', color: '#dc2626' }}>
+                                                                                            {sale.change?.toFixed(2) || '0.00'} EGP
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
                                         ));
                                     })()}
                                 </tbody>

@@ -1,21 +1,6 @@
 
 // app/return-policy/page.tsx
 import styles from '../page.module.css';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: 'سياسة الاستبدال والاسترجاع | مكتبة دار اللغات بالعبور',
-    description: 'سياسة الاستبدال والاسترجاع في مكتبة دار اللغات - شروط استرجاع أو استبدال المنتجات خلال 14 يوم.',
-    alternates: { canonical: '/return-policy' },
-    openGraph: {
-        title: 'سياسة الاستبدال والاسترجاع | مكتبة دار اللغات',
-        description: 'شروط استرجاع أو استبدال المنتجات',
-        url: '/return-policy',
-        siteName: 'مكتبة دار اللغات',
-        type: 'website',
-        locale: 'ar_EG',
-    },
-};
 
 export default function ReturnPolicyPage() {
   return (

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getPosts } from '../lib/data-server'; 
 import { Post } from '../lib/types'; 
@@ -7,28 +6,6 @@ import styles from './Blog.module.css';
 
 // 🚀 السطر السحري الحتمي: إجبار الصفحة على العمل بوضع ديناميكي لتخطي وقت البناء بنجاح
 export const dynamic = 'force-dynamic';
-
-export const metadata: Metadata = {
-    title: 'المدونة | مكتبة دار اللغات بالعبور',
-    description: 'آخر المقالات والنصائح والأخبار من خبراء مكتبة دار اللغات بالعبور. اكتشف نصائح تعليمية، مراجعات كتب، وأخبار عن أحدث المستلزمات التعليمية.',
-    keywords: ['مدونة', 'مقالات', 'نصائح تعليمية', 'كتب خارجية', 'مكتبة دار اللغات', 'العبور'],
-    alternates: {
-        canonical: '/blog',
-    },
-    openGraph: {
-        title: 'المدونة | مكتبة دار اللغات بالعبور',
-        description: 'آخر المقالات والنصائح والأخبار من خبراء مكتبة دار اللغات',
-        url: '/blog',
-        siteName: 'مكتبة دار اللغات',
-        type: 'website',
-        locale: 'ar_EG',
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'المدونة | مكتبة دار اللغات',
-        description: 'آخر المقالات والنصائح التعليمية',
-    },
-};
 
 export default async function BlogPage() {
     const posts: Post[] = await getPosts();

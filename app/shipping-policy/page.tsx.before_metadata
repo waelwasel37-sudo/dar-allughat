@@ -1,21 +1,6 @@
 
 // app/shipping-policy/page.tsx
-import styles from '../page.module.css';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: 'سياسة الشحن والدفع | مكتبة دار اللغات بالعبور',
-    description: 'سياسة الشحن والدفع في مكتبة دار اللغات - خيارات شحن مرنة لجميع أنحاء الجمهورية، وطرق دفع متعددة.',
-    alternates: { canonical: '/shipping-policy' },
-    openGraph: {
-        title: 'سياسة الشحن والدفع | مكتبة دار اللغات',
-        description: 'خيارات شحن مرنة وطرق دفع متعددة',
-        url: '/shipping-policy',
-        siteName: 'مكتبة دار اللغات',
-        type: 'website',
-        locale: 'ar_EG',
-    },
-};
+import styles from '../page.module.css'; // Re-use some global styles
 
 export default function ShippingPolicyPage() {
   return (

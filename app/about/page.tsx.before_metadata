@@ -1,31 +1,8 @@
 
 import React from 'react';
-import type { Metadata } from 'next';
 import { FaBookReader, FaGlobe, FaPencilRuler, FaBrain, FaMosque, FaRecycle } from 'react-icons/fa';
 
 export const dynamic = 'force-static';
-
-export const metadata: Metadata = {
-    title: 'من نحن | مكتبة دار اللغات بالعبور',
-    description: 'تعرّف على مكتبة دار اللغات بالعبور - وجهتك الأولى للكتب الخارجية، المستلزمات المدرسية، وألعاب تنمية مهارات الأطفال. رؤيتنا ورسالتنا وقيمنا.',
-    keywords: ['من نحن', 'مكتبة دار اللغات', 'العبور', 'كتب خارجية', 'مستلزمات مدرسية'],
-    alternates: {
-        canonical: '/about',
-    },
-    openGraph: {
-        title: 'من نحن | مكتبة دار اللغات بالعبور',
-        description: 'تعرّف على مكتبة دار اللغات - وجهتك الأولى للكتب والمستلزمات التعليمية',
-        url: '/about',
-        siteName: 'مكتبة دار اللغات',
-        type: 'website',
-        locale: 'ar_EG',
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'من نحن | مكتبة دار اللغات',
-        description: 'تعرّف على مكتبة دار اللغات بالعبور',
-    },
-};
 
 const AboutPage: React.FC = () => {
   return (
