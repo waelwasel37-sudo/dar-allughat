@@ -372,34 +372,9 @@ export default function POSPage() {
                 }
             ]);
 
-            // 🔥 [تحسين أمني] مزامنة المخزن باستخدام مصادقة الأدمن بدلاً من مفتاح مكشوف
-            let revalidationSuccessful = true;
-            try {
-                console.log('⚡ Attempting to revalidate online store cache...');
-                const revalidateResponse = await fetch('/api/revalidate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token && { 'Authorization': `Bearer ${token}` })
-                    },
-                    body: JSON.stringify({ tags: ['products-list'] }),
-                });
-                if (!revalidateResponse.ok) {
-                    revalidationSuccessful = false;
-                    const err = await revalidateResponse.json();
-                    console.error('Revalidation API error:', err.error || 'Unknown revalidation error');
-                }
-            } catch (revalidateError) {
-                revalidationSuccessful = false;
-                console.error('Failed to send revalidation request:', revalidateError);
-            }
-
-            // عرض رسالة النجاح المناسبة بناءً على نتيجة المزامنة
-            if (revalidationSuccessful) {
-                setSuccessMessage('تم البيع بنجاح وتحديث مخزن المتجر الإلكتروني فوراً!');
-            } else {
-                setSuccessMessage('⚠️ تم البيع، لكن فشلت مزامنة مخزن الأونلاين. يرجى المراجعة.');
-            }
+            // 🆕 /api/orders يعمل revalidateTag تلقائياً — مفيش حاجة إضافية
+            console.log('✅ تم البيع — الكاش اتحدث تلقائياً من /api/orders');
+            setSuccessMessage('تم البيع بنجاح وتحديث مخزن المتجر الإلكتروني فوراً!');
             
             // 🆕 1. اطبع بعد ما الفاتورة تتحدث (invoiceNumber)
             setTimeout(() => {

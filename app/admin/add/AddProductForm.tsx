@@ -228,20 +228,8 @@ export default function AddProductForm({ categories }: AddProductFormProps) {
                 throw new Error(errorResult.error || `فشل إنشاء المنتج. (Status: ${response.status})`);
             }
 
-            // --- بداية الكود المضاف لتحديث الكاش ---
-            console.log('✅ تم حفظ المنتج، جاري إرسال إشارة لتحديث الكاش...');
-            await fetch('/api/revalidate', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATION_TOKEN}` 
-              },
-              body: JSON.stringify({ 
-                tags: ['products-list', `product-${slug}`] 
-              }), 
-            });
-            console.log('✅ تم تحديث كاش المنتجات بنجاح!');
-            // --- نهاية الكود المضاف لتحديث الكاش ---
+            // 🆕 /api/products يعمل revalidateTag تلقائياً — مفيش حاجة إضافية
+            console.log('✅ تم حفظ المنتج — الكاش اتحدث تلقائياً');
 
             alert('تم حفظ المنتج وتحديث الموقع فوراً للزوار وجوجل!');
             router.push('/admin/products');

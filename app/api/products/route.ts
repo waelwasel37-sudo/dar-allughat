@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag, revalidatePath } from "next/cache";
 import admin from 'firebase-admin'; 
 import { getDb, getSecondaryDb } from "@/app/lib/firebase-admin";
 import { getSession } from "@/app/lib/session"; 
@@ -150,6 +151,14 @@ export async function POST(req: NextRequest) {
 
         // حفظ المنتج في الـ Collection
         const docRef = await productsRef.add(finalProduct);
+
+        // 🆕 تحديث الكاش بعد إضافة المنتج
+        revalidateTag('products-list');
+        revalidateTag('products');
+        revalidateTag(`product-${newSlug}`);
+        revalidatePath('/');
+        revalidatePath('/products');
+        console.log('✅ [Next.js Cache] تم تحديث كاش المنتجات بعد الإضافة');
 
         return NextResponse.json({ message: "Product created successfully", id: docRef.id, slug: newSlug }, { status: 201 });
 
